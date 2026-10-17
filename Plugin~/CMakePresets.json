@@ -82,7 +82,7 @@
       "cacheVariables": {
         "CMAKE_SYSTEM_NAME": "iOS",
         "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64",
-        "CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=": "NO"
+        "CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH": "NO"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -101,7 +101,8 @@
       "cacheVariables": {
         "CMAKE_SYSTEM_NAME": "Android",
         "CMAKE_ANDROID_API_MIN": "24",
-        "CMAKE_ANDROID_NDK": "$env{ANDROID_SDK}",
+        "CMAKE_ANDROID_API": "24",
+        "CMAKE_ANDROID_NDK": "$env{ANDROID_NDK}",
         "CMAKE_ANDROID_STL_TYPE": "c++_static"
       }
     },
@@ -180,6 +181,14 @@
       "inherits": "default-android",
       "cacheVariables": {
         "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a"
+      }
+    },
+    {
+      "name": "x86_64-android",
+      "description": "Sets x86_64 arch, generator, compilers",
+      "inherits": "default-android",
+      "cacheVariables": {
+        "CMAKE_ANDROID_ARCH_ABI": "x86_64"
       }
     }
   ],

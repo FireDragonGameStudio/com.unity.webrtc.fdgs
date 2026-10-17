@@ -4,8 +4,8 @@ export LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.
 export LIBWEBRTC_SHA256=1a7001ad093a9ae9ed8ab85d15b021f5fae2a00f5377359b03264232ff739409
 export SOLUTION_DIR=$(pwd)/Plugin~
 export WEBRTC_FRAMEWORK_DIR=$(pwd)/Runtime/Plugins/iOS
-export WEBRTC_ARCHIVE_DIR=build/webrtc.xcarchive
-export WEBRTC_SIM_ARCHIVE_DIR=build/webrtc-sim.xcarchive
+export BUILD_DIR=out/build/ios
+export WEBRTC_ARCHIVE_DIR=$BUILD_DIR/webrtc.xcarchive
 
 BUILD_TYPE="${1:-release}"
 if [ "$BUILD_TYPE" = "debug" ]; then
@@ -14,60 +14,40 @@ else
   CMAKE_BUILD_TYPE="Release"
 fi
 
-# Install cmake
-export HOMEBREW_NO_AUTO_UPDATE=1
-brew install cmake
+# Install cmake (preinstalled on GitHub-hosted macOS runners)
+if ! command -v cmake > /dev/null; then
+  export HOMEBREW_NO_AUTO_UPDATE=1
+  brew install cmake
+fi
 
-# Download webrtc 
+# Download webrtc
 curl -fL "$LIBWEBRTC_DOWNLOAD_URL" -o webrtc.zip || exit 1
 echo "$LIBWEBRTC_SHA256  webrtc.zip" | shasum -a 256 --check || exit 1
-unzip -d $SOLUTION_DIR/webrtc webrtc.zip 
+unzip -o -d $SOLUTION_DIR/webrtc webrtc.zip
 
-# Build webrtc Unity plugin 
+# Build webrtc Unity plugin for iOS devices (arm64). The prebuilt libwebrtc.a also contains an x86_64
+# simulator slice, but Unity only ships the device framework.
 cd "$SOLUTION_DIR"
-cmake . \
-  -G Xcode \
-  -D CMAKE_SYSTEM_NAME=iOS \
-  -D "CMAKE_OSX_ARCHITECTURES=arm64;x86_64" \
-  -D CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-  -D CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
-  -B build
+cmake --preset=ios \
+  -D CMAKE_OSX_ARCHITECTURES=arm64 \
+  -D CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE
 
-xcodebuild \
-  -sdk iphonesimulator \
-  -arch 'x86_64' \
-  -project build/webrtc.xcodeproj \
-  -target WebRTCLib \
-  -configuration Release
+# The framework is not signed here; Xcode signs it when it is embedded into the Unity iOS app.
+XCODEBUILD_FLAGS=(
+  -sdk iphoneos
+  -arch arm64
+  -project "$BUILD_DIR/webrtc.xcodeproj"
+  -configuration $CMAKE_BUILD_TYPE
+  CODE_SIGNING_ALLOWED=NO
+  CODE_SIGNING_REQUIRED=NO
+)
 
-xcodebuild archive \
-  -sdk iphonesimulator \
-  -arch 'x86_64' \
+# Build the static library first: the archive links WebRTCPlugin against it from the regular build folder.
+xcodebuild "${XCODEBUILD_FLAGS[@]}" -target WebRTCLib
+
+xcodebuild archive "${XCODEBUILD_FLAGS[@]}" \
   -scheme WebRTCPlugin \
-  -project build/webrtc.xcodeproj \
-  -configuration Release \
-  -archivePath "$WEBRTC_SIM_ARCHIVE_DIR"
-
-xcodebuild \
-  -sdk iphoneos \
-  -project build/webrtc.xcodeproj \
-  -target WebRTCLib \
-  -configuration Release
-
-xcodebuild archive \
-  -sdk iphoneos \
-  -scheme WebRTCPlugin \
-  -project build/webrtc.xcodeproj \
-  -configuration Release \
   -archivePath "$WEBRTC_ARCHIVE_DIR"
 
 rm -rf "$WEBRTC_FRAMEWORK_DIR/webrtc.framework"
 cp -r "$WEBRTC_ARCHIVE_DIR/Products/@rpath/webrtc.framework" "$WEBRTC_FRAMEWORK_DIR/webrtc.framework"
-
-# todo(kazuki): The command below combines two libraries for supporting iOS and iOS simulator.
-# But currently this is commented out because the combined binary adds a troublesome task to developer 
-# when building iOS app on XCode. We need to support it using XCFramework or another way.
-# 
-# lipo -create -o "$WEBRTC_FRAMEWORK_DIR/webrtc.framework/webrtc" \
-#   "$WEBRTC_ARCHIVE_DIR/Products/@rpath/webrtc.framework/webrtc" \
-#   "$WEBRTC_SIM_ARCHIVE_DIR/Products/@rpath/webrtc.framework/webrtc"

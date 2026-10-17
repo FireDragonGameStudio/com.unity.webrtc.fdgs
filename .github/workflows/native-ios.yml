@@ -1,0 +1,110 @@
+name: Native plugin (iOS)
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_ios.sh'
+      - '.github/workflows/native-ios.yml'
+  pull_request:
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_ios.sh'
+      - '.github/workflows/native-ios.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_ios.sh.
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-ios.zip
+  LIBWEBRTC_SHA256: 1a7001ad093a9ae9ed8ab85d15b021f5fae2a00f5377359b03264232ff739409
+
+jobs:
+  build:
+    name: Build webrtc.framework (${{ matrix.config }})
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Release]
+    env:
+      BUILD_DIR: out/build/ios
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcodebuild -showsdks | grep -i iphoneos
+          cmake --version
+
+      - name: Cache libwebrtc
+        id: libwebrtc-cache
+        uses: actions/cache@v6
+        with:
+          path: Plugin~/webrtc
+          key: libwebrtc-ios-${{ env.LIBWEBRTC_SHA256 }}
+
+      - name: Download libwebrtc
+        if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o webrtc.zip "$LIBWEBRTC_URL"
+          echo "$LIBWEBRTC_SHA256  webrtc.zip" | shasum -a 256 --check --strict
+          unzip -q -o webrtc.zip -d Plugin~/webrtc
+
+      - name: Configure
+        working-directory: Plugin~
+        # Errors are repeated as annotations so they show on the run summary without opening the log.
+        # Unity only ships the device framework, so only arm64 is built.
+        run: |
+          set -o pipefail
+          cmake --preset=ios -Wno-dev -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=${{ matrix.config }} 2>&1 | tee configure.log || {
+            echo "::error title=CMake configure::$({ grep -A8 'CMake Error' configure.log || tail -30 configure.log; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+            exit 1
+          }
+
+      - name: Build
+        working-directory: Plugin~
+        # Same steps as BuildScripts~/build_plugin_ios.sh. The framework is not signed; Xcode signs it when it
+        # is embedded into the Unity iOS app.
+        run: |
+          set -o pipefail
+          flags=(-sdk iphoneos -arch arm64 -project "$BUILD_DIR/webrtc.xcodeproj" -configuration ${{ matrix.config }}
+                 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO -quiet)
+          {
+            xcodebuild "${flags[@]}" -target WebRTCLib &&
+            xcodebuild archive "${flags[@]}" -scheme WebRTCPlugin -archivePath "$BUILD_DIR/webrtc.xcarchive"
+          } 2>&1 | tee build.log || {
+            echo "::error title=Build::$(grep -E -A3 'error:|BUILD FAILED|ARCHIVE FAILED|Undefined symbols' build.log | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+            exit 1
+          }
+          rm -rf ../Runtime/Plugins/iOS/webrtc.framework
+          cp -R "$BUILD_DIR/webrtc.xcarchive/Products/@rpath/webrtc.framework" ../Runtime/Plugins/iOS/webrtc.framework
+
+      - name: Check exports
+        run: |
+          fw=Runtime/Plugins/iOS/webrtc.framework
+          bin=$fw/webrtc
+          test -f "$bin" || { echo "::error::$bin was not built"; exit 1; }
+          lipo "$bin" -verify_arch arm64 || { echo "::error::$bin has no arm64 slice"; exit 1; }
+          # iOS registers the plugin through RegisterPlugin.mm, so the load/unload callbacks have their own names.
+          exports=$(nm -gU "$bin")
+          for name in ContextCreate GetBatchUpdateEventFunc UnityWebRTCPluginLoad UnityWebRTCPluginUnload; do
+            grep -qw "_$name" <<<"$exports" || { echo "::error::Missing export $name"; exit 1; }
+          done
+          plutil -lint "$fw/Info.plist"
+          plutil -p "$fw/Info.plist"
+          lipo -info "$bin"
+          vtool -show-build "$bin" | grep -E 'platform|minos|sdk'
+          otool -L "$bin"
+          ls -lR "$fw"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-ios-arm64-${{ matrix.config }}
+          path: Runtime/Plugins/iOS/webrtc.framework
+          if-no-files-found: error

@@ -1,0 +1,126 @@
+name: Native plugin (Android)
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_android.sh'
+      - '.github/workflows/native-android.yml'
+  pull_request:
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_android.sh'
+      - '.github/workflows/native-android.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_android.sh.
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-android.zip
+  LIBWEBRTC_SHA256: f561153cf06dc5d0c95cb7272168582df9cb37a960c8fb7907dd775547766d4a
+  # NDK r28c. r28 and newer align shared libraries to 16 KB pages by default.
+  NDK_VERSION: '28.2.13676358'
+
+jobs:
+  build:
+    name: Build libwebrtc.aar (${{ matrix.config }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Release]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Android NDK
+        run: |
+          ndk="$ANDROID_SDK_ROOT/ndk/$NDK_VERSION"
+          if [ ! -d "$ndk" ]; then
+            yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$NDK_VERSION" > /dev/null
+          fi
+          echo "ANDROID_NDK=$ndk" >> "$GITHUB_ENV"
+          grep Pkg.Revision "$ndk/source.properties"
+          cmake --version
+
+      - name: Cache libwebrtc
+        id: libwebrtc-cache
+        uses: actions/cache@v6
+        with:
+          path: Plugin~/webrtc
+          key: libwebrtc-android-${{ env.LIBWEBRTC_SHA256 }}
+
+      - name: Download libwebrtc
+        if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o webrtc.zip "$LIBWEBRTC_URL"
+          echo "$LIBWEBRTC_SHA256  webrtc.zip" | sha256sum --check --strict
+          unzip -q -o webrtc.zip -d Plugin~/webrtc
+
+      - name: Build
+        working-directory: Plugin~
+        # Same steps as BuildScripts~/build_plugin_android.sh: build libwebrtc.so per ABI and add it to the
+        # libwebrtc.aar from the prebuilt libwebrtc. Errors are repeated as annotations so they show on the run
+        # summary without opening the log.
+        run: |
+          set -o pipefail
+          plugin_dir=../Runtime/Plugins/Android
+          cp -f webrtc/lib/libwebrtc.aar "$plugin_dir/libwebrtc.aar"
+          for abi in arm64-v8a x86_64; do
+            case $abi in
+              arm64-v8a) preset=arm64-android ;;
+              x86_64) preset=x86_64-android ;;
+            esac
+            cmake --preset=$preset -Wno-dev -DCMAKE_BUILD_TYPE=${{ matrix.config }} 2>&1 | tee configure-$abi.log || {
+              echo "::error title=CMake configure ($abi)::$({ grep -A8 'CMake Error' configure-$abi.log || tail -30 configure-$abi.log; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+              exit 1
+            }
+            cmake --build out/build/$preset --target WebRTCPlugin --parallel 2>&1 | tee build-$abi.log || {
+              echo "::error title=Build ($abi)::$(grep -E -A3 'error:|Error [0-9]|undefined' build-$abi.log | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+              exit 1
+            }
+            mkdir -p "$plugin_dir/jni/$abi"
+            mv "$plugin_dir/libwebrtc.so" "$plugin_dir/jni/$abi/"
+          done
+          cd "$plugin_dir"
+          zip -g libwebrtc.aar jni/*/libwebrtc.so
+
+      - name: Check exports and 16 KB page alignment
+        run: |
+          plugin_dir=Runtime/Plugins/Android
+          llvm="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          # Google Play requires 16 KB aligned LOAD segments for Android 15+ on 64-bit devices.
+          check_alignment() {
+            for align in $("$llvm/llvm-readelf" -lW "$1" | awk '$1 == "LOAD" { print $NF }'); do
+              if (( align < 16384 )); then
+                echo "::error::$1 has LOAD segments aligned to $align (< 16 KB)"; return 1
+              fi
+            done
+          }
+          for abi in arm64-v8a x86_64; do
+            so=$plugin_dir/jni/$abi/libwebrtc.so
+            test -f "$so" || { echo "::error::$so was not built"; exit 1; }
+            exports=$("$llvm/llvm-nm" -D --defined-only "$so")
+            for name in ContextCreate GetBatchUpdateEventFunc UnityPluginLoad UnityPluginUnload JNI_OnLoad; do
+              grep -qw "$name" <<<"$exports" || { echo "::error::Missing export $name ($abi)"; exit 1; }
+            done
+            check_alignment "$so"
+            "$llvm/llvm-readelf" -dW "$so" | grep NEEDED
+            ls -l "$so"
+          done
+          # Every native library in the aar, including libjingle_peerconnection_so.so from the prebuilt libwebrtc,
+          # must be 16 KB aligned.
+          mkdir -p aar && unzip -q -o "$plugin_dir/libwebrtc.aar" -d aar
+          for so in aar/jni/*/*.so; do
+            check_alignment "$so"
+          done
+          unzip -l "$plugin_dir/libwebrtc.aar"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-android-${{ matrix.config }}
+          path: Runtime/Plugins/Android/libwebrtc.aar
+          if-no-files-found: error
