@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Native plugin: `build_plugin_ios.sh` no longer builds an unused simulator archive and does not code sign the framework (Xcode signs it when embedding it into the app). `build_plugin_android.sh` uses the `arm64-android` and `x86_64-android` CMake presets and is tested with NDK r28c; the Android presets now read the NDK path from `ANDROID_NDK`. The Android plugin is linked with `-z max-page-size=16384` explicitly.
 - Update documentation, issue templates and package metadata for the fork.
 - Run PlayMode tests in GitHub Actions with `-nographics`. Tests that need a graphics device are ignored there.
+- Test only Unity 6000.3 on every push and pull request. The minimum supported version, Unity 6000.0, is tested by a weekly scheduled run, on release tags and on manual runs.
 
 ### Fixed
 
