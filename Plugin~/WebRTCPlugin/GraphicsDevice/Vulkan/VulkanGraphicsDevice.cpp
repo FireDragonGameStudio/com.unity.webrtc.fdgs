@@ -469,7 +469,7 @@ namespace webrtc
         if (!ret)
         {
             RTC_LOG(LS_ERROR) << "WaitSync timeout. "
-                              << "texture: " << texture << "currentFrameNumber: " << vulkanTexture->currentFrameNumber
+                              << "texture: " << texture << ", currentFrameNumber: " << vulkanTexture->currentFrameNumber
                               << ", safeFrameNumber: " << m_LastState.safeFrameNumber;
         }
         return ret;

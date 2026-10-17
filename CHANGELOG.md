@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Native plugin: build with Visual Studio 2026, CUDA 13 and CMake 4 (missing `<chrono>` includes, new `cuCtxCreate` signature, googletest 1.15.2). Adds `x64-windows-vs2026` CMake presets.
 - Native plugin: on Linux without a usable GPU (e.g. xvfb with Mesa llvmpipe), failing to create an OpenGL/GLX or EGL context on a worker thread no longer aborts Unity with "terminate called without an active exception". The failure is logged and the frame operation is skipped.
 - Native plugin: `SetGraphicsSyncTimeout` crashed when Unity runs without a graphics device (`-nographics`).
+- Native plugin: on platforms without CUDA, `GpuMemoryBufferFromUnity` no longer copies every frame into an extra GPU texture that only NvCodec uses. Vulkan `AccessTexture` failures and `WaitSync` timeouts are now logged. Ported from upstream branch `fix/crash-av1-encoder` (Kazuki Matsumoto); its libvpx/libaom encoder patches need a libwebrtc rebuild and are not included.
 
 ## [3.0.0] - 2025-09-12
 
