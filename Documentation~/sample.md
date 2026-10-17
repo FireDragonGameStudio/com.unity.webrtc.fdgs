@@ -27,6 +27,14 @@ To get these samples, Push the `Import into Project` button on the Package Manag
 
 ![Download package sample](images/download_package_sample.png)
 
+Open the `Menu` scene in the imported samples and enter Play mode. The menu loads the other sample scenes directly, so they do not need to be in the build profile's scene list while you run them in the Editor.
+
+The samples work with both the Input Manager and the Input System package, and with the built-in render pipeline, URP and HDRP. When a sample scene loads, it switches its UI input module to the Input System when that is the only active input handling, and it replaces the built-in default material with the default material of the active render pipeline.
+
+### Build a player with the samples
+
+A player can only load scenes from the build profile's scene list. Select **Tools > WebRTC Samples > Add Sample Scenes to Build Profile** to add all sample scenes, with the `Menu` scene first, then build as usual.
+
 ## Sample menu
 
 `Menu` scene is helpful for checking multiple sample scenes. You can find the scene `Example/Menu/Menu.scene`.

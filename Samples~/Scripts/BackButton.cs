@@ -1,5 +1,7 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+#if ENABLE_INPUT_SYSTEM && WEBRTC_SAMPLES_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace Unity.WebRTC.Samples
 {
@@ -15,7 +17,7 @@ namespace Unity.WebRTC.Samples
 
         void Start()
         {
-            if (Application.CanStreamedLevelBeLoaded("Menu"))
+            if (SampleScenes.CanLoad(SampleScenes.MenuScene))
             {
                 m_BackButton.SetActive(true);
             }
@@ -23,7 +25,7 @@ namespace Unity.WebRTC.Samples
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (EscapePressed())
             {
                 BackButtonPressed();
             }
@@ -31,10 +33,19 @@ namespace Unity.WebRTC.Samples
 
         public void BackButtonPressed()
         {
-            if (Application.CanStreamedLevelBeLoaded("Menu"))
+            if (SampleScenes.CanLoad(SampleScenes.MenuScene))
             {
-                SceneManager.LoadScene("Menu", LoadSceneMode.Single);
+                SampleScenes.Load(SampleScenes.MenuScene);
             }
+        }
+
+        static bool EscapePressed()
+        {
+#if ENABLE_INPUT_SYSTEM && WEBRTC_SAMPLES_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+#else
+            return Input.GetKeyDown(KeyCode.Escape);
+#endif
         }
     }
 }
