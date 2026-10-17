@@ -29,7 +29,7 @@ To get these samples, Push the `Import into Project` button on the Package Manag
 
 Open the `Menu` scene in the imported samples and enter Play mode. The menu loads the other sample scenes directly, so they do not need to be in the build profile's scene list while you run them in the Editor.
 
-The samples work with both the Input Manager and the Input System package, and with the built-in render pipeline, URP and HDRP. When a sample scene loads, it switches its UI input module to the Input System when that is the only active input handling, and it replaces the built-in default material with the default material of the active render pipeline.
+The samples work with both the Input Manager and the Input System package, and with the built-in render pipeline, URP and HDRP. After you import them, the Editor adapts the sample scenes to your project and saves them: it replaces the UI's `StandaloneInputModule` with `InputSystemUIInputModule` when the Input System is the only active input handling, and the built-in default material with the default material of the active render pipeline. If you change these project settings later, or a sample scene had unsaved changes, select **Tools > WebRTC Samples > Set Up Sample Scenes for This Project**.
 
 ### Build a player with the samples
 
