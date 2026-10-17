@@ -27,6 +27,15 @@ namespace Unity.WebRTC.RuntimeTest
             UnityEngine.Debug.unityLogger.Log(logType, str);
         }
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            // Objects leaked by earlier fixtures are disposed by their finalizers, and native errors they cause
+            // would be reported through this fixture's logger as exceptions. Finalize them before registering it.
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
         [SetUp]
         public void SetUp()
         {
@@ -42,10 +51,6 @@ namespace Unity.WebRTC.RuntimeTest
         [Test]
         public void QuitAndInitContextManager()
         {
-            // ignore error message
-            // Unhandled log message: '[Exception] [000:016](rtp_transceiver.cc:598): PeerConnection is closed. (INVALID_STATE)
-            UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
-
             // ContextManager.Init is already called when the process reaches here.
             ContextManager.Quit();
             ContextManager.Init();
@@ -54,7 +59,6 @@ namespace Unity.WebRTC.RuntimeTest
             // Reinitialize
             WebRTC.InitializeInternal();
 #endif
-            UnityEngine.TestTools.LogAssert.ignoreFailingMessages = false;
         }
 
         [Test]
@@ -74,6 +78,15 @@ namespace Unity.WebRTC.RuntimeTest
             var channelPtr = context.CreateDataChannel(peerPtr, "test", ref init);
             context.DeleteDataChannel(channelPtr);
             context.DeletePeerConnection(peerPtr);
+        }
+
+        [Test]
+        public void DisposePeerConnectionWithTransceiver()
+        {
+            // Disposing must not log a native error, which the logger registered in SetUp reports as an exception.
+            var peer = new RTCPeerConnection();
+            peer.AddTransceiver(TrackKind.Audio);
+            peer.Dispose();
         }
 
         [Test]

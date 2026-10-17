@@ -197,8 +197,10 @@ namespace Unity.WebRTC.RuntimeTest
         public void Dispose()
         {
             dataChannels.Clear();
-            peers[0].Close();
-            peers[1].Close();
+            // Dispose instead of only closing, so the peers are not left for the finalizer,
+            // which could run later in another fixture.
+            peers[0].Dispose();
+            peers[1].Dispose();
         }
     }
 }

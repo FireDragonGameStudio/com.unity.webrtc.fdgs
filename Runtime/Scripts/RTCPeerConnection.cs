@@ -213,9 +213,10 @@ namespace Unity.WebRTC
             var transceivers = GetTransceivers();
             foreach (var transceiver in transceivers)
             {
+                // Close() has already stopped every transceiver, and stopping one on a closed
+                // PeerConnection only makes libwebrtc log an INVALID_STATE error, so don't call Stop() here.
                 // Dispose of MediaStreamTrack when disposing of RTCRtpReceiver.
                 // On the other hand, do not dispose a track when disposing of RTCRtpSender.
-                transceiver.Stop();
                 transceiver.Receiver?.Dispose();
                 transceiver.Sender?.Dispose();
                 transceiver.Dispose();
