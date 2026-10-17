@@ -74,15 +74,25 @@ jobs:
         working-directory: Plugin~
         env:
           CUDACXX: ${{ steps.cuda.outputs.CUDA_PATH }}/bin/nvcc
+        # Errors are repeated as annotations so they show on the run summary without opening the log.
         run: |
+          set -o pipefail
           cmake --preset=x86_64-linux -Wno-dev \
             -DCMAKE_C_COMPILER="clang-$LLVM_VERSION" \
             -DCMAKE_CXX_COMPILER="clang++-$LLVM_VERSION" \
-            -DPython3_EXECUTABLE="$(command -v python3)"
+            -DPython3_EXECUTABLE="$(command -v python3)" 2>&1 | tee configure.log || {
+            echo "::error title=CMake configure::$({ grep -A8 'CMake Error' configure.log || tail -30 configure.log; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+            exit 1
+          }
 
       - name: Build
         working-directory: Plugin~
-        run: cmake --build out/build/x86_64-linux --config ${{ matrix.config }} --target WebRTCPlugin --parallel
+        run: |
+          set -o pipefail
+          cmake --build out/build/x86_64-linux --config ${{ matrix.config }} --target WebRTCPlugin --parallel 2>&1 | tee build.log || {
+            echo "::error title=Build::$(grep -E -A3 'error:|FAILED:|undefined' build.log | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+            exit 1
+          }
 
       - name: Strip
         run: strip --strip-unneeded Runtime/Plugins/x86_64/libwebrtc.so
