@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.22)
 
-set(CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET
-    "10.0"
-    CACHE STRING "Minimum iOS deployment version")
-set(CMAKE_OSX_DEPLOYMENT_TARGET
-    "10.12"
-    CACHE STRING "Minimum OS X deployment version")
+# Minimum OS versions supported by Unity 6. CMAKE_OSX_DEPLOYMENT_TARGET applies
+# to iOS as well, so it must be set per platform before project().
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET
+      "13.0"
+      CACHE STRING "Minimum iOS deployment version")
+else()
+  set(CMAKE_OSX_DEPLOYMENT_TARGET
+      "11.0"
+      CACHE STRING "Minimum macOS deployment version")
+endif()
 
 project(
   webrtc
@@ -40,16 +45,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(XCODE)
-  if(${XCODE_VERSION} VERSION_GREATER_EQUAL 12.0.0 AND ${XCODE_VERSION}
-                                                       VERSION_LESS 11.0.0)
-    message(
-      FATAL_ERROR
-        "The required Xcode version is 11.0 or higher and 12.0 or higher is not supported."
-    )
-  endif()
-endif()
 
 # Use lld linker instead of GNU ld. Link libstdc++ statically so the plugin
 # does not depend on the GLIBCXX version of the user's distribution; the

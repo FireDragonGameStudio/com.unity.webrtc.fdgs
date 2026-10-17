@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace Unity's internal CI with GitHub Actions.
 - Build the Windows native plugin in GitHub Actions (Visual Studio 2022, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc.
 - Build the Linux native plugin in GitHub Actions (Ubuntu 22.04, clang 18, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc in CI and `build_plugin_linux.sh`.
+- Build the macOS (universal arm64 + x86_64), iOS (arm64) and Android (arm64-v8a, x86_64) native plugins in GitHub Actions (Xcode 16 on `macos-15`, Android NDK r28c on Ubuntu 24.04), verifying the SHA-256 of the downloaded prebuilt libwebrtc and checking exports and 16 KB page alignment on Android.
+- Native plugin: raise the minimum deployment targets to iOS 13.0 and macOS 11.0, the minimums supported by Unity 6 (current Xcode no longer supports iOS 10 and macOS 10.12). Removes the obsolete Xcode 11 version check, and skips the libc++ debug-mode shim (`libcxx/debug.cpp`) when the toolchain's libc++ no longer has the `<__debug>` header (Xcode 15.3 and newer).
+- Native plugin: `build_plugin_ios.sh` no longer builds an unused simulator archive and does not code sign the framework (Xcode signs it when embedding it into the app). `build_plugin_android.sh` uses the `arm64-android` and `x86_64-android` CMake presets and is tested with NDK r28c; the Android presets now read the NDK path from `ANDROID_NDK`. The Android plugin is linked with `-z max-page-size=16384` explicitly.
 - Update documentation, issue templates and package metadata for the fork.
 - Run PlayMode tests in GitHub Actions with `-nographics`. Tests that need a graphics device are ignored there.
 
@@ -25,6 +28,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Native plugin: build with Visual Studio 2026, CUDA 13 and CMake 4 (missing `<chrono>` includes, new `cuCtxCreate` signature, googletest 1.15.2). Adds `x64-windows-vs2026` CMake presets.
 - Native plugin: on Linux without a usable GPU (e.g. xvfb with Mesa llvmpipe), failing to create an OpenGL/GLX or EGL context on a worker thread no longer aborts Unity with "terminate called without an active exception". The failure is logged and the frame operation is skipped.
 - Native plugin: `SetGraphicsSyncTimeout` crashed when Unity runs without a graphics device (`-nographics`).
+- Native plugin: update the Unity native plugin API headers to Unity 6000.3. OpenGL ES 2.0 (`kUnityGfxRendererOpenGLES20`), which Unity 6 removed, is no longer handled. Ported from upstream branch `fix/update-plugin-headers-6000.3` (Kazuki Matsumoto).
+- Native plugin: the video encoder crashed when reading a GPU frame back to the CPU failed (e.g. a `WaitSync` timeout). The frame is now dropped with a warning. Ported from upstream branch `fix/crash-encoder-kleptine` (John Austin).
 - Native plugin: on platforms without CUDA, `GpuMemoryBufferFromUnity` no longer copies every frame into an extra GPU texture that only NvCodec uses. Vulkan `AccessTexture` failures and `WaitSync` timeouts are now logged. Ported from upstream branch `fix/crash-av1-encoder` (Kazuki Matsumoto); its libvpx/libaom encoder patches need a libwebrtc rebuild and are not included.
 
 ## [3.0.0] - 2025-09-12

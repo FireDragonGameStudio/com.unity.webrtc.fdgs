@@ -12,14 +12,16 @@ else
   CMAKE_BUILD_TYPE="Release"
 fi
 
-# Install cmake
-export HOMEBREW_NO_AUTO_UPDATE=1
-brew install cmake
+# Install cmake (preinstalled on GitHub-hosted macOS runners)
+if ! command -v cmake > /dev/null; then
+  export HOMEBREW_NO_AUTO_UPDATE=1
+  brew install cmake
+fi
 
 # Download LibWebRTC 
 curl -fL "$LIBWEBRTC_DOWNLOAD_URL" -o webrtc.zip || exit 1
 echo "$LIBWEBRTC_SHA256  webrtc.zip" | shasum -a 256 --check || exit 1
-unzip -d $SOLUTION_DIR/webrtc webrtc.zip 
+unzip -o -d $SOLUTION_DIR/webrtc webrtc.zip 
 
 # Remove old dylib file
 rm -rf "$DYLIB_FILE"
