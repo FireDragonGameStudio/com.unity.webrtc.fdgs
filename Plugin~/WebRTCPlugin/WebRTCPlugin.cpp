@@ -1582,6 +1582,9 @@ extern "C"
     UNITY_INTERFACE_EXPORT void SetGraphicsSyncTimeout(uint64_t nSecTimeout)
     {
         auto graphicsDevice = Plugin::GraphicsDevice();
+        // The graphics device is null when Unity runs without graphics (e.g. -nographics).
+        if (graphicsDevice == nullptr)
+            return;
         graphicsDevice->SetSyncTimeout(std::chrono::nanoseconds(nSecTimeout));
     }
 #pragma clang diagnostic pop

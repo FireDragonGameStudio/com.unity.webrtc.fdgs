@@ -42,10 +42,12 @@ namespace webrtc
         : IGraphicsDevice(renderer, profiler)
         , mainContext_(nullptr)
     {
-        OpenGLContext::Init();
+        if (!OpenGLContext::Init())
+            RTC_LOG(LS_ERROR) << "Failed to initialize the OpenGL display.";
 
         mainContext_ = OpenGLContext::CurrentContext();
-        RTC_DCHECK(mainContext_);
+        if (!mainContext_)
+            RTC_LOG(LS_ERROR) << "No OpenGL context is current on the render thread.";
     }
 
     OpenGLGraphicsDevice::~OpenGLGraphicsDevice() { }
@@ -185,10 +187,25 @@ namespace webrtc
         return true;
     }
 
+    bool OpenGLGraphicsDevice::EnsureContext()
+    {
+        if (OpenGLContext::CurrentContext())
+            return true;
+        std::unique_ptr<OpenGLContext> context = OpenGLContext::CreateGLContext(mainContext_.get());
+        if (!context)
+        {
+            RTC_LOG(LS_ERROR) << "Failed to create an OpenGL context on this thread.";
+            return false;
+        }
+        contexts_.push_back(std::move(context));
+        return true;
+    }
+
     void OpenGLGraphicsDevice::ReleaseTexture(OpenGLTexture2D* texture)
     {
-        if (!OpenGLContext::CurrentContext())
-            contexts_.push_back(OpenGLContext::CreateGLContext(mainContext_.get()));
+        // Without a context, GL calls are invalid; the GL objects are leaked rather than crashing.
+        if (!EnsureContext())
+            return;
         texture->Release();
     }
 
@@ -218,8 +235,8 @@ namespace webrtc
 
     rtc::scoped_refptr<webrtc::I420Buffer> OpenGLGraphicsDevice::ConvertRGBToI420(ITexture2D* tex)
     {
-        if (!OpenGLContext::CurrentContext())
-            contexts_.push_back(OpenGLContext::CreateGLContext(mainContext_.get()));
+        if (!EnsureContext())
+            return nullptr;
 
         OpenGLTexture2D* sourceTex = static_cast<OpenGLTexture2D*>(tex);
         const GLuint sourceId = reinterpret_cast<uintptr_t>(sourceTex->GetNativeTexturePtrV());
@@ -267,8 +284,8 @@ namespace webrtc
         if (!IsCudaSupport())
             return nullptr;
 
-        if (!OpenGLContext::CurrentContext())
-            contexts_.push_back(OpenGLContext::CreateGLContext(mainContext_.get()));
+        if (!EnsureContext())
+            return nullptr;
 
         OpenGLTexture2D* glTexture2D = static_cast<OpenGLTexture2D*>(texture);
         return GpuMemoryBufferCudaHandle::CreateHandle(GetCUcontext(), glTexture2D->GetTexture());
@@ -279,8 +296,8 @@ namespace webrtc
 
     bool OpenGLGraphicsDevice::WaitSync(const ITexture2D* texture)
     {
-        if (!OpenGLContext::CurrentContext())
-            contexts_.push_back(OpenGLContext::CreateGLContext(mainContext_.get()));
+        if (!EnsureContext())
+            return false;
 
         const OpenGLTexture2D* glTexture2D = static_cast<const OpenGLTexture2D*>(texture);
         GLsync sync = glTexture2D->GetSync();
