@@ -25,7 +25,7 @@ cmake --preset=x64-windows-vs2026
 cmake --build --preset=release-windows-vs2026 --target=WebRTCPlugin
 ```
 
-Visual Studio finds CUDA through the environment variables the CUDA installer sets (`CUDA_PATH_V<major>_<minor>`), so open a new terminal after installing CUDA. You can also run `BuildScripts~uild_plugin_win.cmd release vs2026` from the repository root, which downloads the prebuilt libwebrtc first.
+Visual Studio finds CUDA through the environment variables the CUDA installer sets (`CUDA_PATH_V<major>_<minor>`), so open a new terminal after installing CUDA. You can also run `BuildScripts~\build_plugin_win.cmd release vs2026` from the repository root, which downloads the prebuilt libwebrtc first.
 
 #### Visual Studio 2022
 
@@ -85,41 +85,43 @@ CC=clang-18 CXX=clang++-18 BuildScripts~/build_plugin_linux.sh
 
 ### macOS
 
-On macOS, [homebrew](https://brew.sh/) is used to install CMake. XCode version **11.0.0 or higher** is used but **Xcode 12 would not work well**.
+Building requires a Mac with **Xcode 16 or newer** and CMake 3.22 or newer (the same environment as the [GitHub Actions workflow](../.github/workflows/native-macos.yml), which uses the `macos-15` runner). The prebuilt libwebrtc is a universal library, so the build produces a universal (arm64 + x86_64) `Runtime/Plugins/macOS/libwebrtc.dylib`. The minimum deployment target is macOS 11.0, the minimum supported by Unity 6.
 
 ```bash
-# Install CMake
+# Install CMake (if not installed yet)
 brew install cmake
+
+# Build Runtime/Plugins/macOS/libwebrtc.dylib
+BuildScripts~/build_plugin_mac.sh
 ```
 
 ### iOS
 
-On macOS, [homebrew](https://brew.sh/) is used to install CMake. XCode version **11.0.0 or higher** is used but **Xcode 12 would not work well**.
+The requirements are the same as for macOS ([workflow](../.github/workflows/native-ios.yml)). The script builds `Runtime/Plugins/iOS/webrtc.framework` for devices (arm64) with a minimum deployment target of iOS 13.0, the minimum supported by Unity 6. The framework is not code signed; Xcode signs it when it embeds the framework into the Unity iOS app.
+
+```bash
+BuildScripts~/build_plugin_ios.sh
+```
 
 ### Android
 
-On Ubuntu (**WSL2** on Windows is also working well), 
+On Ubuntu (**WSL2** on Windows also works), with the same environment as the [GitHub Actions workflow](../.github/workflows/native-android.yml). Android NDK **r28c** is tested; NDK r28 and newer align shared libraries to 16 KB pages by default, which Google Play requires for Android 15+ devices. The CMake project also passes `-z max-page-size=16384` to the linker, so older NDKs produce 16 KB aligned libraries too.
 
 ```bash
-# Download Android NDK r21b
-wget https://dl.google.com/android/repository/android-ndk-r21b-linux-x86_64.zip
+# Install the Android NDK r28c with sdkmanager (from the Android SDK command-line tools) ...
+sdkmanager --install "ndk;28.2.13676358"
+export ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/28.2.13676358
 
-# Unzip the downloaded NDK file to home directory
-unzip android-ndk-r21b-linux-x86_64.zip -d ~/
+# ... or download it directly
+wget https://dl.google.com/android/repository/android-ndk-r28c-linux.zip
+unzip android-ndk-r28c-linux.zip -d ~/
+export ANDROID_NDK=~/android-ndk-r28c
 
-# Set Android NDK root path to `ANDROID_NDK` environment variable
-echo "export ANDROID_NDK=~/android-ndk-r21b/" >> ~/.profile
+# CMake 3.22 or newer is required (Ubuntu 22.04 and newer ship it), plus curl, unzip and zip
+sudo apt install -y cmake curl unzip zip
 
-# Install CMake 3.24.3
-sudo apt install -y libssl-dev
-sudo apt purge -y cmake
-wget https://github.com/Kitware/CMake/releases/download/v3.24.3/cmake-3.24.3.tar.gz
-tar xvf cmake-3.24.3.tar.gz
-cd cmake-3.24.3
-./bootstrap && make && sudo make install
-
-# Install pkg-config, zip
-sudo apt install -y pkg-config zip
+# Build Runtime/Plugins/Android/libwebrtc.aar (arm64-v8a and x86_64)
+BuildScripts~/build_plugin_android.sh
 ```
 
 ## Build plugin

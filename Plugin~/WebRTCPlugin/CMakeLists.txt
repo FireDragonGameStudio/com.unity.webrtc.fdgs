@@ -217,6 +217,10 @@ elseif(Android)
   list(TRANSFORM JNI_SYMBOLS PREPEND "-Wl,--undefined=")
   target_link_options(WebRTCLib PUBLIC ${JNI_SYMBOLS})
 
+  # Align LOAD segments to 16 KB so the plugin loads on Android 15+ devices
+  # with 16 KB pages (required by Google Play). NDK r28+ does this by default.
+  target_link_options(WebRTCLib PUBLIC -Wl,-z,max-page-size=16384)
+
   set(PROJECT_BINARY_DIR "${CMAKE_SOURCE_DIR}/../Runtime/Plugins/Android")
 endif()
 

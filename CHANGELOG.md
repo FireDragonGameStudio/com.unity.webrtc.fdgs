@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace Unity's internal CI with GitHub Actions.
 - Build the Windows native plugin in GitHub Actions (Visual Studio 2022, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc.
 - Build the Linux native plugin in GitHub Actions (Ubuntu 22.04, clang 18, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc in CI and `build_plugin_linux.sh`.
+- Build the macOS (universal arm64 + x86_64), iOS (arm64) and Android (arm64-v8a, x86_64) native plugins in GitHub Actions (Xcode 16 on `macos-15`, Android NDK r28c on Ubuntu 24.04), verifying the SHA-256 of the downloaded prebuilt libwebrtc and checking exports and 16 KB page alignment on Android.
+- Native plugin: raise the minimum deployment targets to iOS 13.0 and macOS 11.0, the minimums supported by Unity 6 (current Xcode no longer supports iOS 10 and macOS 10.12). Removes the obsolete Xcode 11 version check, and skips the libc++ debug-mode shim (`libcxx/debug.cpp`) when the toolchain's libc++ no longer has the `<__debug>` header (Xcode 15.3 and newer).
+- Native plugin: `build_plugin_ios.sh` no longer builds an unused simulator archive and does not code sign the framework (Xcode signs it when embedding it into the app). `build_plugin_android.sh` uses the `arm64-android` and `x86_64-android` CMake presets and is tested with NDK r28c; the Android presets now read the NDK path from `ANDROID_NDK`. The Android plugin is linked with `-z max-page-size=16384` explicitly.
 - Update documentation, issue templates and package metadata for the fork.
 - Run PlayMode tests in GitHub Actions with `-nographics`. Tests that need a graphics device are ignored there.
 
