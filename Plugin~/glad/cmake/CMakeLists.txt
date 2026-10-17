@@ -42,7 +42,8 @@ cmake_minimum_required(VERSION 3.12)
 project(glad C)
 
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
-set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")
+# glad_add_library() runs in the caller's scope, so the interpreter must be a cache variable.
+set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}" CACHE FILEPATH "Python interpreter used to run the glad generator")
 
 set(GLAD_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}" CACHE STRING "Directory containing glad generator CMakeLists.txt")
 set(GLAD_SOURCES_DIR "${GLAD_CMAKE_DIR}/../"   CACHE STRING "Directory containing glad sources (python modules), used as working directory")
