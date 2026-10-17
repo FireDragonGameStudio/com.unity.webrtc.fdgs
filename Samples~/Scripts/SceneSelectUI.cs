@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Unity.WebRTC.Samples
@@ -197,83 +196,83 @@ namespace Unity.WebRTC.Samples
 
         private void OnPressedPeerConnectionButton()
         {
-            SceneManager.LoadScene("PeerConnection", LoadSceneMode.Single);
+            SampleScenes.Load("PeerConnection");
         }
         private void OnPressedDataChannelButton()
         {
-            SceneManager.LoadScene("DataChannel", LoadSceneMode.Single);
+            SampleScenes.Load("DataChannel");
         }
         private void OnPressedMediaStreamButton()
         {
-            SceneManager.LoadScene("MediaStream", LoadSceneMode.Single);
+            SampleScenes.Load("MediaStream");
         }
 
         private void OnPressedAudioButton()
         {
-            SceneManager.LoadScene("Audio", LoadSceneMode.Single);
+            SampleScenes.Load("Audio");
         }
 
         private void OnPressedMultiPeersButton()
         {
-            SceneManager.LoadScene("MultiplePeerConnections", LoadSceneMode.Single);
+            SampleScenes.Load("MultiplePeerConnections");
         }
         private void OnPressedMultiAudioRecvButton()
         {
-            SceneManager.LoadScene("MultiAudioReceive", LoadSceneMode.Single);
+            SampleScenes.Load("MultiAudioReceive");
         }
         private void OnPressedMultiVideoRecvButton()
         {
-            SceneManager.LoadScene("MultiVideoReceive", LoadSceneMode.Single);
+            SampleScenes.Load("MultiVideoReceive");
         }
         private void OnPressedMungeSDPButton()
         {
-            SceneManager.LoadScene("MungeSDP", LoadSceneMode.Single);
+            SampleScenes.Load("MungeSDP");
         }
         private void OnPressedStatsButton()
         {
-            SceneManager.LoadScene("Stats", LoadSceneMode.Single);
+            SampleScenes.Load("Stats");
         }
         private void OnPressedChangeCodecsButton()
         {
-            SceneManager.LoadScene("ChangeCodecs", LoadSceneMode.Single);
+            SampleScenes.Load("ChangeCodecs");
         }
         private void OnPressedTrickleIceButton()
         {
-            SceneManager.LoadScene("TrickleIce", LoadSceneMode.Single);
+            SampleScenes.Load("TrickleIce");
         }
         private void OnPressedVideoReceiveButton()
         {
-            SceneManager.LoadScene("VideoReceive", LoadSceneMode.Single);
+            SampleScenes.Load("VideoReceive");
         }
         private void OnPressedBandwidthButton()
         {
-            SceneManager.LoadScene("Bandwidth", LoadSceneMode.Single);
+            SampleScenes.Load("Bandwidth");
         }
         private void OnPressedPerfectNegotiationButton()
         {
-            SceneManager.LoadScene("PerfectNegotiation", LoadSceneMode.Single);
+            SampleScenes.Load("PerfectNegotiation");
         }
         private void OnPressedLatencyButton()
         {
-            SceneManager.LoadScene("E2ELatency", LoadSceneMode.Single);
+            SampleScenes.Load("E2ELatency");
         }
         private void OnPressedReplaceTrackButton()
         {
-            SceneManager.LoadScene("ReplaceTrack", LoadSceneMode.Single);
+            SampleScenes.Load("ReplaceTrack");
         }
 
         private void OnPressedSimulcastButton()
         {
-            SceneManager.LoadScene("Simulcast", LoadSceneMode.Single);
+            SampleScenes.Load("Simulcast");
         }
 
         private void OnPressedMetadataButton()
         {
-            SceneManager.LoadScene("Metadata", LoadSceneMode.Single);
+            SampleScenes.Load("Metadata");
         }
         private void OnPressedEncryption()
         {
-            SceneManager.LoadScene("Encryption", LoadSceneMode.Single);
+            SampleScenes.Load("Encryption");
         }
     }
 }
