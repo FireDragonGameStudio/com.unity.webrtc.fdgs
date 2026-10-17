@@ -1,11 +1,13 @@
 #!/bin/bash -eu
 
-export LIBWEBRTC_DOWNLOAD_URL=https://github.com/Unity-Technologies/com.unity.webrtc/releases/download/M116-20250805/webrtc-android.zip
+export LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-android.zip
+export LIBWEBRTC_SHA256=f561153cf06dc5d0c95cb7272168582df9cb37a960c8fb7907dd775547766d4a
 export SOLUTION_DIR=$(pwd)/Plugin~
 export ARCH_ABI=arm64-v8a
 
 # Download LibWebRTC 
-curl -L $LIBWEBRTC_DOWNLOAD_URL > webrtc.zip
+curl -fL "$LIBWEBRTC_DOWNLOAD_URL" -o webrtc.zip || exit 1
+echo "$LIBWEBRTC_SHA256  webrtc.zip" | sha256sum --check --strict || exit 1
 unzip -d $SOLUTION_DIR/webrtc webrtc.zip 
 
 # Build UnityRenderStreaming Plugin 

@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-export LIBWEBRTC_DOWNLOAD_URL=https://github.com/Unity-Technologies/com.unity.webrtc/releases/download/M116-20250805/webrtc-linux.zip
+export LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-linux.zip
 # Keep in sync with LIBWEBRTC_SHA256 in .github/workflows/native-linux.yml.
 export LIBWEBRTC_SHA256=d7ca2f66f1ac7d70b2f859497c127e15050c19a0bc431ad8b7d892d6ca2be819
 export SOLUTION_DIR=$(pwd)/Plugin~
