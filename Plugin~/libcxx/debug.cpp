@@ -17,6 +17,10 @@
 //===----------------------------------------------------------------------===//
 
 
+// libc++ 17 (Xcode 15.3 and newer) removed the legacy debug mode and its
+// <__debug> header, and nothing references these symbols anymore.
+#if __has_include(<__debug>)
+
 #include "__config"
 #include "__debug"
 #include "functional"
@@ -595,3 +599,5 @@ __c_node::__remove(__i_node* p)
 #endif // defined(USE_DEBUG_MODE)
 
 _LIBCPP_END_NAMESPACE_STD
+
+#endif // __has_include(<__debug>)
