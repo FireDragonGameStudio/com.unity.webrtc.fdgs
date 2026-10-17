@@ -132,7 +132,6 @@ namespace webrtc
         }
 #endif
 #if SUPPORT_OPENGL_CORE || SUPPORT_OPENGL_ES || UNITY_WIN || UNITY_OSX
-        case kUnityGfxRendererOpenGLES20:
         case kUnityGfxRendererOpenGLES30:
         case kUnityGfxRendererOpenGLCore:
         {
@@ -190,7 +189,6 @@ namespace webrtc
         }
 #endif
 #if SUPPORT_OPENGL_CORE || SUPPORT_OPENGL_ES || UNITY_WIN || UNITY_OSX
-        case kUnityGfxRendererOpenGLES20:
         case kUnityGfxRendererOpenGLES30:
         case kUnityGfxRendererOpenGLCore:
         {

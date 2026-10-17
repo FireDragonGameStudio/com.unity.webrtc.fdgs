@@ -459,7 +459,6 @@ namespace webrtc
             return CreateDeviceGLCore();
 #endif
 #if SUPPORT_OPENGL_ES
-        case kUnityGfxRendererOpenGLES20:
         case kUnityGfxRendererOpenGLES30:
             return CreateDeviceGLES();
 #endif
@@ -495,7 +494,6 @@ namespace webrtc
             return;
 #endif
 #if SUPPORT_OPENGL_ES
-        case kUnityGfxRendererOpenGLES20:
         case kUnityGfxRendererOpenGLES30:
             DestroyDeviceGLES(pGfxDevice);
             return;
