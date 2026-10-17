@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Download the prebuilt libwebrtc M116 from the fork's own `libwebrtc-M116` release (an unmodified mirror of Unity's `M116-20250805`), and verify its SHA-256 in every build script.
 - Fork the package as `com.fdgs.webrtc`, based on the last Apache-2.0 release of `com.unity.webrtc`. The `Unity.WebRTC` namespace and assembly names are unchanged.
 - Replace Unity's internal CI with GitHub Actions.
 - Build the Windows native plugin in GitHub Actions (Visual Studio 2022, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc.

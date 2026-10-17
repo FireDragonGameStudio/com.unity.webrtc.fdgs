@@ -20,7 +20,7 @@ concurrency:
 
 env:
   # Prebuilt libwebrtc M116 published by Unity. Pinned by checksum because the fork does not control that release.
-  LIBWEBRTC_URL: https://github.com/Unity-Technologies/com.unity.webrtc/releases/download/M116-20250805/webrtc-linux.zip
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-linux.zip
   LIBWEBRTC_SHA256: d7ca2f66f1ac7d70b2f859497c127e15050c19a0bc431ad8b7d892d6ca2be819
   LLVM_VERSION: '18'
 

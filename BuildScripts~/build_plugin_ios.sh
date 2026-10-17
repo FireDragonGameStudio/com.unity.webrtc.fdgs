@@ -1,6 +1,7 @@
 #!/bin/bash -eu
 
-export LIBWEBRTC_DOWNLOAD_URL=https://github.com/Unity-Technologies/com.unity.webrtc/releases/download/M116-20250805/webrtc-ios.zip
+export LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-ios.zip
+export LIBWEBRTC_SHA256=1a7001ad093a9ae9ed8ab85d15b021f5fae2a00f5377359b03264232ff739409
 export SOLUTION_DIR=$(pwd)/Plugin~
 export WEBRTC_FRAMEWORK_DIR=$(pwd)/Runtime/Plugins/iOS
 export WEBRTC_ARCHIVE_DIR=build/webrtc.xcarchive
@@ -18,7 +19,8 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 brew install cmake
 
 # Download webrtc 
-curl -L $LIBWEBRTC_DOWNLOAD_URL > webrtc.zip
+curl -fL "$LIBWEBRTC_DOWNLOAD_URL" -o webrtc.zip || exit 1
+echo "$LIBWEBRTC_SHA256  webrtc.zip" | shasum -a 256 --check || exit 1
 unzip -d $SOLUTION_DIR/webrtc webrtc.zip 
 
 # Build webrtc Unity plugin 

@@ -1,6 +1,6 @@
 @echo off
 
-set LIBWEBRTC_DOWNLOAD_URL=https://github.com/Unity-Technologies/com.unity.webrtc/releases/download/M116-20250805/webrtc-win.zip
+set LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-win.zip
 set LIBWEBRTC_SHA256=e3f2e88746dbd0b9b82ed7cdcab623131252d773712b41798f8be1a8ac948f79
 set SOLUTION_DIR=%cd%\Plugin~
 
