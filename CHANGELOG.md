@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fork the package as `com.fdgs.webrtc`, based on the last Apache-2.0 release of `com.unity.webrtc`. The `Unity.WebRTC` namespace and assembly names are unchanged.
 - Replace Unity's internal CI with GitHub Actions.
 - Build the Windows native plugin in GitHub Actions (Visual Studio 2022, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc.
+- Build the Linux native plugin in GitHub Actions (Ubuntu 22.04, clang 18, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc in CI and `build_plugin_linux.sh`.
 - Update documentation, issue templates and package metadata for the fork.
 - Run PlayMode tests in GitHub Actions with `-nographics`. Tests that need a graphics device are ignored there.
 
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `WebRTC.Update` never submitted video track textures when Unity runs with `-batchmode`, because `WaitForEndOfFrame` is not resumed there. It now waits for the next frame in batch mode.
 - Unity crashed when running with `-nographics`: `WebRTC.SetGraphicsSyncTimeout` now does nothing without a graphics device, and creating a `VideoStreamTrack` throws `NotSupportedException`.
+- Native plugin: build on Linux with current toolchains (no hardcoded `clang-11`/`lld-11`; glad uses `find_package(Python3)` instead of the removed `FindPythonInterp`).
 - `PluginTest.CheckPluginImportSettings` looked up plugins under a hardcoded `Packages/com.unity.webrtc` path.
 - Native plugin: build with Visual Studio 2026, CUDA 13 and CMake 4 (missing `<chrono>` includes, new `cuCtxCreate` signature, googletest 1.15.2). Adds `x64-windows-vs2026` CMake presets.
 
