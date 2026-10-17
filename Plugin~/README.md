@@ -64,7 +64,7 @@ wget https://apt.llvm.org/llvm.sh
 sudo bash llvm.sh 18
 
 # Install other packages
-sudo apt install -y ninja-build pkg-config libvulkan-dev libx11-dev libgl-dev python3-pip
+sudo apt install -y ninja-build pkg-config libvulkan-dev libx11-dev libgl-dev libglfw3-dev python3-pip
 
 # Install glad2
 python3 -m pip install --user glad2==2.0.8
