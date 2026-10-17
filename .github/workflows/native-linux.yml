@@ -1,0 +1,109 @@
+name: Native plugin (Linux)
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_linux.sh'
+      - '.github/workflows/native-linux.yml'
+  pull_request:
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_linux.sh'
+      - '.github/workflows/native-linux.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Prebuilt libwebrtc M116 published by Unity. Pinned by checksum because the fork does not control that release.
+  LIBWEBRTC_URL: https://github.com/Unity-Technologies/com.unity.webrtc/releases/download/M116-20250805/webrtc-linux.zip
+  LIBWEBRTC_SHA256: d7ca2f66f1ac7d70b2f859497c127e15050c19a0bc431ad8b7d892d6ca2be819
+  LLVM_VERSION: '18'
+
+jobs:
+  build:
+    name: Build libwebrtc.so (${{ matrix.config }})
+    # The plugin links against the glibc of the build machine. Ubuntu 22.04 (glibc 2.35) is the oldest Ubuntu
+    # supported by Unity 6, so building there keeps the .so loadable on every distro Unity supports.
+    # libstdc++ is linked statically, so only the glibc version matters.
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Release]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install clang, lld and build tools
+        run: |
+          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh "$LLVM_VERSION"
+          sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config libvulkan-dev libx11-dev libgl-dev
+          python3 -m pip install --user glad2==2.0.8
+          cmake --version
+          "clang++-$LLVM_VERSION" --version
+
+      - name: Install CUDA
+        id: cuda
+        uses: Jimver/cuda-toolkit@v0.2.36
+        with:
+          cuda: '12.9.1'
+          method: network
+          sub-packages: '["nvcc", "cudart-dev"]'
+
+      - name: Cache libwebrtc
+        id: libwebrtc-cache
+        uses: actions/cache@v6
+        with:
+          path: Plugin~/webrtc
+          key: libwebrtc-linux-${{ env.LIBWEBRTC_SHA256 }}
+
+      - name: Download libwebrtc
+        if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o webrtc.zip "$LIBWEBRTC_URL"
+          echo "$LIBWEBRTC_SHA256  webrtc.zip" | sha256sum --check --strict
+          unzip -q -o webrtc.zip -d Plugin~/webrtc
+
+      - name: Configure
+        working-directory: Plugin~
+        env:
+          CUDACXX: ${{ steps.cuda.outputs.CUDA_PATH }}/bin/nvcc
+        run: |
+          cmake --preset=x86_64-linux -Wno-dev \
+            -DCMAKE_C_COMPILER="clang-$LLVM_VERSION" \
+            -DCMAKE_CXX_COMPILER="clang++-$LLVM_VERSION" \
+            -DPython3_EXECUTABLE="$(command -v python3)"
+
+      - name: Build
+        working-directory: Plugin~
+        run: cmake --build out/build/x86_64-linux --config ${{ matrix.config }} --target WebRTCPlugin --parallel
+
+      - name: Strip
+        run: strip --strip-unneeded Runtime/Plugins/x86_64/libwebrtc.so
+
+      - name: Check exports
+        run: |
+          so=Runtime/Plugins/x86_64/libwebrtc.so
+          test -f "$so" || { echo "::error::$so was not built"; exit 1; }
+          exports=$(nm -D --defined-only "$so")
+          for name in ContextCreate GetBatchUpdateEventFunc UnityPluginLoad UnityPluginUnload; do
+            grep -qw "$name" <<<"$exports" || { echo "::error::Missing export $name"; exit 1; }
+          done
+          if objdump -p "$so" | grep -q 'NEEDED.*libstdc++'; then
+            echo "::error::libstdc++ must be linked statically"; exit 1
+          fi
+          echo "Required glibc: $(objdump -T "$so" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"
+          objdump -p "$so" | grep NEEDED
+          ls -l "$so"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-linux-x64-${{ matrix.config }}
+          path: Runtime/Plugins/x86_64/libwebrtc.so
+          if-no-files-found: error

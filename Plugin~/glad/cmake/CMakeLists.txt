@@ -38,10 +38,11 @@
 #   ```
 # - create  a static glad library with the vulkan=1.1
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.12)
 project(glad C)
 
-find_package(PythonInterp REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")
 
 set(GLAD_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}" CACHE STRING "Directory containing glad generator CMakeLists.txt")
 set(GLAD_SOURCES_DIR "${GLAD_CMAKE_DIR}/../"   CACHE STRING "Directory containing glad sources (python modules), used as working directory")

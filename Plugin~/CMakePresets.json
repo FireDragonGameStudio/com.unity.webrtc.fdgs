@@ -157,8 +157,8 @@
       "description": "Sets x86_64 arch, generator, compilers",
       "inherits": "default-linux",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang-11",
-        "CMAKE_CXX_COMPILER": "clang++-11"
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
       }
     },
     {
