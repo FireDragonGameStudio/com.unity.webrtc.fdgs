@@ -87,6 +87,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
+        [UnityEngine.TestTools.ConditionalIgnore(ConditionalIgnore.NoGraphicsDevice, "Requires a graphics device to create textures")]
         public void CreateAndDeleteVideoTrack()
         {
             var context = WebRTC.Context;

@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
-using UnityEngine.TestTools;
-
-#if !UNITY_2020_1_OR_NEWER
 using UnityEngine.Rendering;
-#endif
+using UnityEngine.TestTools;
 
 namespace Unity.WebRTC.RuntimeTest
 {
@@ -26,12 +23,23 @@ namespace Unity.WebRTC.RuntimeTest
         public const string UnsupportedPlatformVideoDecoder = "IgnoreUnsupportedPlatformVideoDecoder";
 
         /// <summary>
-        /// On Windows and macOS platform, VideoStreamTrack class doesn't work.
+        /// On Windows and macOS platform, VideoStreamTrack class doesn't work with OpenGL.
+        /// It also doesn't work without a graphics device (-nographics).
         /// </summary>
         public const string UnsupportedPlatformOpenGL = "IgnoreUnsupportedPlatformOpenGL";
 
+        /// <summary>
+        /// Textures can't be created without a graphics device, e.g. on CI runners started with -nographics.
+        /// </summary>
+        public const string NoGraphicsDevice = "IgnoreNoGraphicsDevice";
+
         static bool s_loaded = false;
 
+        // The test framework may build the PlayMode test tree in the Editor before entering Play Mode,
+        // so register the mappings on Editor load too.
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+#endif
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void OnLoad()
         {
@@ -45,6 +53,8 @@ namespace Unity.WebRTC.RuntimeTest
 #endif
             ConditionalIgnoreAttribute.AddConditionalIgnoreMapping(UnsupportedPlatformOpenGL,
                 !VideoStreamTrack.IsSupported(Application.platform, SystemInfo.graphicsDeviceType));
+            ConditionalIgnoreAttribute.AddConditionalIgnoreMapping(NoGraphicsDevice,
+                SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null);
         }
     }
 }

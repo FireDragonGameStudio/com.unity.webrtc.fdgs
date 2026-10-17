@@ -299,12 +299,15 @@ namespace Unity.WebRTC
 
         /// <summary>
         /// On Windows or macOS, VideoStreamTrack doesn't work with OpenGL.
+        /// It also doesn't work without a graphics device, e.g. with -nographics.
         /// </summary>
         /// <param name="platform"></param>
         /// <param name="graphicsDeviceType"></param>
         /// <returns></returns>
         internal static bool IsSupported(RuntimePlatform platform, UnityEngine.Rendering.GraphicsDeviceType graphicsDeviceType)
         {
+            if (graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null)
+                return false;
             if (platform != RuntimePlatform.WindowsEditor &&
                 platform != RuntimePlatform.WindowsPlayer &&
                 platform != RuntimePlatform.OSXEditor &&
@@ -326,7 +329,7 @@ namespace Unity.WebRTC
         static IntPtr CreateVideoTrack(Texture texture, out VideoTrackSource source)
         {
             if (!IsSupported(Application.platform, SystemInfo.graphicsDeviceType))
-                throw new NotSupportedException($"Not Support OpenGL API on {Application.platform} in Unity WebRTC.");
+                throw new NotSupportedException($"Not Support {SystemInfo.graphicsDeviceType} graphics API on {Application.platform} in Unity WebRTC.");
 
             WebRTC.ValidateGraphicsFormat(texture.graphicsFormat);
 
@@ -347,7 +350,7 @@ namespace Unity.WebRTC
         static IntPtr CreateVideoTrack(IntPtr ptr)
         {
             if (!IsSupported(Application.platform, SystemInfo.graphicsDeviceType))
-                throw new NotSupportedException($"Not Support OpenGL API on {Application.platform} in Unity WebRTC.");
+                throw new NotSupportedException($"Not Support {SystemInfo.graphicsDeviceType} graphics API on {Application.platform} in Unity WebRTC.");
             return ptr;
         }
     }

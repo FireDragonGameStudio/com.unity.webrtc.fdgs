@@ -121,6 +121,7 @@ namespace Unity.WebRTC.RuntimeTest
         [UnityTest]
         [Timeout(1000)]
         [UnityPlatform(exclude = new[] { RuntimePlatform.OSXEditor })]
+        [ConditionalIgnore(ConditionalIgnore.NoGraphicsDevice, "Requires a graphics device to create textures")]
         public IEnumerator ReceiverSetTransform()
         {
             var rt = CreateRenderTexture();

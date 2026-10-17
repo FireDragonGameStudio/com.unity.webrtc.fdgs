@@ -11,7 +11,7 @@ namespace Unity.WebRTC.RuntimeTest
     class MediaStreamTrackTest
     {
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void Constructor()
         {
             var width = 256;
@@ -26,6 +26,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
+        [ConditionalIgnore(ConditionalIgnore.NoGraphicsDevice, "Requires a graphics device to create textures")]
         public void ConstructorThrowException()
         {
             if (VideoStreamTrack.IsSupported(Application.platform, SystemInfo.graphicsDeviceType))
@@ -42,7 +43,7 @@ namespace Unity.WebRTC.RuntimeTest
 
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void EqualIdWithAudioTrack()
         {
             var guid = Guid.NewGuid().ToString();
@@ -55,7 +56,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void EqualIdWithVideoTrack()
         {
             var guid = Guid.NewGuid().ToString();
@@ -68,7 +69,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void AccessAfterDisposed()
         {
             var width = 256;
@@ -84,7 +85,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void ConstructorThrowsExceptionWhenInvalidGraphicsFormat()
         {
             var width = 256;
@@ -103,7 +104,7 @@ namespace Unity.WebRTC.RuntimeTest
 
         [Test]
         [UnityPlatform(RuntimePlatform.Android)]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void ConstructThrowsExceptionWhenSmallTexture()
         {
             var width = 50;
@@ -121,7 +122,7 @@ namespace Unity.WebRTC.RuntimeTest
         [UnityTest]
         [Timeout(5000)]
         [UnityPlatform(exclude = new[] { RuntimePlatform.LinuxPlayer, RuntimePlatform.WindowsPlayer })]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
 
         public IEnumerator VideoStreamTrackEnabled()
         {
@@ -159,7 +160,7 @@ namespace Unity.WebRTC.RuntimeTest
         [UnityTest]
         [Timeout(5000)]
         [UnityPlatform(exclude = new[] { RuntimePlatform.LinuxPlayer })]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public IEnumerator CaptureStreamTrack()
         {
             var camObj = new GameObject("Camera");
@@ -175,7 +176,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void CaptureStreamTrackThrowExeption()
         {
             var camObj = new GameObject("Camera");
@@ -208,7 +209,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void VideoStreamTrackDisposeImmediately()
         {
             var width = 256;
@@ -225,7 +226,7 @@ namespace Unity.WebRTC.RuntimeTest
         [UnityTest, LongRunning]
         [Timeout(5000)]
         [UnityPlatform(exclude = new[] { RuntimePlatform.LinuxPlayer })]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public IEnumerator VideoStreamTrackInstantiateMultiple()
         {
             var width = 256;
