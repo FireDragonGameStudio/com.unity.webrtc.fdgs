@@ -50,7 +50,7 @@ static class SampleScenesBuildMenu
         Debug.Log($"Added {added} WebRTC sample scenes to the build profile ({root}).");
     }
 
-    static string FindSamplesRoot()
+    internal static string FindSamplesRoot()
     {
         return AssetDatabase.FindAssets("Unity.WebRTC.Samples t:AssemblyDefinitionAsset")
             .Select(AssetDatabase.GUIDToAssetPath)

@@ -25,8 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Samples: work in projects that use only the Input System package. Sample scenes switch their UI input module to `InputSystemUIInputModule`, and the back button reads the Escape key through the Input System.
-- Samples: objects no longer render pink with URP or HDRP. The built-in default material is replaced with the active render pipeline's default material when a sample scene loads.
+- Samples: work in projects that use only the Input System package. After import, the Editor replaces the sample scenes' `StandaloneInputModule` with `InputSystemUIInputModule` (also available as **Tools > WebRTC Samples > Set Up Sample Scenes for This Project**), and the back button reads the Escape key through the Input System.
+- Samples: objects no longer render pink with URP or HDRP. After import, the Editor replaces the built-in default material in the sample scenes with the active render pipeline's default material. This also works with Enter Play Mode Options that disable scene reload.
 - Samples: the sample scenes no longer need to be added to the build profile's scene list to run in the Editor. For player builds, add them with **Tools > WebRTC Samples > Add Sample Scenes to Build Profile**.
 - `WebRTC.Update` never submitted video track textures when Unity runs with `-batchmode`, because `WaitForEndOfFrame` is not resumed there. It now waits for the next frame in batch mode.
 - Unity crashed when running with `-nographics`: `WebRTC.SetGraphicsSyncTimeout` now does nothing without a graphics device, and creating a `VideoStreamTrack` throws `NotSupportedException`.

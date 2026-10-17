@@ -9,15 +9,17 @@ using UnityEngine.InputSystem.UI;
 namespace Unity.WebRTC.Samples
 {
     /// <summary>
-    /// Adapts each sample scene to the project when it is loaded, so the samples work in projects that use the
-    /// Input System package or a scriptable render pipeline (URP, HDRP) without editing the scenes:
+    /// Adapts the sample scenes to the project, so the samples work in projects that use the
+    /// Input System package or a scriptable render pipeline (URP, HDRP):
     /// <list type="bullet">
     /// <item>Replaces StandaloneInputModule with InputSystemUIInputModule when only the Input System is enabled.</item>
     /// <item>Replaces the built-in default material, which renders pink in a scriptable render pipeline,
     /// with the default material of the active render pipeline.</item>
     /// </list>
+    /// The Editor applies this to the imported scene files (see SampleScenesSetup in the Editor folder).
+    /// At runtime it is applied again to every sample scene that is loaded, as a fallback.
     /// </summary>
-    internal static class SampleSceneSetup
+    public static class SampleSceneSetup
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Initialize()
@@ -26,16 +28,36 @@ namespace Unity.WebRTC.Samples
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
+        // With "Enter Play Mode Options" and scene reload disabled, sceneLoaded is not raised for
+        // the scenes that are already open when entering Play mode.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        static void ApplyToLoadedScenes()
+        {
+            for (var i = 0; i < SceneManager.sceneCount; i++)
+                Apply(SceneManager.GetSceneAt(i));
+        }
+
         static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (!IsSampleScene(scene))
-                return;
+            Apply(scene);
+        }
 
+        /// <summary>
+        /// Adapts a sample scene to the project. Returns true if it changed the scene.
+        /// Scenes that are not part of the samples are left untouched.
+        /// </summary>
+        public static bool Apply(Scene scene)
+        {
+            if (!scene.isLoaded || !IsSampleScene(scene))
+                return false;
+
+            var changed = false;
             foreach (var root in scene.GetRootGameObjects())
             {
-                ReplaceInputModules(root);
-                ReplaceBuiltinMaterials(root);
+                changed |= ReplaceInputModules(root);
+                changed |= ReplaceBuiltinMaterials(root);
             }
+            return changed;
         }
 
         // Only touch the scenes of these samples, never other scenes of the project.
@@ -50,8 +72,9 @@ namespace Unity.WebRTC.Samples
             return false;
         }
 
-        static void ReplaceInputModules(GameObject root)
+        static bool ReplaceInputModules(GameObject root)
         {
+            var changed = false;
 #if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER && WEBRTC_SAMPLES_INPUT_SYSTEM
             foreach (var module in root.GetComponentsInChildren<StandaloneInputModule>(true))
             {
@@ -59,16 +82,19 @@ namespace Unity.WebRTC.Samples
                 Object.DestroyImmediate(module);
                 if (gameObject.GetComponent<InputSystemUIInputModule>() == null)
                     gameObject.AddComponent<InputSystemUIInputModule>();
+                changed = true;
             }
 #endif
+            return changed;
         }
 
-        static void ReplaceBuiltinMaterials(GameObject root)
+        static bool ReplaceBuiltinMaterials(GameObject root)
         {
             var pipeline = GraphicsSettings.currentRenderPipeline;
             if (pipeline == null || pipeline.defaultMaterial == null)
-                return;
+                return false;
 
+            var anyChanged = false;
             foreach (var renderer in root.GetComponentsInChildren<MeshRenderer>(true))
             {
                 var materials = renderer.sharedMaterials;
@@ -82,8 +108,12 @@ namespace Unity.WebRTC.Samples
                     }
                 }
                 if (changed)
+                {
                     renderer.sharedMaterials = materials;
+                    anyChanged = true;
+                }
             }
+            return anyChanged;
         }
 
         // The scenes use the built-in "Default-Material" with the built-in render pipeline's "Standard" shader.
