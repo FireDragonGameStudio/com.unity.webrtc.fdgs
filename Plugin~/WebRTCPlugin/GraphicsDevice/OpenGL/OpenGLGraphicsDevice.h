@@ -48,6 +48,7 @@ namespace webrtc
     private:
         bool CopyResource(OpenGLTexture2D* texture, GLuint srcName);
         void ReleaseTexture(OpenGLTexture2D* texture);
+        bool EnsureContext();
 #if CUDA_PLATFORM
         CudaContext m_cudaContext;
         bool m_isCudaSupport;
