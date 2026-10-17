@@ -12,10 +12,16 @@ else
   CMAKE_BUILD_TYPE="Release"
 fi
 
-# Download LibWebRTC 
+# ANDROID_NDK must point to the Android NDK (r28 or newer is tested).
+if [ -z "${ANDROID_NDK:-}" ] || [ ! -f "$ANDROID_NDK/build/cmake/android.toolchain.cmake" ]; then
+  echo "Set ANDROID_NDK to the Android NDK root directory." >&2
+  exit 1
+fi
+
+# Download LibWebRTC
 curl -fL "$LIBWEBRTC_DOWNLOAD_URL" -o webrtc.zip || exit 1
 echo "$LIBWEBRTC_SHA256  webrtc.zip" | sha256sum --check --strict || exit 1
-unzip -d $SOLUTION_DIR/webrtc webrtc.zip 
+unzip -o -d $SOLUTION_DIR/webrtc webrtc.zip
 cp -f $SOLUTION_DIR/webrtc/lib/libwebrtc.aar $PLUGIN_DIR
 
 # If debug build, download android-binaries that contains Vulkan validation layer
@@ -27,22 +33,19 @@ if [ "$BUILD_TYPE" = "debug" ]; then
   fi
 fi
 
-# Build UnityRenderStreaming Plugin 
+# Build UnityRenderStreaming Plugin
 cd "$SOLUTION_DIR"
 for ARCH_ABI in "arm64-v8a" "x86_64"
 do
-  cmake . \
-    -B build \
-    -D CMAKE_SYSTEM_NAME=Android \
-    -D CMAKE_ANDROID_API_MIN=24 \
-    -D CMAKE_ANDROID_API=24 \
-    -D CMAKE_ANDROID_ARCH_ABI=$ARCH_ABI \
-    -D CMAKE_ANDROID_NDK=$ANDROID_NDK \
-    -D CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
-    -D CMAKE_ANDROID_STL_TYPE=c++_static
+  case $ARCH_ABI in
+    arm64-v8a) PRESET=arm64-android ;;
+    x86_64) PRESET=x86_64-android ;;
+  esac
+
+  cmake --preset=$PRESET -D CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE
 
   cmake \
-    --build build \
+    --build out/build/$PRESET \
     --target WebRTCPlugin
 
   # libwebrtc.so move into libwebrtc.aar
@@ -57,5 +60,5 @@ do
   fi
   rm -r jni
   popd
-  rm -rf build
+  rm -rf out/build/$PRESET
 done

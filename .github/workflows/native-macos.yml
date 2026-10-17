@@ -1,0 +1,97 @@
+name: Native plugin (macOS)
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_mac.sh'
+      - '.github/workflows/native-macos.yml'
+  pull_request:
+    paths:
+      - 'Plugin~/**'
+      - 'BuildScripts~/build_plugin_mac.sh'
+      - '.github/workflows/native-macos.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_mac.sh.
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-mac.zip
+  LIBWEBRTC_SHA256: 4b25237c4928c48587b71e545255f21af19fd6d18f290fdcd76d6129f7d93f86
+
+jobs:
+  build:
+    name: Build libwebrtc.dylib (${{ matrix.config }})
+    # The prebuilt libwebrtc.a is universal (arm64 + x86_64), so one Xcode build produces a universal dylib.
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Release]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          cmake --version
+
+      - name: Cache libwebrtc
+        id: libwebrtc-cache
+        uses: actions/cache@v6
+        with:
+          path: Plugin~/webrtc
+          key: libwebrtc-mac-${{ env.LIBWEBRTC_SHA256 }}
+
+      - name: Download libwebrtc
+        if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o webrtc.zip "$LIBWEBRTC_URL"
+          echo "$LIBWEBRTC_SHA256  webrtc.zip" | shasum -a 256 --check --strict
+          unzip -q -o webrtc.zip -d Plugin~/webrtc
+
+      - name: Configure
+        working-directory: Plugin~
+        # Errors are repeated as annotations so they show on the run summary without opening the log.
+        run: |
+          set -o pipefail
+          cmake --preset=macos -Wno-dev 2>&1 | tee configure.log || {
+            echo "::error title=CMake configure::$({ grep -A8 'CMake Error' configure.log || tail -30 configure.log; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+            exit 1
+          }
+
+      - name: Build
+        working-directory: Plugin~
+        run: |
+          set -o pipefail
+          rm -f ../Runtime/Plugins/macOS/libwebrtc.dylib
+          cmake --build out/build/macos --config ${{ matrix.config }} --target WebRTCPlugin --parallel -- -quiet 2>&1 | tee build.log || {
+            echo "::error title=Build::$(grep -E -A3 'error:|BUILD FAILED|Undefined symbols' build.log | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+            exit 1
+          }
+
+      - name: Check exports
+        run: |
+          dylib=Runtime/Plugins/macOS/libwebrtc.dylib
+          test -f "$dylib" || { echo "::error::$dylib was not built"; exit 1; }
+          for arch in arm64 x86_64; do
+            lipo "$dylib" -verify_arch "$arch" || { echo "::error::$dylib has no $arch slice"; exit 1; }
+            exports=$(nm -gU -arch "$arch" "$dylib")
+            for name in ContextCreate GetBatchUpdateEventFunc UnityPluginLoad UnityPluginUnload; do
+              grep -qw "_$name" <<<"$exports" || { echo "::error::Missing export $name ($arch)"; exit 1; }
+            done
+          done
+          lipo -info "$dylib"
+          vtool -show-build "$dylib" | grep -E 'architecture|minos|sdk'
+          otool -L "$dylib"
+          ls -l "$dylib"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-macos-universal-${{ matrix.config }}
+          path: Runtime/Plugins/macOS/libwebrtc.dylib
+          if-no-files-found: error
