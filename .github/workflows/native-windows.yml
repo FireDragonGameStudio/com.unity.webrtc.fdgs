@@ -13,13 +13,16 @@ on:
       - 'BuildScripts~/build_plugin_win.cmd'
       - '.github/workflows/native-windows.yml'
   workflow_dispatch:
+  # Called by the release workflow.
+  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # A fixed name: inside a called workflow, github.workflow is the caller's name.
+  group: native-windows-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  # Prebuilt libwebrtc M116 published by Unity. Pinned by checksum because the fork does not control that release.
+  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_win.cmd.
   LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-win.zip
   LIBWEBRTC_SHA256: e3f2e88746dbd0b9b82ed7cdcab623131252d773712b41798f8be1a8ac948f79
 

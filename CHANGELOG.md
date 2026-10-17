@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-10-17
+
 ### Changed
 
 - Download the prebuilt libwebrtc M116 from the fork's own `libwebrtc-M116` release (an unmodified mirror of Unity's `M116-20250805`), and verify its SHA-256 in every build script.
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update documentation, issue templates and package metadata for the fork.
 - Run PlayMode tests in GitHub Actions with `-nographics`. Tests that need a graphics device are ignored there.
 - Test only Unity 6000.3 on every push and pull request. The minimum supported version, Unity 6000.0, is tested by a weekly scheduled run, on release tags and on manual runs.
+- Add a release workflow (Actions tab -> Release -> Run workflow) that builds all native plugins, commits them to a `release/v<version>` branch, runs the full test matrix there, and publishes the tag `v<version>` with a GitHub release and a package tarball.
 
 ### Fixed
 

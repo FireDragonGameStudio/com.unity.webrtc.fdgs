@@ -13,9 +13,12 @@ on:
       - 'BuildScripts~/build_plugin_ios.sh'
       - '.github/workflows/native-ios.yml'
   workflow_dispatch:
+  # Called by the release workflow.
+  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # A fixed name: inside a called workflow, github.workflow is the caller's name.
+  group: native-ios-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:

@@ -8,11 +8,13 @@ This repository is a community-maintained fork of [`com.unity.webrtc`](https://g
 
 ## Installation
 
-In the Package Manager, choose **Add package from git URL...** and enter:
+In the Package Manager, choose **Add package from git URL...** and enter a released version, for example:
 
 ```
-https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git
+https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v3.1.0
 ```
+
+See [Releases](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases) for all versions. Install a release tag rather than `main`: only release tags contain native plugins built from this repository's source.
 
 Remove `com.unity.webrtc` first; the two packages cannot be installed side by side. See [Install package](Documentation~/install.md) for details.
 
@@ -32,6 +34,7 @@ The native plugin (C++, built on Google's libwebrtc) lives in [`Plugin~`](Plugin
 | Version | libwebrtc | Notes |
 | ------- | --------- | ----- |
 | `3.0.0` | [M116](https://groups.google.com/g/discuss-webrtc/c/bEsO8Lz7psE) | Starting point of this fork, identical to the last Apache-2.0 release of `com.unity.webrtc`. |
+| `3.1.0` | [M116](https://groups.google.com/g/discuss-webrtc/c/bEsO8Lz7psE) | First release of the fork: native plugins built in CI for all platforms, Unity 6.3 support, crash and batch mode fixes. |
 
 Planned work is tracked in [GitHub Issues](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/issues). See [CHANGELOG.md](CHANGELOG.md) for the history of this package, including the releases made by Unity Technologies.
 
