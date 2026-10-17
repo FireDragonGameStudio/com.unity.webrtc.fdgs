@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Native plugin: `SetGraphicsSyncTimeout` crashed when Unity runs without a graphics device (`-nographics`).
 - Native plugin: update the Unity native plugin API headers to Unity 6000.3. OpenGL ES 2.0 (`kUnityGfxRendererOpenGLES20`), which Unity 6 removed, is no longer handled. Ported from upstream branch `fix/update-plugin-headers-6000.3` (Kazuki Matsumoto).
 - Native plugin: the video encoder crashed when reading a GPU frame back to the CPU failed (e.g. a `WaitSync` timeout). The frame is now dropped with a warning. Ported from upstream branch `fix/crash-encoder-kleptine` (John Austin).
+- Native plugin: on platforms without CUDA, `GpuMemoryBufferFromUnity` no longer copies every frame into an extra GPU texture that only NvCodec uses. Vulkan `AccessTexture` failures and `WaitSync` timeouts are now logged. Ported from upstream branch `fix/crash-av1-encoder` (Kazuki Matsumoto); its libvpx/libaom encoder patches need a libwebrtc rebuild and are not included.
 
 ## [3.0.0] - 2025-09-12
 
