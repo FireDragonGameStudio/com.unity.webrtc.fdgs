@@ -35,6 +35,11 @@ namespace Unity.WebRTC.RuntimeTest
 
         static bool s_loaded = false;
 
+        // The test framework may build the PlayMode test tree in the Editor before entering Play Mode,
+        // so register the mappings on Editor load too.
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+#endif
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void OnLoad()
         {

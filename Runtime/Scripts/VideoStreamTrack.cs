@@ -329,7 +329,7 @@ namespace Unity.WebRTC
         static IntPtr CreateVideoTrack(Texture texture, out VideoTrackSource source)
         {
             if (!IsSupported(Application.platform, SystemInfo.graphicsDeviceType))
-                throw new NotSupportedException($"Not Support OpenGL API on {Application.platform} in Unity WebRTC.");
+                throw new NotSupportedException($"Not Support {SystemInfo.graphicsDeviceType} graphics API on {Application.platform} in Unity WebRTC.");
 
             WebRTC.ValidateGraphicsFormat(texture.graphicsFormat);
 
@@ -350,7 +350,7 @@ namespace Unity.WebRTC
         static IntPtr CreateVideoTrack(IntPtr ptr)
         {
             if (!IsSupported(Application.platform, SystemInfo.graphicsDeviceType))
-                throw new NotSupportedException($"Not Support OpenGL API on {Application.platform} in Unity WebRTC.");
+                throw new NotSupportedException($"Not Support {SystemInfo.graphicsDeviceType} graphics API on {Application.platform} in Unity WebRTC.");
             return ptr;
         }
     }
