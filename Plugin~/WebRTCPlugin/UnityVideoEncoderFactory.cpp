@@ -87,7 +87,7 @@ namespace webrtc
                     return WEBRTC_VIDEO_CODEC_ERROR;
                 }
             }
-            
+
             int32_t result;
             {
                 std::unique_ptr<const ScopedProfiler> profiler;
