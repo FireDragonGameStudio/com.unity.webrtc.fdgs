@@ -98,7 +98,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void TransceiverSetVideoCodecPreferences()
         {
             var peer = new RTCPeerConnection();
@@ -119,7 +119,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void ReceiverGetTrackReturnsVideoTrack()
         {
             var peer = new RTCPeerConnection();
@@ -212,7 +212,7 @@ namespace Unity.WebRTC.RuntimeTest
 
         [UnityTest]
         [Timeout(5000)]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public IEnumerator TransceiverStop()
         {
             if (SystemInfo.processorType == "Apple M1")

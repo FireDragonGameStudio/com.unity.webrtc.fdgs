@@ -14,6 +14,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
+        [ConditionalIgnore(ConditionalIgnore.NoGraphicsDevice, "Requires a graphics device to create textures")]
         public void GraphicsFormat()
         {
             var graphicsFormat = WebRTC.GetSupportedGraphicsFormat(SystemInfo.graphicsDeviceType);
@@ -41,7 +42,7 @@ namespace Unity.WebRTC.RuntimeTest
         [Test]
         [UnityPlatform(exclude = new[] {RuntimePlatform.Android, RuntimePlatform.IPhonePlayer})]
         [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL,
-            "Not support VideoStreamTrack for OpenGL")]
+            "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void WebCamTextureFormat()
         {
             var webCam = new WebCamTexture(10, 10);
@@ -96,6 +97,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
+        [ConditionalIgnore(ConditionalIgnore.NoGraphicsDevice, "Requires a graphics device to create textures")]
         public void ValidateGraphicsFormat()
         {
             var format = WebRTC.GetSupportedGraphicsFormat(SystemInfo.graphicsDeviceType);

@@ -74,6 +74,10 @@ jobs:
           projectPath: WebRTC~
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
+          # The runners have no GPU. Without -nographics Unity falls back to Mesa's llvmpipe,
+          # where the native plugin aborts when it creates a GLX context on a worker thread.
+          # Tests that need a graphics device are ignored when there is none.
+          customParameters: -nographics
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: Unity ${{ matrix.unityVersion }} ${{ matrix.testMode }} results
 

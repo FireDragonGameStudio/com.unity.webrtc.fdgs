@@ -910,6 +910,9 @@ namespace Unity.WebRTC
         /// <param name="nSecTimeout">The timeout value specified in nanoseconds.</param>
         public static void SetGraphicsSyncTimeout(uint nSecTimeout)
         {
+            // There is no graphics device to configure when Unity runs with -nographics.
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+                return;
             NativeMethods.SetGraphicsSyncTimeout(nSecTimeout);
         }
 

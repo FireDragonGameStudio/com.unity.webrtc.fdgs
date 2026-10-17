@@ -8,7 +8,7 @@ namespace Unity.WebRTC.RuntimeTest
 {
     [TestFixture]
     [UnityPlatform(exclude = new[] { RuntimePlatform.Android, RuntimePlatform.IPhonePlayer, RuntimePlatform.OSXPlayer, RuntimePlatform.OSXEditor, RuntimePlatform.LinuxPlayer })]
-    [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+    [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
     class VideoReceiveTestWithH264Codec : VideoReceiveTestBase
     {
         protected override void SetUpCodecCapability()
@@ -22,7 +22,7 @@ namespace Unity.WebRTC.RuntimeTest
 
     [TestFixture]
     [UnityPlatform(exclude = new[] { RuntimePlatform.Android, RuntimePlatform.IPhonePlayer, RuntimePlatform.OSXPlayer, RuntimePlatform.OSXEditor, RuntimePlatform.LinuxPlayer })]
-    [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+    [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
     class VideoReceiveTestWithVP8Codec : VideoReceiveTestBase
     {
         protected override void SetUpCodecCapability()
@@ -75,7 +75,7 @@ namespace Unity.WebRTC.RuntimeTest
         [ConditionalIgnoreMultiple(ConditionalIgnore.UnsupportedPlatformVideoDecoder,
             "VideoStreamTrack.UpdateTexture is not supported on Direct3D12 for decoder")]
         [ConditionalIgnoreMultiple(ConditionalIgnore.UnsupportedPlatformOpenGL,
-            "Not support VideoStreamTrack for OpenGL")]
+            "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public IEnumerator VideoReceive([ValueSource(nameof(range))] int index)
         {
             if (SystemInfo.processorType == "Apple M1")

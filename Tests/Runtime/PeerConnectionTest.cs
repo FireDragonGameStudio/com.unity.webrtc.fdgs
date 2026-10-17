@@ -106,7 +106,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void AddTrack()
         {
             var peer = new RTCPeerConnection();
@@ -140,7 +140,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void AddTransceiver()
         {
             var peer = new RTCPeerConnection();
@@ -183,7 +183,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void GetTransceiversReturnsNotEmptyAfterDisposingTransceiver()
         {
             // `RTCPeerConnection.AddTransceiver` method is not intuitive. Moreover, we don't have the API to remove
@@ -197,7 +197,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void GetTransceiversReturnsNotEmptyAfterCallingRemoveTrack()
         {
             // Also, `RTCPeerConnection.AddTrack` and `RTCPeerConnection.RemoveTrack` method is not intuitive.
@@ -246,7 +246,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void AddTransceiverTrackKindVideo()
         {
             var peer = new RTCPeerConnection();
@@ -268,7 +268,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void AddTransceiverWithInit()
         {
             var peer = new RTCPeerConnection();
@@ -301,7 +301,7 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void AddTransceiverWithKindAndInit()
         {
             var peer = new RTCPeerConnection();
@@ -341,7 +341,7 @@ namespace Unity.WebRTC.RuntimeTest
 
 
         [Test]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public void GetAndSetDirectionTransceiver()
         {
             var peer = new RTCPeerConnection();
@@ -1056,7 +1056,7 @@ namespace Unity.WebRTC.RuntimeTest
 
         [UnityTest]
         [Timeout(5000)]
-        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL")]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public IEnumerator GetStatsReturnsReport()
         {
             var go1 = new GameObject("Test1");

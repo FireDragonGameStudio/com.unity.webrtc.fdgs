@@ -299,12 +299,15 @@ namespace Unity.WebRTC
 
         /// <summary>
         /// On Windows or macOS, VideoStreamTrack doesn't work with OpenGL.
+        /// It also doesn't work without a graphics device, e.g. with -nographics.
         /// </summary>
         /// <param name="platform"></param>
         /// <param name="graphicsDeviceType"></param>
         /// <returns></returns>
         internal static bool IsSupported(RuntimePlatform platform, UnityEngine.Rendering.GraphicsDeviceType graphicsDeviceType)
         {
+            if (graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null)
+                return false;
             if (platform != RuntimePlatform.WindowsEditor &&
                 platform != RuntimePlatform.WindowsPlayer &&
                 platform != RuntimePlatform.OSXEditor &&
