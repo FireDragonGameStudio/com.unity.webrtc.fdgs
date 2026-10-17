@@ -43,7 +43,7 @@ jobs:
       matrix:
         # Minimum supported version (see package.json) and the current LTS.
         unityVersion: [6000.0.84f1, 6000.3.26f1]
-        testMode: [editmode]
+        testMode: [editmode, playmode]
     steps:
       - uses: actions/checkout@v7
 

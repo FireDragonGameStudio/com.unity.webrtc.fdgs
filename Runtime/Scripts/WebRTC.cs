@@ -771,6 +771,7 @@ namespace Unity.WebRTC
         /// </summary>
         /// <remarks>
         ///    `Update` method updates the texture data for all video tracks at the end of each frame.
+        ///    When Unity runs in batch mode, it updates the texture data once per frame after `Update` instead.
         /// </remarks>
         /// <returns>`IEnumerator` to facilitate coroutine execution.</returns>
         /// <example>
@@ -780,7 +781,9 @@ namespace Unity.WebRTC
         /// </example>
         public static IEnumerator Update()
         {
-            var instruction = new WaitForEndOfFrame();
+            // WaitForEndOfFrame is never resumed when Unity runs with -batchmode,
+            // so wait for the next frame there instead.
+            var instruction = Application.isBatchMode ? null : new WaitForEndOfFrame();
 
             while (true)
             {

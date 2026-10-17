@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace Unity's internal CI with GitHub Actions.
 - Build the Windows native plugin in GitHub Actions (Visual Studio 2022, CUDA 12.9), and verify the SHA-256 of the downloaded prebuilt libwebrtc.
 - Update documentation, issue templates and package metadata for the fork.
+- Run PlayMode tests in GitHub Actions.
 
 ### Fixed
 
+- `WebRTC.Update` never submitted video track textures when Unity runs with `-batchmode`, because `WaitForEndOfFrame` is not resumed there. It now waits for the next frame in batch mode.
 - `PluginTest.CheckPluginImportSettings` looked up plugins under a hardcoded `Packages/com.unity.webrtc` path.
 - Native plugin: build with Visual Studio 2026, CUDA 13 and CMake 4 (missing `<chrono>` includes, new `cuCtxCreate` signature, googletest 1.15.2). Adds `x64-windows-vs2026` CMake presets.
 
