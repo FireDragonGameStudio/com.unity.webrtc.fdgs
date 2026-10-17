@@ -27,3 +27,5 @@ WebRTC~/**
 # waste of the plugin artifacts
 linux_plugin-*
 win_plugin-*
+.claude/**
+.gitattributes

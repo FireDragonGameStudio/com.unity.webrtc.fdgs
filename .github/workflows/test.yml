@@ -3,7 +3,6 @@ name: Test
 on:
   push:
     branches: ['**']
-    tags: ['v*']
   pull_request:
   # Weekly run on main that also covers the minimum supported Unity version.
   schedule:
@@ -14,10 +13,22 @@ on:
         description: Also test the minimum supported Unity version
         type: boolean
         default: true
+  # Called by the release workflow to test the release branch with the freshly built plugins.
+  workflow_call:
+    inputs:
+      ref:
+        description: Branch or commit to test
+        type: string
+        required: true
+      all_versions:
+        description: Also test the minimum supported Unity version
+        type: boolean
+        default: true
 
 concurrency:
-  # Include the event so a push to main does not cancel the scheduled run.
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  # A fixed name, because inside a called workflow github.workflow is the caller's name.
+  # Include the event and the tested ref so pushes, scheduled runs and releases do not cancel each other.
+  group: test-${{ github.event_name }}-${{ inputs.ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -26,6 +37,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Validate package.json
         run: python3 -c "import json; m = json.load(open('package.json')); assert m['name'] == 'com.fdgs.webrtc', m['name']; print(m['name'], m['version'])"
@@ -51,12 +64,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Pushes and pull requests test only the current LTS. The weekly schedule, release tags
-        # and manual runs (by default) also test the minimum supported version from package.json.
-        unityVersion: ${{ fromJSON((github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.all_versions)) && '["6000.0.84f1", "6000.3.26f1"]' || '["6000.3.26f1"]') }}
+        # Pushes and pull requests test only the current LTS. The weekly schedule, releases and
+        # manual runs (by default) also test the minimum supported version from package.json.
+        # A release calls this workflow from a workflow_dispatch run, so its all_versions input applies.
+        unityVersion: ${{ fromJSON((github.event_name == 'schedule' || inputs.all_versions) && '["6000.0.84f1", "6000.3.26f1"]' || '["6000.3.26f1"]') }}
         testMode: [editmode, playmode]
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
 
       # game-ci always uses the Unity version from ProjectVersion.txt for a full project,
       # so write the matrix version there before restoring the cache and running tests.

@@ -1,7 +1,7 @@
 {
   "name": "com.fdgs.webrtc",
   "displayName": "WebRTC (FDGS)",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "unity": "6000.0",
   "description": "Community-maintained fork of the deprecated com.unity.webrtc package. Provides Real-Time Communications (RTC) capabilities for Unity: peer connections, audio and video streaming, and data channels.",
   "keywords": [

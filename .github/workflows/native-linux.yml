@@ -13,13 +13,16 @@ on:
       - 'BuildScripts~/build_plugin_linux.sh'
       - '.github/workflows/native-linux.yml'
   workflow_dispatch:
+  # Called by the release workflow.
+  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # A fixed name: inside a called workflow, github.workflow is the caller's name.
+  group: native-linux-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  # Prebuilt libwebrtc M116 published by Unity. Pinned by checksum because the fork does not control that release.
+  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_linux.sh.
   LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-linux.zip
   LIBWEBRTC_SHA256: d7ca2f66f1ac7d70b2f859497c127e15050c19a0bc431ad8b7d892d6ca2be819
   LLVM_VERSION: '18'

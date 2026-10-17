@@ -1,0 +1,222 @@
+name: Release
+
+# Start from the Actions tab: Release -> Run workflow on main, with the version to release.
+# Builds every native plugin, commits them to the branch release/v<version>, runs the full Unity
+# test matrix on that commit, and only then tags it v<version> and publishes a GitHub release.
+# Users install a release with https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v<version>.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, e.g. 3.1.0 or 3.1.0-rc.1 (pre-release). package.json and CHANGELOG.md on main must already be at 3.1.0.'
+        type: string
+        required: true
+
+# One release at a time; never cancel a release that is already running.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  prepare:
+    name: Check version
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      prerelease: ${{ steps.check.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check version, package.json, CHANGELOG.md and existing tags
+        id: check
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "::error::Run the release workflow on main (it ran on $GITHUB_REF)."; exit 1
+          fi
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::'$VERSION' is not a version like 3.1.0 or 3.1.0-rc.1."; exit 1
+          fi
+          base="${VERSION%%-*}"
+          package_version=$(python3 -c "import json; print(json.load(open('package.json'))['version'])")
+          if [ "$package_version" != "$base" ]; then
+            echo "::error::package.json version is $package_version, expected $base."; exit 1
+          fi
+          # Release notes: the CHANGELOG.md section of the base version, up to the next section.
+          python3 - "$base" > release-notes.md <<'PY'
+          import re, sys
+          base = sys.argv[1]
+          text = open('CHANGELOG.md', encoding='utf-8').read()
+          match = re.search(r'^## \[' + re.escape(base) + r'\][^\n]*\n(.*?)(?=^## \[|\Z)', text, re.M | re.S)
+          if not match or not match.group(1).strip():
+              sys.exit(f'CHANGELOG.md has no "## [{base}]" section with content.')
+          print(match.group(1).strip())
+          PY
+          if [ -n "$(git ls-remote --tags origin "refs/tags/v$VERSION")" ]; then
+            echo "::error::Tag v$VERSION already exists."; exit 1
+          fi
+          if [ -n "$(git ls-remote --heads origin "refs/heads/release/v$VERSION")" ]; then
+            echo "::error::Branch release/v$VERSION already exists. Delete it to retry this version."; exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [ "$VERSION" != "$base" ]; then echo "prerelease=true" >> "$GITHUB_OUTPUT"; else echo "prerelease=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-notes
+          path: release-notes.md
+          if-no-files-found: error
+
+  build-windows:
+    needs: prepare
+    permissions:
+      contents: read
+    uses: ./.github/workflows/native-windows.yml
+
+  build-linux:
+    needs: prepare
+    permissions:
+      contents: read
+    uses: ./.github/workflows/native-linux.yml
+
+  build-macos:
+    needs: prepare
+    permissions:
+      contents: read
+    uses: ./.github/workflows/native-macos.yml
+
+  build-ios:
+    needs: prepare
+    permissions:
+      contents: read
+    uses: ./.github/workflows/native-ios.yml
+
+  build-android:
+    needs: prepare
+    permissions:
+      contents: read
+    uses: ./.github/workflows/native-android.yml
+
+  assemble:
+    name: Commit plugins to release branch
+    needs: [prepare, build-windows, build-linux, build-macos, build-ios, build-android]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: webrtc-*
+          path: dist
+
+      - name: Replace the prebuilt plugins
+        run: |
+          set -euo pipefail
+          ls -lR dist
+          # Copy over the existing files so their .meta files and git file modes stay as they are.
+          cp dist/webrtc-win-x64-Release/webrtc.dll Runtime/Plugins/x86_64/webrtc.dll
+          cp dist/webrtc-linux-x64-Release/libwebrtc.so Runtime/Plugins/x86_64/libwebrtc.so
+          cp dist/webrtc-macos-universal-Release/libwebrtc.dylib Runtime/Plugins/macOS/libwebrtc.dylib
+          cp dist/webrtc-android-Release/libwebrtc.aar Runtime/Plugins/Android/libwebrtc.aar
+          # The iOS artifact holds the contents of webrtc.framework.
+          test -f dist/webrtc-ios-arm64-Release/webrtc
+          test -f dist/webrtc-ios-arm64-Release/Info.plist
+          rm -rf Runtime/Plugins/iOS/webrtc.framework
+          mkdir Runtime/Plugins/iOS/webrtc.framework
+          cp -R dist/webrtc-ios-arm64-Release/. Runtime/Plugins/iOS/webrtc.framework/
+          git status --short Runtime/Plugins
+
+      - name: Set the pre-release version in package.json
+        if: needs.prepare.outputs.prerelease == 'true'
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          text = open('package.json', encoding='utf-8').read()
+          text, count = re.subn(r'("version"\s*:\s*")[^"]*(")', r'\g<1>' + os.environ['VERSION'] + r'\g<2>', text, count=1)
+          assert count == 1, 'no version field in package.json'
+          open('package.json', 'w', encoding='utf-8', newline='\n').write(text)
+          PY
+
+      - name: Commit and push release/v${{ needs.prepare.outputs.version }}
+        id: commit
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "release/v$VERSION"
+          git add Runtime/Plugins package.json
+          git commit -m "Release v$VERSION" -m "Native plugins built by run ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} from ${GITHUB_SHA}."
+          git push origin "release/v$VERSION"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: assemble
+    permissions:
+      contents: read
+      checks: write
+    uses: ./.github/workflows/test.yml
+    with:
+      ref: ${{ needs.assemble.outputs.sha }}
+      all_versions: true
+    secrets: inherit
+
+  publish:
+    name: Tag and publish
+    needs: [prepare, assemble, test]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.assemble.outputs.sha }}
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-notes
+
+      - name: Tag v${{ needs.prepare.outputs.version }}
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "v$VERSION" -m "v$VERSION" HEAD
+          git push origin "v$VERSION"
+
+      # A tarball for "Add package from tarball...". npm pack honours .npmignore.
+      - name: Pack the package
+        run: |
+          mkdir dist
+          npm pack --pack-destination dist
+          ls -l dist
+
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+        run: |
+          set -euo pipefail
+          flags=()
+          if [ "$PRERELEASE" = "true" ]; then flags+=(--prerelease); else flags+=(--latest); fi
+          gh release create "v$VERSION" dist/*.tgz \
+            --verify-tag \
+            --title "v$VERSION" \
+            --notes-file release-notes.md \
+            "${flags[@]}"
