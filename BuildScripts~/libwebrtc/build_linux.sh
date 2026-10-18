@@ -43,9 +43,9 @@ test -n "$libcxx_objects" || { echo "No libc++ objects found"; exit 1; }
 size=$(stat -c %s "$package/lib/x64/libwebrtc.a")
 test "$size" -gt 50000000 || { echo "libwebrtc.a is only $size bytes"; exit 1; }
 
-# Headers: every libwebrtc header, plus the complete libc++ and libc++abi include directories
-# (libc++ headers such as <vector> have no extension).
-find . -name '*.h' -not -path './out/*' -not -path './third_party/llvm-build/*' | cpio -pdm --quiet "$package/include"
+# Headers: every libwebrtc header and textual include (*.inc, e.g. abseil's int128_have_intrinsic.inc), plus the
+# complete libc++ and libc++abi include directories (libc++ headers such as <vector> have no extension).
+find . \( -name '*.h' -o -name '*.inc' \) -not -path './out/*' -not -path './third_party/llvm-build/*' | cpio -pdm --quiet "$package/include"
 for dir in third_party/libc++/src/include third_party/libc++abi/src/include buildtools/third_party/libc++; do
   mkdir -p "$package/include/$dir"
   cp -R "$dir/." "$package/include/$dir/"
