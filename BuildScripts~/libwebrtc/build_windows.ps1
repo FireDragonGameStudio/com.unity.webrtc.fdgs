@@ -61,11 +61,12 @@ if (Test-Path "$llvmBin\llvm-lib.exe") {
 $size = (Get-Item $lib).Length
 if ($size -lt 50000000) { throw "webrtc.lib is only $size bytes" }
 
-# Headers: every libwebrtc header (*.h, and *.inc that some headers include, e.g. abseil int128), plus the complete libc++ include directories (libc++ headers such as
-# <vector> have no extension). libc++abi is not used on Windows but shipped like on the other platforms.
+# Headers: every libwebrtc header (*.h, and the *.inc files some of them include, e.g. abseil's int128), plus
+# the complete libc++ include directories (libc++ headers such as <vector> have no extension). libc++abi is
+# not used on Windows but shipped like on the other platforms.
 $src = (Get-Location).Path
 $PSNativeCommandUseErrorActionPreference = $false
-robocopy $src "$Package\include" *.h /S /XD "$src\out" "$src\third_party\llvm-build" /NFL /NDL /NJH /NJS /NP | Out-Null
+robocopy $src "$Package\include" *.h *.inc /S /XD "$src\out" "$src\third_party\llvm-build" /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "robocopy failed with $LASTEXITCODE" }
 $PSNativeCommandUseErrorActionPreference = $true
 foreach ($dir in 'third_party/libc++/src/include', 'third_party/libc++abi/src/include', 'buildtools/third_party/libc++') {
