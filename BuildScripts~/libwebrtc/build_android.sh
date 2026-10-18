@@ -10,8 +10,9 @@ package="$2"
 export PATH="$root/depot_tools:$PATH"
 cd "$root/src"
 
-# Lowest Android API level the package supports; the plugin is built with the same level (CMAKE_ANDROID_API).
-min_sdk=24
+# Lowest Android API level the package supports: Unity's minimum (Editor/BuildProcessor.cs), which is also the
+# lowest Chromium allows. The plugin must not be built for a lower level (CMAKE_ANDROID_API).
+min_sdk=23
 
 ar="third_party/llvm-build/Release+Asserts/bin/llvm-ar"
 nm="third_party/llvm-build/Release+Asserts/bin/llvm-nm"
@@ -82,9 +83,20 @@ for pair in $abis; do
   # Every symbol used inside libwebrtc.a must be defined in it or in the Android system libraries: link all of
   # it into a shared library without a C++ library or unwinder and refuse unresolved symbols.
   case "$cpu" in arm64) triple=aarch64-linux-android ;; x64) triple=x86_64-linux-android ;; esac
-  "$clang" --target="$triple$min_sdk" --sysroot="$sysroot" -shared -fuse-ld=lld --unwindlib=none \
-    -o "$out/libwebrtc_link_check.so" -Wl,--whole-archive "$lib" -Wl,--no-whole-archive \
-    -nostdlib++ -Wl,--no-undefined -llog -landroid -lOpenSLES -laaudio -lEGL -lGLESv2 -lmediandk -lm -ldl     && echo "Link check passed: $lib has no unresolved symbols"     || { echo "Link check failed: $lib"; link_check_failed="$link_check_failed $cpu"; }
+  # The system libraries are the ones GN links into libjingle_peerconnection_so.so (libwebrtc plus the JNI
+  # code), at the API level of the build (GN's android_ndk_api_level), so a library newer than that fails here.
+  system_libs=$(grep -h -E '^\s*libs = ' "$out/obj/sdk/android/libjingle_peerconnection_so.ninja" | sed 's/^\s*libs = //' | tr ' ' '\n' \
+    | grep -E '^-l' | sort -u | tr '\n' ' ' || true)
+  api_level=$(gn args "$out" --list=android_ndk_api_level --short | sed 's/.*= *//')
+  echo "System libraries ($abi, API $api_level): $system_libs"
+  if "$clang" --target="$triple$api_level" --sysroot="$sysroot" -shared -fuse-ld=lld --unwindlib=none \
+      -o "$out/libwebrtc_link_check.so" -Wl,--whole-archive "$lib" -Wl,--no-whole-archive \
+      -nostdlib++ -Wl,--no-undefined $system_libs -lm -ldl; then
+    echo "Link check passed: $lib has no unresolved symbols"
+  else
+    echo "Link check failed: $lib"
+    link_check_failed="$link_check_failed $cpu"
+  fi
 
   # Chromium links Android 64-bit shared libraries with 16 KB pages by default (build/config/android/BUILD.gn).
   "$readelf" -lW "$out/libjingle_peerconnection_so.so" | awk '$1 == "LOAD" { print "LOAD align " $NF; if ($NF != "0x4000") bad = 1 } END { exit bad }' \
@@ -139,8 +151,9 @@ WEBRTC_BRANCH=branch-heads/${WEBRTC_BRANCH:-unknown}
 WEBRTC_COMMIT=$(git rev-parse HEAD)
 LIBCXX_COMMIT=$(git -C third_party/libc++/src rev-parse HEAD)
 CLANG_REVISION=$(python3 tools/clang/scripts/update.py --print-revision)
-ANDROID_NDK_VERSION=$(grep -E '^Pkg.Revision' third_party/android_toolchain/ndk/source.properties | sed 's/.*= *//')
-ANDROID_MIN_SDK=$min_sdk
+ANDROID_NDK_VERSION=$(gn args "$first_out" --list=android_ndk_version --short | sed 's/.*= *//; s/"//g')
+ANDROID_MIN_SDK=$api_level
+ANDROID_SYSTEM_LIBS=$system_libs
 VERSIONS
 
 python3 tools_webrtc/libs/generate_licenses.py --target :webrtc "$first_out" "$first_out"
