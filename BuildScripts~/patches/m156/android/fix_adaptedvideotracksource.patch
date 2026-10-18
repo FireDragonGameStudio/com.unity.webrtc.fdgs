@@ -1,0 +1,28 @@
+diff --git a/api/video/adapted_video_track_source.cc b/api/video/adapted_video_track_source.cc
+index afaa55e..044afbe 100644
+--- a/api/video/adapted_video_track_source.cc
++++ b/api/video/adapted_video_track_source.cc
+@@ -86,6 +86,10 @@ bool AdaptedVideoTrackSource::apply_rotation() {
+   return broadcaster_.wants().rotation_applied;
+ }
+ 
++VideoAdapter* AdaptedVideoTrackSource::video_adapter() {
++  return &video_adapter_;
++}
++
+ void AdaptedVideoTrackSource::OnSinkWantsChanged(const VideoSinkWants& wants) {
+   video_adapter_.OnSinkWants(wants);
+ }
+diff --git a/api/video/adapted_video_track_source.h b/api/video/adapted_video_track_source.h
+index f498ac3..d8129e9 100644
+--- a/api/video/adapted_video_track_source.h
++++ b/api/video/adapted_video_track_source.h
+@@ -71,7 +71,7 @@ class RTC_EXPORT AdaptedVideoTrackSource
+   // become stale before it is used.
+   bool apply_rotation();
+ 
+-  VideoAdapter* video_adapter() { return &video_adapter_; }
++  VideoAdapter* video_adapter();
+ 
+  private:
+   // Implements VideoSourceInterface.
