@@ -84,15 +84,25 @@ jobs:
             --notes "libwebrtc branch-heads/$WEBRTC_BRANCH built by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/workflows/libwebrtc.yml with Chromium's libc++. See VERSIONS in each package."
           gh release upload "$tag" webrtc-linux.zip webrtc-linux.zip.sha256 --clobber
 
-      # Workflow logs need a GitHub login to read; push the tail of the log to a branch instead.
-      - name: Push the log on failure
-        if: failure()
+      # Workflow logs need a GitHub login to read; push the log and a description of the package to a branch.
+      - name: Push the log
+        if: always()
         run: |
           branch="ci-logs/libwebrtc-linux-${GITHUB_RUN_ID}"
           mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
           git init -q && git checkout -q -b "$branch"
-          tail -n 400 "$RUNNER_TEMP/build.log" > build-tail.log 2>/dev/null || echo "no log" > build-tail.log
-          grep -n -E 'error|Error|FAILED|failed' "$RUNNER_TEMP/build.log" | tail -n 200 > errors.log 2>/dev/null || true
-          df -h / > disk.txt
+          cp "$RUNNER_TEMP/build.log" build.log 2>/dev/null || echo "no log" > build.log
+          grep -n -E 'error|Error|FAILED|failed' build.log | tail -n 200 > errors.log || true
+          pkg="$RUNNER_TEMP/package"
+          {
+            echo "## disk"; df -h /
+            echo "## package files"; (cd "$pkg" 2>/dev/null && find . -maxdepth 3 -type f -not -path './include/*' -exec ls -l {} \;)
+            echo "## include size"; du -sh "$pkg/include" 2>/dev/null
+            echo "## VERSIONS"; cat "$pkg/VERSIONS" 2>/dev/null
+            echo "## cxx_flags.txt"; cat "$pkg/cxx_flags.txt" 2>/dev/null
+            echo "## libwebrtc.a"; nm -C "$pkg/lib/x64/libwebrtc.a" 2>/dev/null | grep -c ' T ' | sed 's/^/defined text symbols: /'
+            nm -C "$pkg/lib/x64/libwebrtc.a" 2>/dev/null | grep -c ' T std::__Cr::' | sed 's/^/defined std::__Cr text symbols (libc++): /'
+            nm -C "$pkg/lib/x64/libwebrtc.a" 2>/dev/null | grep -c ' T __cxa_' | sed 's/^/defined __cxa_ symbols (libc++abi): /'
+          } > package.txt 2>&1
           git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Log of run ${GITHUB_RUN_ID}"
           git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
