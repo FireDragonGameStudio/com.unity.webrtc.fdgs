@@ -88,10 +88,13 @@ jobs:
       - name: Push the log
         if: always()
         run: |
+          # Collect whatever exists; a failed build has no package directory.
+          set +e +o pipefail
           branch="ci-logs/libwebrtc-linux-${GITHUB_RUN_ID}"
           mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
           git init -q && git checkout -q -b "$branch"
-          cp "$RUNNER_TEMP/build.log" build.log 2>/dev/null || echo "no log" > build.log
+          # Keep the log below GitHub's file size limit.
+          tail -c 40000000 "$RUNNER_TEMP/build.log" > build.log 2>/dev/null || echo "no log" > build.log
           grep -n -E 'error|Error|FAILED|failed' build.log | tail -n 200 > errors.log || true
           pkg="$RUNNER_TEMP/package"
           {
