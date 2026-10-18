@@ -1,10 +1,12 @@
-#!/bin/bash -eu
+#!/bin/bash
 # Fetches libwebrtc branch-heads/<branch> with its dependencies for <target_os> into $WEBRTC_ROOT
 # (default: $RUNNER_TEMP/webrtc, or ./webrtc).
 # Usage: fetch.sh <branch> <target_os>   e.g. fetch.sh 8078 linux
 
 branch="$1"
 target_os="$2"
+set -euo pipefail
+
 root="${WEBRTC_ROOT:-${RUNNER_TEMP:-$PWD}/webrtc}"
 
 mkdir -p "$root"
@@ -13,7 +15,8 @@ if [ ! -d depot_tools ]; then
   git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
 fi
 export PATH="$root/depot_tools:$PATH"
-export DEPOT_TOOLS_UPDATE=0
+# Bootstraps depot_tools (its Python and tool wrappers) on first use.
+update_depot_tools
 
 cat > .gclient <<GCLIENT
 solutions = [{

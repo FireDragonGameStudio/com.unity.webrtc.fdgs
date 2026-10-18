@@ -1,11 +1,12 @@
-#!/bin/bash -eu
+#!/bin/bash
 # Builds libwebrtc for Linux x64 with Chromium's libc++ and writes the package to <package dir>.
 # Usage: build_linux.sh <webrtc root (contains src and depot_tools)> <package dir>
+
+set -euo pipefail
 
 root="$1"
 package="$2"
 export PATH="$root/depot_tools:$PATH"
-export DEPOT_TOOLS_UPDATE=0
 cd "$root/src"
 
 out=out/Release-x64
@@ -23,11 +24,13 @@ gn gen "$out" --args='
   use_rtti=true
   use_custom_libcxx=true
 '
+test -f "$out/args.gn" || { echo "gn gen did not create $out"; exit 1; }
 
 # libc++ and libc++abi are source sets that executables link implicitly; build them explicitly so their
 # objects can be added to the static library.
-libcxx_targets=$(gn ls "$out" | grep -E '^//buildtools/third_party/libc\+\+(abi)?:libc\+\+(abi)?$' | sed 's#^//##')
+libcxx_targets=$(gn ls "$out" | grep -E '^//buildtools/third_party/libc\+\+(abi)?:libc\+\+(abi)?$' | sed 's#^//##' || true)
 echo "libc++ targets: $libcxx_targets"
+test -n "$libcxx_targets" || { echo "No libc++ targets found:"; gn ls "$out" | grep -i 'libc++' | head -20; exit 1; }
 autoninja -C "$out" webrtc $libcxx_targets
 
 ar="third_party/llvm-build/Release+Asserts/bin/llvm-ar"
@@ -35,7 +38,10 @@ mkdir -p "$package/lib/x64"
 cp "$out/obj/libwebrtc.a" "$package/lib/x64/libwebrtc.a"
 libcxx_objects=$(find "$out/obj/buildtools/third_party/libc++" "$out/obj/buildtools/third_party/libc++abi" -name '*.o' | sort)
 echo "Adding $(echo "$libcxx_objects" | wc -l) libc++/libc++abi objects"
+test -n "$libcxx_objects" || { echo "No libc++ objects found"; exit 1; }
 "$ar" rs "$package/lib/x64/libwebrtc.a" $libcxx_objects
+size=$(stat -c %s "$package/lib/x64/libwebrtc.a")
+test "$size" -gt 50000000 || { echo "libwebrtc.a is only $size bytes"; exit 1; }
 
 # Headers: every libwebrtc header, plus the complete libc++ and libc++abi include directories
 # (libc++ headers such as <vector> have no extension).
@@ -47,7 +53,7 @@ done
 find "$package/include/buildtools/third_party/libc++" -name '*.gn' -delete
 
 # Compiler flags for code that uses this package. ${WEBRTC_INCLUDE_DIR} is replaced by the consumer.
-defines=$(gn desc "$out" //api:libjingle_peerconnection_api defines | grep -E '^\s*(_LIBCPP|_LIBCXXABI|CR_)' | sed 's/^\s*/-D/' | tr '\n' ' ')
+defines=$(gn desc "$out" //api:libjingle_peerconnection_api defines | grep -E '^\s*(_LIBCPP|_LIBCXXABI|CR_)' | sed 's/^\s*/-D/' | tr '\n' ' ' || true)
 cat > "$package/cxx_flags.txt" <<FLAGS
 -nostdinc++ -isystem \${WEBRTC_INCLUDE_DIR}/buildtools/third_party/libc++ -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++/src/include -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++abi/src/include $defines
 FLAGS
