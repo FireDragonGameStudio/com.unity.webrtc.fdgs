@@ -61,7 +61,7 @@ if (Test-Path "$llvmBin\llvm-lib.exe") {
 $size = (Get-Item $lib).Length
 if ($size -lt 50000000) { throw "webrtc.lib is only $size bytes" }
 
-# Headers: every libwebrtc header, plus the complete libc++ include directories (libc++ headers such as
+# Headers: every libwebrtc header (*.h, and *.inc that some headers include, e.g. abseil int128), plus the complete libc++ include directories (libc++ headers such as
 # <vector> have no extension). libc++abi is not used on Windows but shipped like on the other platforms.
 $src = (Get-Location).Path
 $PSNativeCommandUseErrorActionPreference = $false
