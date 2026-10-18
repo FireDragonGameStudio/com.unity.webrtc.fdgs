@@ -72,6 +72,9 @@ if(EXISTS "${WEBRTC_DIR}/cxx_flags.txt")
       set(_webrtc_join_next FALSE)
     elseif(_flag STREQUAL "-isystem")
       set(_webrtc_join_next TRUE)
+    elseif(macOS AND _flag MATCHES "^-D(WEBRTC_ARCH_ARM64|WEBRTC_HAS_NEON)$")
+      # The universal macOS package lists the defines of its arm64 build; the plugin is compiled for
+      # x86_64 too, and rtc_base/system/arch.h detects the architecture itself.
     else()
       list(APPEND WEBRTC_CXX_FLAGS "${_flag}")
     endif()

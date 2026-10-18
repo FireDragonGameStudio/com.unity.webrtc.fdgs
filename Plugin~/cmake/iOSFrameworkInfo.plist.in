@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Info.plist of webrtc.framework (iOS) with the keys Xcode wrote when the framework was built with the
+     Xcode generator. Configured twice: by configure_file in Plugin~/WebRTCPlugin/CMakeLists.txt (at-sign
+     variables), then by CMake for the framework (MACOSX_FRAMEWORK_* target properties). -->
+<plist version="1.0">
+<dict>
+	<key>BuildMachineOSBuild</key>
+	<string>@BUILD_MACHINE_OS_BUILD@</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>webrtc</string>
+	<key>CFBundleIdentifier</key>
+	<string>${MACOSX_FRAMEWORK_IDENTIFIER}</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>${MACOSX_FRAMEWORK_SHORT_VERSION_STRING}</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>${MACOSX_FRAMEWORK_BUNDLE_VERSION}</string>
+	<key>CSResourcesFileMapped</key>
+	<true/>
+	<key>DTPlatformBuild</key>
+	<string>@IOS_SDK_BUILD@</string>
+	<key>DTPlatformName</key>
+	<string>iphoneos</string>
+	<key>DTPlatformVersion</key>
+	<string>@IOS_SDK_VERSION@</string>
+	<key>DTSDKBuild</key>
+	<string>@IOS_SDK_BUILD@</string>
+	<key>DTSDKName</key>
+	<string>iphoneos@IOS_SDK_VERSION@</string>
+	<key>DTXcode</key>
+	<string>@DT_XCODE@</string>
+	<key>DTXcodeBuild</key>
+	<string>@DT_XCODE_BUILD@</string>
+	<key>MinimumOSVersion</key>
+	<string>@CMAKE_OSX_DEPLOYMENT_TARGET@</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+	</array>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+</dict>
+</plist>

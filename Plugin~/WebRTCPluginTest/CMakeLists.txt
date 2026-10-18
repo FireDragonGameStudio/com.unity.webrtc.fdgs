@@ -111,9 +111,7 @@ if(Windows)
       "-delayload:nvcuda.dll -delayload:nvEncodeAPI64.dll -delayload:nvcuvid.dll -delayload:vulkan-1.dll"
       MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif(macOS)
-  set(CMAKE_C_FLAGS "-x objective-c")
-  set(CMAKE_CXX_FLAGS "-x objective-c++")
-
+  # WebRTCLib passes -xobjective-c++ on to the tests.
   set_target_properties(
     WebRTCLibTest
     PROPERTIES LINK_FLAGS "-ObjC"
@@ -155,9 +153,7 @@ elseif(Linux)
   target_include_directories(WebRTCLibTest PRIVATE .. ${CUDA_INCLUDE_DIRS}
                                                    ${NVCODEC_INCLUDE_DIR})
 elseif(iOS)
-  set(CMAKE_C_FLAGS "-x objective-c")
-  set(CMAKE_CXX_FLAGS "-x objective-c++")
-
+  # WebRTCLib passes -xobjective-c++ on to the tests.
   set_target_properties(
     WebRTCLibTest
     PROPERTIES LINK_FLAGS "-ObjC"

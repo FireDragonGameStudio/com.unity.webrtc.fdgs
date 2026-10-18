@@ -43,9 +43,10 @@
       "displayName": "Default macOS Config",
       "hidden": true,
       "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "generator": "Xcode",
+      "generator": "Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64"
+        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64",
+        "CMAKE_OSX_SYSROOT": "macosx"
       },      
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -78,11 +79,11 @@
       "displayName": "Default iOS Config",
       "hidden": true,
       "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "generator": "Xcode",
+      "generator": "Ninja Multi-Config",
       "cacheVariables": {
         "CMAKE_SYSTEM_NAME": "iOS",
-        "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64",
-        "CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH": "NO"
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_SYSROOT": "iphoneos"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -164,7 +165,7 @@
     },
     {
       "name": "ios",
-      "description": "Sets x86_64 and arm64 arch, generator, compilers",
+      "description": "Sets arm64 arch (devices), generator, compilers",
       "inherits": "default-ios"
     },
     {
