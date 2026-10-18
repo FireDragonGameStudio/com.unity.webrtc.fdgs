@@ -22,13 +22,13 @@ reads (`<cpu>` is `x64` or `arm64`):
 |---|---|
 | `include/` | every libwebrtc header and textual include (`*.h`, `*.inc`), plus the complete libc++ and libc++abi include directories: `third_party/libc++/src/include`, `third_party/libc++abi/src/include`, `buildtools/third_party/libc++` (`__config_site`, `__assertion_handler`) |
 | `lib/x64/libwebrtc.a` | Linux |
-| `lib/x64/webrtc.lib` | Windows (MSVC-compatible archive built by clang-cl) |
+| `lib/x64/webrtc.lib` | Windows (MSVC-compatible archive built by clang-cl), plus `lib/x64/clang_rt.builtins-x86_64.lib` (clang's builtins, from Chromium's clang) |
 | `lib/libwebrtc.a` | macOS (universal: x86_64 + arm64) and iOS (arm64) |
 | `lib/<cpu>/libwebrtc.a` | Android (`arm64`, `x64`), plus `lib/libwebrtc.aar` with the Java classes |
 | `cxx_flags.txt` | flags for compiling against the bundled libc++: `-nostdinc++`, the three include directories as `-isystem ${WEBRTC_INCLUDE_DIR}/...`, and Chromium's `_LIBCPP_*`/`CR_*` defines. Windows (clang-cl syntax): `/external:I${WEBRTC_INCLUDE_DIR}/...` for the libc++ directories and `/D` defines; there is no `-nostdinc++`, because the MSVC include directory holds both the CRT and the MSVC STL, and the libc++ directories come first instead (as in Chromium) |
 | `VERSIONS` | `WEBRTC_BRANCH`, `WEBRTC_COMMIT`, `LIBCXX_COMMIT`, `CLANG_REVISION`; on Windows also `MSVC_RUNTIME` (`/MT` or `/MD`, which the plugin must use too) and `WINDOWS_SDK` |
 | `args.gn`, `gn_cflags_cc.txt` | the GN arguments and C++ flags of the build, for reference (Windows also has `gn_defines.txt`) |
-| `system_libs.txt` | Windows: the system libraries (`ws2_32.lib`, ...) to link together with `webrtc.lib` |
+| `libs.txt` | Windows: the libraries to link together with `webrtc.lib`, by file name: system libraries (`ws2_32.lib`, ...) and `clang_rt.builtins-x86_64.lib` from `lib/x64` (add it to the library path), plus the C runtime matching `MSVC_RUNTIME` |
 | `LICENSE.md` | licenses of libwebrtc and its third-party code |
 
 Each static library contains the libc++ and libc++abi objects (`llvm-ar` adds them after the build), so

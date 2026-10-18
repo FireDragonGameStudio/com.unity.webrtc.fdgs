@@ -66,17 +66,26 @@ $membersAfter = @(Invoke-Lib /list $lib).Count
 Write-Host "webrtc.lib members: $membersBefore + $($libcxxObjects.Count) libc++ = $membersAfter"
 if ($membersAfter -ne $membersBefore + $libcxxObjects.Count) { throw 'Merging the libc++ objects lost archive members' }
 
-# System libraries that code linking webrtc.lib needs: those of the webrtc target, plus Chromium's default
-# Windows libraries (build/config/win:default_libs), which only linkable targets get.
-$systemLibs = @(gn desc $out //:webrtc libs | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '\.lib$' }) + @(
+# Libraries that code linking webrtc.lib needs: those of the webrtc target, plus Chromium's default Windows
+# libraries (build/config/win:default_libs), which only linkable targets get. The webrtc target's libs include
+# clang's builtins by GN path (//third_party/llvm-build/.../clang_rt.builtins-x86_64.lib, from
+# build/config/clang:compiler_builtins); such libraries are shipped in lib/x64 and listed by file name.
+$libs = @(gn desc $out //:webrtc libs | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '\.lib$' } | ForEach-Object {
+  if ($_.StartsWith('//')) {
+    Copy-Item $_.Substring(2) (Split-Path $lib)
+    Split-Path $_ -Leaf
+  } else { $_ }
+}) + @(
   'advapi32.lib', 'comdlg32.lib', 'dbghelp.lib', 'dnsapi.lib', 'gdi32.lib', 'msimg32.lib', 'odbc32.lib',
   'odbccp32.lib', 'oleaut32.lib', 'shell32.lib', 'shlwapi.lib', 'user32.lib', 'usp10.lib', 'uuid.lib',
   'version.lib', 'wininet.lib', 'winmm.lib', 'winspool.lib', 'ws2_32.lib', 'kernel32.lib', 'ole32.lib'
 ) | Sort-Object -Unique
-$systemLibs | Set-Content -Encoding ascii "$Package\system_libs.txt"
-# The whole library must link without unresolved symbols (lld-link finds Visual Studio and the SDK itself).
+$libs | Set-Content -Encoding ascii "$Package\libs.txt"
+Write-Host "libs.txt: $libs"
+# The whole library must link without unresolved symbols, with the libraries a consumer links (lld-link finds
+# Visual Studio and the SDK itself).
 & "$llvmBin\lld-link.exe" /DLL /NOENTRY /MACHINE:X64 /NOLOGO /ERRORLIMIT:0 "/OUT:$out/link_check.dll" `
-  "/WHOLEARCHIVE:$lib" @systemLibs libcmt.lib libvcruntime.lib libucrt.lib
+  "/LIBPATH:$(Split-Path $lib)" "/WHOLEARCHIVE:$lib" @libs libcmt.lib libvcruntime.lib libucrt.lib
 Write-Host 'webrtc.lib links without unresolved symbols'
 
 # Headers: every libwebrtc header (*.h, and the *.inc files some of them include, e.g. abseil's int128), plus

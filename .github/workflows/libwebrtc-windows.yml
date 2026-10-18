@@ -145,6 +145,7 @@ jobs:
             echo "## include size"; du -sh "$pkg/include" 2>/dev/null
             echo "## VERSIONS"; cat "$pkg/VERSIONS" 2>/dev/null
             echo "## cxx_flags.txt"; cat "$pkg/cxx_flags.txt" 2>/dev/null
+            echo "## libs.txt"; cat "$pkg/libs.txt" 2>/dev/null
             echo "## webrtc.lib"
             "$nm" --defined-only "$lib" 2>/dev/null > "$RUNNER_TEMP/nm.txt"
             grep -c ' T ' "$RUNNER_TEMP/nm.txt" | sed 's/^/defined text symbols: /'
