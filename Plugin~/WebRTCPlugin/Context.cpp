@@ -182,6 +182,36 @@ namespace webrtc
             nullptr);
     }
 
+    namespace
+    {
+        // RTCStats::Attributes() returns the attributes by value, but the C# RTCStats keeps a pointer to each of
+        // its members for as long as the report lives. The attributes are therefore created once per stats
+        // object when a report arrives and kept until the report is deleted.
+        std::mutex s_mutexStatsAttributes;
+        std::map<const RTCStats*, std::vector<::webrtc::Attribute>> s_statsAttributes;
+
+        void AddStatsAttributes(const RTCStatsReport& report)
+        {
+            std::lock_guard<std::mutex> lock(s_mutexStatsAttributes);
+            for (const auto& stats : report)
+                s_statsAttributes.insert_or_assign(&stats, stats.Attributes());
+        }
+
+        void RemoveStatsAttributes(const RTCStatsReport& report)
+        {
+            std::lock_guard<std::mutex> lock(s_mutexStatsAttributes);
+            for (const auto& stats : report)
+                s_statsAttributes.erase(&stats);
+        }
+    }
+
+    const std::vector<::webrtc::Attribute>* Context::GetStatsAttributes(const RTCStats* stats)
+    {
+        std::lock_guard<std::mutex> lock(s_mutexStatsAttributes);
+        auto it = s_statsAttributes.find(stats);
+        return it == s_statsAttributes.end() ? nullptr : &it->second;
+    }
+
     Context::~Context()
     {
         {
@@ -198,6 +228,10 @@ namespace webrtc
             m_mapMediaStreamObserver.clear();
             m_mapDataChannels.clear();
             m_mapVideoRenderer.clear();
+
+            for (const auto& report : m_listStatsReport)
+                RemoveStatsAttributes(*report);
+            m_listStatsReport.clear();
 
             m_workerThread->Quit();
             m_workerThread.reset();
@@ -272,6 +306,7 @@ namespace webrtc
     {
         std::lock_guard<std::mutex> lock(mutexStatsReport);
         m_listStatsReport.push_back(report);
+        AddStatsAttributes(*report);
     }
 
     const RTCStats** Context::GetStatsList(const RTCStatsReport* report, size_t* length, uint32_t** types)
@@ -322,6 +357,7 @@ namespace webrtc
             RTC_LOG(LS_INFO) << "Calling DeleteStatsReport is failed. The reference of RTCStatsReport is not found.";
             return;
         }
+        RemoveStatsAttributes(**result);
         m_listStatsReport.erase(result);
     }
 

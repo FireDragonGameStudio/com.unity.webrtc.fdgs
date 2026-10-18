@@ -2,6 +2,8 @@
 
 #include <mutex>
 
+#include <api/stats/attribute.h>
+
 #include "AudioTrackSinkAdapter.h"
 #include "DummyAudioDevice.h"
 #include "GraphicsDevice/IGraphicsDevice.h"
@@ -127,6 +129,8 @@ namespace webrtc
         void AddStatsReport(const ::webrtc::scoped_refptr<const webrtc::RTCStatsReport>& report);
         const RTCStats** GetStatsList(const RTCStatsReport* report, size_t* length, uint32_t** types);
         void DeleteStatsReport(const webrtc::RTCStatsReport* report);
+        // The attributes (members) of a stats object of a report held by any context, or nullptr.
+        static const std::vector<::webrtc::Attribute>* GetStatsAttributes(const RTCStats* stats);
 
         // DataChannel
         DataChannelInterface*

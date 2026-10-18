@@ -671,113 +671,113 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT uint32_t StatsGetType(const RTCStats* stats) { return statsTypes.at(stats->type()); }
 
-    UNITY_INTERFACE_EXPORT const RTCStatsMemberInterface** StatsGetMembers(const RTCStats* stats, size_t* length)
+    // A stats member is a webrtc::Attribute kept by Context::GetStatsAttributes. The index of its value type in
+    // Attribute::StatVariant is the StatsMemberType of Runtime/Scripts/RTCStats.cs.
+    using StatsMember = ::webrtc::Attribute;
+    static_assert(std::variant_size_v<StatsMember::StatVariant> == 16);
+    static_assert(std::is_same_v<std::variant_alternative_t<0, StatsMember::StatVariant>, const std::optional<bool>*>);
+    static_assert(
+        std::is_same_v<std::variant_alternative_t<6, StatsMember::StatVariant>, const std::optional<std::string>*>);
+    static_assert(std::is_same_v<
+                  std::variant_alternative_t<15, StatsMember::StatVariant>,
+                  const std::optional<std::map<std::string, double>>*>);
+
+    UNITY_INTERFACE_EXPORT const StatsMember** StatsGetMembers(const RTCStats* stats, size_t* length)
     {
-        return ConvertArray(stats->Members(), length);
+        std::vector<const StatsMember*> members;
+        if (const std::vector<StatsMember>* attributes = Context::GetStatsAttributes(stats))
+        {
+            for (const StatsMember& attribute : *attributes)
+                members.push_back(&attribute);
+        }
+        return ConvertArray(members, length);
     }
 
-    UNITY_INTERFACE_EXPORT bool StatsMemberIsDefined(const RTCStatsMemberInterface* member)
-    {
-        return member->is_defined();
-    }
+    UNITY_INTERFACE_EXPORT bool StatsMemberIsDefined(const StatsMember* member) { return member->has_value(); }
 
-    UNITY_INTERFACE_EXPORT const char* StatsMemberGetName(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT const char* StatsMemberGetName(const StatsMember* member)
     {
         return ConvertString(std::string(member->name()));
     }
 
-    UNITY_INTERFACE_EXPORT bool StatsMemberGetBool(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT bool StatsMemberGetBool(const StatsMember* member) { return member->get<bool>(); }
+
+    UNITY_INTERFACE_EXPORT int32_t StatsMemberGetInt(const StatsMember* member) { return member->get<int32_t>(); }
+
+    UNITY_INTERFACE_EXPORT uint32_t StatsMemberGetUnsignedInt(const StatsMember* member)
     {
-        return *member->cast_to<RTCStatsMember<bool>>();
+        return member->get<uint32_t>();
     }
 
-    UNITY_INTERFACE_EXPORT int32_t StatsMemberGetInt(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int64_t StatsMemberGetLong(const StatsMember* member) { return member->get<int64_t>(); }
+
+    UNITY_INTERFACE_EXPORT uint64_t StatsMemberGetUnsignedLong(const StatsMember* member)
     {
-        return *member->cast_to<RTCStatsMember<int32_t>>();
+        return member->get<uint64_t>();
     }
 
-    UNITY_INTERFACE_EXPORT uint32_t StatsMemberGetUnsignedInt(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT double StatsMemberGetDouble(const StatsMember* member) { return member->get<double>(); }
+
+    UNITY_INTERFACE_EXPORT const char* StatsMemberGetString(const StatsMember* member)
     {
-        return *member->cast_to<RTCStatsMember<uint32_t>>();
+        return ConvertString(member->get<std::string>());
     }
 
-    UNITY_INTERFACE_EXPORT int64_t StatsMemberGetLong(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT bool* StatsMemberGetBoolArray(const StatsMember* member, size_t* length)
     {
-        return *member->cast_to<RTCStatsMember<int64_t>>();
+        return ConvertArray(member->get<std::vector<bool>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT uint64_t StatsMemberGetUnsignedLong(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int32_t* StatsMemberGetIntArray(const StatsMember* member, size_t* length)
     {
-        return *member->cast_to<RTCStatsMember<uint64_t>>();
+        return ConvertArray(member->get<std::vector<int32_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT double StatsMemberGetDouble(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT uint32_t* StatsMemberGetUnsignedIntArray(const StatsMember* member, size_t* length)
     {
-        return *member->cast_to<RTCStatsMember<double>>();
+        return ConvertArray(member->get<std::vector<uint32_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT const char* StatsMemberGetString(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int64_t* StatsMemberGetLongArray(const StatsMember* member, size_t* length)
     {
-        return ConvertString(member->ValueToString());
+        return ConvertArray(member->get<std::vector<int64_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT bool* StatsMemberGetBoolArray(const RTCStatsMemberInterface* member, size_t* length)
+    UNITY_INTERFACE_EXPORT uint64_t* StatsMemberGetUnsignedLongArray(const StatsMember* member, size_t* length)
     {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<bool>>>(), length);
+        return ConvertArray(member->get<std::vector<uint64_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT int32_t* StatsMemberGetIntArray(const RTCStatsMemberInterface* member, size_t* length)
+    UNITY_INTERFACE_EXPORT double* StatsMemberGetDoubleArray(const StatsMember* member, size_t* length)
     {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<int>>>(), length);
+        return ConvertArray(member->get<std::vector<double>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT uint32_t*
-    StatsMemberGetUnsignedIntArray(const RTCStatsMemberInterface* member, size_t* length)
+    UNITY_INTERFACE_EXPORT const char** StatsMemberGetStringArray(const StatsMember* member, size_t* length)
     {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<uint32_t>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT int64_t* StatsMemberGetLongArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<int64_t>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT uint64_t*
-    StatsMemberGetUnsignedLongArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<uint64_t>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT double* StatsMemberGetDoubleArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<double>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT const char** StatsMemberGetStringArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        std::vector<std::string> vec = *member->cast_to<RTCStatsMember<std::vector<std::string>>>();
+        const std::vector<std::string>& vec = member->get<std::vector<std::string>>();
         std::vector<const char*> vc;
         std::transform(vec.begin(), vec.end(), std::back_inserter(vc), ConvertString);
         return ConvertArray(vc, length);
     }
 
     UNITY_INTERFACE_EXPORT const char**
-    StatsMemberGetMapStringUint64(const RTCStatsMemberInterface* member, uint64_t** values, size_t* length)
+    StatsMemberGetMapStringUint64(const StatsMember* member, uint64_t** values, size_t* length)
     {
-        std::map<std::string, uint64_t> map = *member->cast_to<RTCStatsMember<std::map<std::string, uint64_t>>>();
+        std::map<std::string, uint64_t> map = member->get<std::map<std::string, uint64_t>>();
         return StatsMemberGetMapStringValue(map, values, length);
     }
 
     UNITY_INTERFACE_EXPORT const char**
-    StatsMemberGetMapStringDouble(const RTCStatsMemberInterface* member, double** values, size_t* length)
+    StatsMemberGetMapStringDouble(const StatsMember* member, double** values, size_t* length)
     {
-        std::map<std::string, double> map = *member->cast_to<RTCStatsMember<std::map<std::string, double>>>();
+        std::map<std::string, double> map = member->get<std::map<std::string, double>>();
         return StatsMemberGetMapStringValue(map, values, length);
     }
 
-    UNITY_INTERFACE_EXPORT RTCStatsMemberInterface::Type StatsMemberGetType(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int32_t StatsMemberGetType(const StatsMember* member)
     {
-        return member->type();
+        return static_cast<int32_t>(member->as_variant().index());
     }
 
     UNITY_INTERFACE_EXPORT SetLocalDescriptionObserver* PeerConnectionSetLocalDescription(
