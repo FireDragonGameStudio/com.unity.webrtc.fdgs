@@ -1,5 +1,8 @@
 name: Native plugin (iOS)
 
+# Builds webrtc.framework (arm64 devices) against the libwebrtc M156 package published on the release
+# libwebrtc-M156 (built by libwebrtc-ios.yml with Chromium's libc++, see BuildScripts~/libwebrtc/README.md),
+# with the exact Chromium clang that built it and the iPhoneOS SDK of the runner's Xcode.
 on:
   push:
     branches: ['**']
@@ -22,28 +25,33 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_ios.sh.
-  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-ios.zip
-  LIBWEBRTC_SHA256: 1a7001ad093a9ae9ed8ab85d15b021f5fae2a00f5377359b03264232ff739409
+  # Keep in sync with BuildScripts~/build_plugin_ios.sh.
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M156/webrtc-ios.zip
+  LIBWEBRTC_SHA256: 78e4a68e0d7226a74e4dc84ad00cb66c1408a1e48361002a8c08cdae5498f811
+  FRAMEWORK: Runtime/Plugins/iOS/webrtc.framework
 
 jobs:
   build:
     name: Build webrtc.framework (${{ matrix.config }})
     runs-on: macos-15
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
         config: [Release]
-    env:
-      BUILD_DIR: out/build/ios
     steps:
       - uses: actions/checkout@v7
 
       - name: Show toolchain
         run: |
-          xcodebuild -version
-          xcodebuild -showsdks | grep -i iphoneos
-          cmake --version
+          {
+            xcodebuild -version
+            xcrun --sdk iphoneos --show-sdk-path
+            cmake --version | head -1
+            command -v ninja || brew install ninja
+            echo "ninja $(ninja --version)"
+          } 2>&1 | tee -a "$RUNNER_TEMP/build.log"
 
       - name: Cache libwebrtc
         id: libwebrtc-cache
@@ -55,59 +63,123 @@ jobs:
       - name: Download libwebrtc
         if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL -o webrtc.zip "$LIBWEBRTC_URL"
-          echo "$LIBWEBRTC_SHA256  webrtc.zip" | shasum -a 256 --check --strict
-          unzip -q -o webrtc.zip -d Plugin~/webrtc
+          curl -fsSL -o "$RUNNER_TEMP/webrtc.zip" "$LIBWEBRTC_URL"
+          echo "$LIBWEBRTC_SHA256  $RUNNER_TEMP/webrtc.zip" | shasum -a 256 --check --strict
+          unzip -q -o "$RUNNER_TEMP/webrtc.zip" -d Plugin~/webrtc
+
+      - name: Show libwebrtc version
+        run: |
+          { cat Plugin~/webrtc/VERSIONS; lipo -info Plugin~/webrtc/lib/libwebrtc.a; } | tee -a "$RUNNER_TEMP/build.log"
+
+      # The plugin shares standard library types with libwebrtc, so it is compiled with the clang that built it.
+      - name: Install Chromium's clang
+        run: |
+          rev=$(sed -n 's/^CLANG_REVISION=//p' Plugin~/webrtc/VERSIONS)
+          case "$(uname -m)" in arm64) host=Mac_arm64 ;; *) host=Mac ;; esac
+          mkdir -p "$RUNNER_TEMP/clang"
+          curl -fsSL "https://commondatastorage.googleapis.com/chromium-browser-clang/$host/clang-$rev.tar.xz" \
+            | tar -xJ -C "$RUNNER_TEMP/clang"
+          {
+            "$RUNNER_TEMP/clang/bin/clang++" --version
+            find "$RUNNER_TEMP/clang/lib/clang" -name 'libclang_rt.ios*'
+          } 2>&1 | tee -a "$RUNNER_TEMP/build.log"
 
       - name: Configure
         working-directory: Plugin~
         # Errors are repeated as annotations so they show on the run summary without opening the log.
-        # Unity only ships the device framework, so only arm64 is built.
+        # Unity only ships the device framework, so only arm64 is built (set by the preset).
         run: |
           set -o pipefail
-          cmake --preset=ios -Wno-dev -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_BUILD_TYPE=${{ matrix.config }} 2>&1 | tee configure.log || {
-            echo "::error title=CMake configure::$({ grep -A8 'CMake Error' configure.log || tail -30 configure.log; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+          cmake --preset=ios -Wno-dev \
+            -DCMAKE_C_COMPILER="$RUNNER_TEMP/clang/bin/clang" \
+            -DCMAKE_CXX_COMPILER="$RUNNER_TEMP/clang/bin/clang++" 2>&1 | tee "$RUNNER_TEMP/configure.log" || {
+            echo "::error title=CMake configure::$({ grep -A8 'CMake Error' "$RUNNER_TEMP/configure.log" || tail -30 "$RUNNER_TEMP/configure.log"; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
             exit 1
           }
 
+      # Same steps as BuildScripts~/build_plugin_ios.sh. The framework is not signed; Xcode signs it when it
+      # is embedded into the Unity iOS app.
       - name: Build
         working-directory: Plugin~
-        # Same steps as BuildScripts~/build_plugin_ios.sh. The framework is not signed; Xcode signs it when it
-        # is embedded into the Unity iOS app.
         run: |
           set -o pipefail
-          flags=(-sdk iphoneos -arch arm64 -project "$BUILD_DIR/webrtc.xcodeproj" -configuration ${{ matrix.config }}
-                 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO -quiet)
-          {
-            xcodebuild "${flags[@]}" -target WebRTCLib &&
-            xcodebuild archive "${flags[@]}" -scheme WebRTCPlugin -archivePath "$BUILD_DIR/webrtc.xcarchive"
-          } 2>&1 | tee build.log || {
-            echo "::error title=Build::$(grep -E -A3 'error:|BUILD FAILED|ARCHIVE FAILED|Undefined symbols' build.log | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+          rm -rf "../$FRAMEWORK"
+          cmake --build out/build/ios --config ${{ matrix.config }} --target WebRTCPlugin -- -k 0 2>&1 \
+            | tee "$RUNNER_TEMP/plugin.log" > /dev/null || {
+            echo "::error title=Build::$(grep -E -A3 'error:|FAILED:|Undefined symbols' "$RUNNER_TEMP/plugin.log" | head -80 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
             exit 1
           }
-          rm -rf ../Runtime/Plugins/iOS/webrtc.framework
-          cp -R "$BUILD_DIR/webrtc.xcarchive/Products/@rpath/webrtc.framework" ../Runtime/Plugins/iOS/webrtc.framework
 
       - name: Check exports
         run: |
-          fw=Runtime/Plugins/iOS/webrtc.framework
-          bin=$fw/webrtc
-          test -f "$bin" || { echo "::error::$bin was not built"; exit 1; }
+          bin=$FRAMEWORK/webrtc
+          test -f "$bin" || { echo "::error::$bin was not built"; ls -lR Runtime/Plugins/iOS; exit 1; }
+          # Keep the exported symbols only (as Xcode's STRIP_STYLE non-global).
+          strip -x "$bin"
           lipo "$bin" -verify_arch arm64 || { echo "::error::$bin has no arm64 slice"; exit 1; }
           # iOS registers the plugin through RegisterPlugin.mm, so the load/unload callbacks have their own names.
           exports=$(nm -gU "$bin")
           for name in ContextCreate GetBatchUpdateEventFunc UnityWebRTCPluginLoad UnityWebRTCPluginUnload; do
             grep -qw "_$name" <<<"$exports" || { echo "::error::Missing export $name"; exit 1; }
           done
-          plutil -lint "$fw/Info.plist"
-          plutil -p "$fw/Info.plist"
-          lipo -info "$bin"
-          vtool -show-build "$bin" | grep -E 'platform|minos|sdk'
-          otool -L "$bin"
-          ls -lR "$fw"
+          if otool -L "$bin" | grep -E 'libc\+\+|libstdc\+\+'; then
+            echo "::error::$bin must not depend on a system C++ library"; exit 1
+          fi
+          plutil -lint "$FRAMEWORK/Info.plist"
+          {
+            plutil -p "$FRAMEWORK/Info.plist"
+            lipo -info "$bin"
+            vtool -show-build "$bin" | grep -E 'platform|minos|sdk'
+            otool -L "$bin"
+            otool -D "$bin"
+            echo "Exported symbols: $(nm -gU "$bin" | wc -l)"
+            ls -lR "$FRAMEWORK"
+          } | tee "$RUNNER_TEMP/framework.txt"
+          # The keys Unity and Xcode need from the framework.
+          for key in CFBundleExecutable CFBundleIdentifier CFBundlePackageType CFBundleVersion MinimumOSVersion; do
+            /usr/libexec/PlistBuddy -c "Print :$key" "$FRAMEWORK/Info.plist" > /dev/null \
+              || { echo "::error::Info.plist has no $key"; exit 1; }
+          done
+          test "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$FRAMEWORK/Info.plist")" = 13.0 \
+            || { echo "::error::MinimumOSVersion is not 13.0"; exit 1; }
+
+      # Every undefined symbol must come from a system library or framework (two-level namespace: nm -m
+      # names the library).
+      - name: Check for unresolved symbols
+        run: |
+          bin=$FRAMEWORK/webrtc
+          nm -m -u "$bin" > "$RUNNER_TEMP/undefined-arm64.txt"
+          grep -v -E '\(from [^)]+\)$' "$RUNNER_TEMP/undefined-arm64.txt" > "$RUNNER_TEMP/undefined.txt" || true
+          echo "$(wc -l < "$RUNNER_TEMP/undefined-arm64.txt") undefined symbols from" \
+            "$(sed -n 's/.*(from \(.*\))$/\1/p' "$RUNNER_TEMP/undefined-arm64.txt" | sort -u | tr '\n' ' ')" \
+            | tee -a "$RUNNER_TEMP/framework.txt"
+          cat "$RUNNER_TEMP/undefined.txt"
+          if [ -s "$RUNNER_TEMP/undefined.txt" ]; then
+            echo "::error::$(wc -l < "$RUNNER_TEMP/undefined.txt") unresolved symbols in $bin"; exit 1
+          fi
+          if otool -L "$bin" | grep -E '^\s' | grep -v -E '^\s+(/System/Library/|/usr/lib/|@rpath/webrtc\.framework/webrtc)'; then
+            echo "::error::$bin links a library outside the system"; exit 1
+          fi
 
       - uses: actions/upload-artifact@v7
         with:
           name: webrtc-ios-arm64-${{ matrix.config }}
-          path: Runtime/Plugins/iOS/webrtc.framework
+          path: ${{ env.FRAMEWORK }}
           if-no-files-found: error
+
+      # Workflow logs on GitHub need a login to read; push the logs to a branch.
+      - name: Push the logs
+        if: always()
+        run: |
+          set +e +o pipefail
+          branch="ci-logs/plugin-ios-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          for f in build.log configure.log plugin.log framework.txt undefined.txt undefined-arm64.txt; do
+            [ -f "$RUNNER_TEMP/$f" ] && tail -c 20000000 "$RUNNER_TEMP/$f" > "$f"
+          done
+          [ -f plugin.log ] && grep -E 'error:|FAILED:|Undefined symbols|ld: ' plugin.log > plugin-errors.txt
+          [ -f "$GITHUB_WORKSPACE/$FRAMEWORK/Info.plist" ] && cp "$GITHUB_WORKSPACE/$FRAMEWORK/Info.plist" Info.plist
+          echo "${GITHUB_SHA}" > sha.txt
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Logs of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"

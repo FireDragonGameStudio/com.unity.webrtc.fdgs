@@ -1,5 +1,8 @@
 name: Native plugin (macOS)
 
+# Builds the universal libwebrtc.dylib (arm64 + x86_64) against the libwebrtc M156 package published on the
+# release libwebrtc-M156 (built by libwebrtc-macos.yml with Chromium's libc++, see BuildScripts~/libwebrtc/README.md),
+# with the exact Chromium clang that built it and the SDK of the runner's Xcode.
 on:
   push:
     branches: ['**']
@@ -22,15 +25,19 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_mac.sh.
-  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-mac.zip
-  LIBWEBRTC_SHA256: 4b25237c4928c48587b71e545255f21af19fd6d18f290fdcd76d6129f7d93f86
+  # Keep in sync with BuildScripts~/build_plugin_mac.sh.
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M156/webrtc-mac.zip
+  LIBWEBRTC_SHA256: c0bc1f73dda783ded2e6d7d3361c981f91130aa20649db2b0a97491b63ee5e74
+  BUILD_DIR: Plugin~/out/build/macos
+  DYLIB: Runtime/Plugins/macOS/libwebrtc.dylib
 
 jobs:
   build:
     name: Build libwebrtc.dylib (${{ matrix.config }})
-    # The prebuilt libwebrtc.a is universal (arm64 + x86_64), so one Xcode build produces a universal dylib.
+    # The libwebrtc.a of the package is universal (arm64 + x86_64), so one build produces a universal dylib.
     runs-on: macos-15
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -40,8 +47,13 @@ jobs:
 
       - name: Show toolchain
         run: |
-          xcodebuild -version
-          cmake --version
+          {
+            xcodebuild -version
+            xcrun --sdk macosx --show-sdk-path
+            cmake --version | head -1
+            command -v ninja || brew install ninja
+            echo "ninja $(ninja --version)"
+          } 2>&1 | tee -a "$RUNNER_TEMP/build.log"
 
       - name: Cache libwebrtc
         id: libwebrtc-cache
@@ -53,48 +65,116 @@ jobs:
       - name: Download libwebrtc
         if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL -o webrtc.zip "$LIBWEBRTC_URL"
-          echo "$LIBWEBRTC_SHA256  webrtc.zip" | shasum -a 256 --check --strict
-          unzip -q -o webrtc.zip -d Plugin~/webrtc
+          curl -fsSL -o "$RUNNER_TEMP/webrtc.zip" "$LIBWEBRTC_URL"
+          echo "$LIBWEBRTC_SHA256  $RUNNER_TEMP/webrtc.zip" | shasum -a 256 --check --strict
+          unzip -q -o "$RUNNER_TEMP/webrtc.zip" -d Plugin~/webrtc
+
+      - name: Show libwebrtc version
+        run: |
+          { cat Plugin~/webrtc/VERSIONS; lipo -info Plugin~/webrtc/lib/libwebrtc.a; } | tee -a "$RUNNER_TEMP/build.log"
+
+      # The plugin shares standard library types with libwebrtc, so it is compiled with the clang that built it.
+      - name: Install Chromium's clang
+        run: |
+          rev=$(sed -n 's/^CLANG_REVISION=//p' Plugin~/webrtc/VERSIONS)
+          case "$(uname -m)" in arm64) host=Mac_arm64 ;; *) host=Mac ;; esac
+          mkdir -p "$RUNNER_TEMP/clang"
+          curl -fsSL "https://commondatastorage.googleapis.com/chromium-browser-clang/$host/clang-$rev.tar.xz" \
+            | tar -xJ -C "$RUNNER_TEMP/clang"
+          {
+            "$RUNNER_TEMP/clang/bin/clang++" --version
+            ls "$RUNNER_TEMP/clang/bin"
+            find "$RUNNER_TEMP/clang/lib/clang" -name 'libclang_rt.osx*'
+          } 2>&1 | tee -a "$RUNNER_TEMP/build.log"
 
       - name: Configure
         working-directory: Plugin~
         # Errors are repeated as annotations so they show on the run summary without opening the log.
         run: |
           set -o pipefail
-          cmake --preset=macos -Wno-dev 2>&1 | tee configure.log || {
-            echo "::error title=CMake configure::$({ grep -A8 'CMake Error' configure.log || tail -30 configure.log; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+          cmake --preset=macos -Wno-dev \
+            -DCMAKE_C_COMPILER="$RUNNER_TEMP/clang/bin/clang" \
+            -DCMAKE_CXX_COMPILER="$RUNNER_TEMP/clang/bin/clang++" 2>&1 | tee "$RUNNER_TEMP/configure.log" || {
+            echo "::error title=CMake configure::$({ grep -A8 'CMake Error' "$RUNNER_TEMP/configure.log" || tail -30 "$RUNNER_TEMP/configure.log"; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
             exit 1
           }
 
+      # -k 0 reports every compile error in one run.
       - name: Build
         working-directory: Plugin~
         run: |
           set -o pipefail
-          rm -f ../Runtime/Plugins/macOS/libwebrtc.dylib
-          cmake --build out/build/macos --config ${{ matrix.config }} --target WebRTCPlugin --parallel -- -quiet 2>&1 | tee build.log || {
-            echo "::error title=Build::$(grep -E -A3 'error:|BUILD FAILED|Undefined symbols' build.log | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
+          rm -f "../$DYLIB"
+          cmake --build out/build/macos --config ${{ matrix.config }} --target WebRTCPlugin -- -k 0 2>&1 \
+            | tee "$RUNNER_TEMP/plugin.log" > /dev/null || {
+            echo "::error title=Build::$(grep -E -A3 'error:|FAILED:|Undefined symbols' "$RUNNER_TEMP/plugin.log" | head -80 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
             exit 1
           }
 
       - name: Check exports
         run: |
-          dylib=Runtime/Plugins/macOS/libwebrtc.dylib
-          test -f "$dylib" || { echo "::error::$dylib was not built"; exit 1; }
+          test -f "$DYLIB" || { echo "::error::$DYLIB was not built"; exit 1; }
+          # Keep the exported symbols only (as Xcode's STRIP_STYLE non-global).
+          strip -x "$DYLIB"
           for arch in arm64 x86_64; do
-            lipo "$dylib" -verify_arch "$arch" || { echo "::error::$dylib has no $arch slice"; exit 1; }
-            exports=$(nm -gU -arch "$arch" "$dylib")
+            lipo "$DYLIB" -verify_arch "$arch" || { echo "::error::$DYLIB has no $arch slice"; exit 1; }
+            exports=$(nm -gU -arch "$arch" "$DYLIB")
             for name in ContextCreate GetBatchUpdateEventFunc UnityPluginLoad UnityPluginUnload; do
               grep -qw "_$name" <<<"$exports" || { echo "::error::Missing export $name ($arch)"; exit 1; }
             done
           done
-          lipo -info "$dylib"
-          vtool -show-build "$dylib" | grep -E 'architecture|minos|sdk'
-          otool -L "$dylib"
-          ls -l "$dylib"
+          if otool -L "$DYLIB" | grep -E 'libc\+\+|libstdc\+\+'; then
+            echo "::error::$DYLIB must not depend on a system C++ library"; exit 1
+          fi
+          {
+            lipo -info "$DYLIB"
+            vtool -show-build "$DYLIB" | grep -E 'architecture|minos|sdk'
+            otool -L "$DYLIB"
+            for arch in arm64 x86_64; do
+              echo "Exported symbols ($arch): $(nm -gU -arch "$arch" "$DYLIB" | wc -l)"
+            done
+            ls -l "$DYLIB"
+          } | tee "$RUNNER_TEMP/dylib.txt"
+
+      # Every undefined symbol must come from a system library or framework (two-level namespace: nm -m
+      # names the library). "dynamically looked up" symbols would only be resolved, or missed, at load time.
+      - name: Check for unresolved symbols
+        run: |
+          : > "$RUNNER_TEMP/undefined.txt"
+          for arch in arm64 x86_64; do
+            nm -m -u -arch "$arch" "$DYLIB" > "$RUNNER_TEMP/undefined-$arch.txt"
+            grep -v -E '\(from [^)]+\)$' "$RUNNER_TEMP/undefined-$arch.txt" \
+              | sed "s/^/$arch: /" >> "$RUNNER_TEMP/undefined.txt" || true
+            echo "$arch: $(wc -l < "$RUNNER_TEMP/undefined-$arch.txt") undefined symbols from" \
+              "$(sed -n 's/.*(from \(.*\))$/\1/p' "$RUNNER_TEMP/undefined-$arch.txt" | sort -u | tr '\n' ' ')"
+          done | tee -a "$RUNNER_TEMP/dylib.txt"
+          cat "$RUNNER_TEMP/undefined.txt"
+          if [ -s "$RUNNER_TEMP/undefined.txt" ]; then
+            echo "::error::$(wc -l < "$RUNNER_TEMP/undefined.txt") unresolved symbols in $DYLIB"; exit 1
+          fi
+          # Only system libraries: frameworks and /usr/lib.
+          if otool -L "$DYLIB" | grep -E '^\s' | grep -v -E '^\s+(/System/Library/|/usr/lib/|@rpath/libwebrtc\.dylib)'; then
+            echo "::error::$DYLIB links a library outside the system"; exit 1
+          fi
 
       - uses: actions/upload-artifact@v7
         with:
           name: webrtc-macos-universal-${{ matrix.config }}
-          path: Runtime/Plugins/macOS/libwebrtc.dylib
+          path: ${{ env.DYLIB }}
           if-no-files-found: error
+
+      # Workflow logs on GitHub need a login to read; push the logs to a branch.
+      - name: Push the logs
+        if: always()
+        run: |
+          set +e +o pipefail
+          branch="ci-logs/plugin-macos-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          for f in build.log configure.log plugin.log dylib.txt undefined.txt undefined-arm64.txt undefined-x86_64.txt; do
+            [ -f "$RUNNER_TEMP/$f" ] && tail -c 20000000 "$RUNNER_TEMP/$f" > "$f"
+          done
+          [ -f plugin.log ] && grep -E 'error:|FAILED:|Undefined symbols|ld: ' plugin.log > plugin-errors.txt
+          echo "${GITHUB_SHA}" > sha.txt
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Logs of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
