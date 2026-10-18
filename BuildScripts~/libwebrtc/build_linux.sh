@@ -53,11 +53,11 @@ done
 find "$package/include/buildtools/third_party/libc++" -name '*.gn' -delete
 
 # Compiler flags for code that uses this package. ${WEBRTC_INCLUDE_DIR} is replaced by the consumer.
-defines=$(gn desc "$out" //api:libjingle_peerconnection_api defines | grep -E '^\s*(_LIBCPP|_LIBCXXABI|CR_)' | sed 's/^\s*/-D/' | tr '\n' ' ' || true)
+defines=$(gn desc "$out" //api:rtc_error defines | grep -E '^\s*(_LIBCPP|_LIBCXXABI|CR_)' | sed 's/^\s*/-D/' | tr '\n' ' ' || true)
 cat > "$package/cxx_flags.txt" <<FLAGS
 -nostdinc++ -isystem \${WEBRTC_INCLUDE_DIR}/buildtools/third_party/libc++ -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++/src/include -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++abi/src/include $defines
 FLAGS
-gn desc "$out" //api:libjingle_peerconnection_api cflags_cc > "$package/gn_cflags_cc.txt"
+gn desc "$out" //api:rtc_error cflags_cc > "$package/gn_cflags_cc.txt"
 cp "$out/args.gn" "$package/args.gn"
 
 cat > "$package/VERSIONS" <<VERSIONS
