@@ -1,18 +1,21 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 0ebb093..1626d81 100644
+index 0ebb093..c602e5d 100644
 --- a/BUILD.gn
 +++ b/BUILD.gn
-@@ -584,6 +584,13 @@ if (!build_with_chromium) {
+@@ -584,6 +584,16 @@ if (!build_with_chromium) {
        "pc:rtc_pc",
        "pc:webrtc_sdp",
        "video",
 +
-+      # com.fdgs.webrtc: the Unity plugin also uses jsoncpp and the internal
-+      # (built-in) video encoder and decoder factories.
++      # com.fdgs.webrtc: the Unity plugin also uses jsoncpp, the internal
++      # (built-in) video encoder and decoder factories, AdaptedVideoTrackSource
++      # and abseil (including str_format and charconv) through inline headers.
 +      "//third_party/jsoncpp",
 +      "api/video_codecs:builtin_video_decoder_factory",
 +      "api/video_codecs:builtin_video_encoder_factory",
 +      "media:rtc_internal_video_codecs",
++      "api/video:adapted_video_track_source",
++      "//third_party/abseil-cpp:absl",
      ]
  
      if (rtc_include_builtin_audio_codecs) {

@@ -20,7 +20,7 @@ reads (`<cpu>` is `x64` or `arm64`):
 
 | Path | Content |
 |---|---|
-| `include/` | every libwebrtc header (`*.h`), plus the complete libc++ and libc++abi include directories: `third_party/libc++/src/include`, `third_party/libc++abi/src/include`, `buildtools/third_party/libc++` (`__config_site`, `__assertion_handler`) |
+| `include/` | every libwebrtc header and textual include (`*.h`, `*.inc`), plus the complete libc++ and libc++abi include directories: `third_party/libc++/src/include`, `third_party/libc++abi/src/include`, `buildtools/third_party/libc++` (`__config_site`, `__assertion_handler`) |
 | `lib/x64/libwebrtc.a` | Linux |
 | `lib/x64/webrtc.lib` | Windows (MSVC-compatible archive built by clang-cl) |
 | `lib/libwebrtc.a` | macOS (universal: x86_64 + arm64) and iOS (arm64) |
