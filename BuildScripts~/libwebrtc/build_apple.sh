@@ -43,6 +43,7 @@ for cpu in $cpus; do
     use_rtti=true
     use_custom_libcxx=true
     use_clang_modules=false
+    rtc_rust=false
   "
   test -f "$out/args.gn" || { echo "gn gen did not create $out"; exit 1; }
 
@@ -84,7 +85,7 @@ done
 find "$package/include/buildtools/third_party/libc++" -name '*.gn' -delete
 
 # Compiler flags for code that uses this package. ${WEBRTC_INCLUDE_DIR} is replaced by the consumer.
-defines=$(gn desc "$out" //api:rtc_error defines | grep -E '^[[:space:]]*(_LIBCPP|_LIBCXXABI|CR_)' | sed -E 's/^[[:space:]]*/-D/' | tr '\n' ' ' || true)
+defines=$(gn desc "$out" //api:rtc_error defines | grep -E '^[[:space:]]*(_LIBCPP|_LIBCXXABI|CR_|WEBRTC_|RTC_|ABSL_)' | sed -E 's/^[[:space:]]*/-D/' | tr '\n' ' ' || true)
 cat > "$package/cxx_flags.txt" <<FLAGS
 -nostdinc++ -isystem \${WEBRTC_INCLUDE_DIR}/buildtools/third_party/libc++ -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++/src/include -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++abi/src/include $defines
 FLAGS
