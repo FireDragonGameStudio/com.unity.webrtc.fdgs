@@ -81,8 +81,10 @@ jobs:
 
   build-linux:
     needs: prepare
+    # The called workflow pushes its logs to a ci-logs branch and can report Unity test checks.
     permissions:
-      contents: read
+      contents: write
+      checks: write
     uses: ./.github/workflows/native-linux.yml
 
   build-macos:
