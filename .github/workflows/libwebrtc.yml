@@ -1,0 +1,98 @@
+name: libwebrtc
+
+# Builds Google's libwebrtc for the native plugin, with Chromium's own libc++ (use_custom_libcxx=true,
+# the upstream default). Each package contains:
+#   include/                 libwebrtc headers, plus the libc++ and libc++abi headers it was built with
+#   lib/<cpu>/libwebrtc.a    libwebrtc, with the libc++ and libc++abi objects added
+#   cxx_flags.txt            compiler flags the plugin must use to compile against that libc++
+#   VERSIONS, LICENSE.md
+# Started manually with "publish" it uploads the packages to the release libwebrtc-M<milestone>.
+on:
+  push:
+    branches: ['feat/libwebrtc-**']
+    paths:
+      - '.github/workflows/libwebrtc.yml'
+      - 'BuildScripts~/libwebrtc/**'
+      - 'BuildScripts~/patches/m156/**'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Upload the packages to the release libwebrtc-M<milestone>
+        type: boolean
+        default: false
+
+concurrency:
+  group: libwebrtc-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  WEBRTC_MILESTONE: '156'
+  WEBRTC_BRANCH: '8078'
+  PATCH_DIR: BuildScripts~/patches/m156
+
+jobs:
+  linux:
+    name: Linux x64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Free disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force > /dev/null || true
+          df -h /
+
+      - name: Fetch libwebrtc branch-heads/${{ env.WEBRTC_BRANCH }}
+        run: bash "BuildScripts~/libwebrtc/fetch.sh" "$WEBRTC_BRANCH" linux 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Apply patches
+        run: |
+          for p in "$PATCH_DIR"/*.patch; do
+            echo "Applying $p"
+            git -C "$RUNNER_TEMP/webrtc/src" apply --verbose "$GITHUB_WORKSPACE/$p"
+          done 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Build and package
+        run: |
+          set -o pipefail
+          bash "BuildScripts~/libwebrtc/build_linux.sh" "$RUNNER_TEMP/webrtc" "$RUNNER_TEMP/package" 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+          (cd "$RUNNER_TEMP/package" && zip -qr "$GITHUB_WORKSPACE/webrtc-linux.zip" .)
+          sha256sum webrtc-linux.zip | tee webrtc-linux.zip.sha256
+          ls -lh webrtc-linux.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-linux
+          path: |
+            webrtc-linux.zip
+            webrtc-linux.zip.sha256
+          if-no-files-found: error
+
+      - name: Publish to libwebrtc-M${{ env.WEBRTC_MILESTONE }}
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="libwebrtc-M$WEBRTC_MILESTONE"
+          gh release view "$tag" > /dev/null 2>&1 || gh release create "$tag" --prerelease --target "$GITHUB_SHA" \
+            --title "Prebuilt libwebrtc M$WEBRTC_MILESTONE" \
+            --notes "libwebrtc branch-heads/$WEBRTC_BRANCH built by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/workflows/libwebrtc.yml with Chromium's libc++. See VERSIONS in each package."
+          gh release upload "$tag" webrtc-linux.zip webrtc-linux.zip.sha256 --clobber
+
+      # Workflow logs need a GitHub login to read; push the tail of the log to a branch instead.
+      - name: Push the log on failure
+        if: failure()
+        run: |
+          branch="ci-logs/libwebrtc-linux-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          tail -n 400 "$RUNNER_TEMP/build.log" > build-tail.log 2>/dev/null || echo "no log" > build-tail.log
+          grep -n -E 'error|Error|FAILED|failed' "$RUNNER_TEMP/build.log" | tail -n 200 > errors.log 2>/dev/null || true
+          df -h / > disk.txt
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Log of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
