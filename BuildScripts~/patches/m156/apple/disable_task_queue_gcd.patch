@@ -1,0 +1,19 @@
+diff --git a/api/task_queue/BUILD.gn b/api/task_queue/BUILD.gn
+index 0fe44fd..953700b 100644
+--- a/api/task_queue/BUILD.gn
++++ b/api/task_queue/BUILD.gn
+@@ -87,10 +87,10 @@ rtc_library("default_task_queue_factory") {
+     "../../rtc_base/memory:always_valid_pointer",
+   ]
+ 
+-  if (is_mac || is_ios) {
+-    sources += [ "default_task_queue_factory_gcd.cc" ]
+-    deps += [ "../../rtc_base:rtc_task_queue_gcd" ]
+-  } else if (is_win && current_os != "winuwp" && !build_with_chromium) {
++  # com.fdgs.webrtc: no GCD task queue on macOS/iOS. GCD runs tasks on any
++  # thread of its pool, and the Unity profiler expects each queue to run on
++  # one thread, so use the stdlib task queue there as on Linux.
++  if (is_win && current_os != "winuwp" && !build_with_chromium) {
+     sources += [ "default_task_queue_factory_win.cc" ]
+     deps += [ "../../rtc_base:rtc_task_queue_win" ]
+   } else {

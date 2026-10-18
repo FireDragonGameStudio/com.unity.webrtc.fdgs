@@ -1,0 +1,24 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index 0ebb093..724901b 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -610,6 +610,19 @@ if (!build_with_chromium) {
+       if (is_ios) {
+         deps += [ "sdk:framework_objc" ]
+       }
++
++      # com.fdgs.webrtc: the Unity plugin uses the VideoToolbox H.264 codec
++      # factories and the ObjC<->native adapters on macOS and iOS.
++      if (is_ios || is_mac) {
++        deps += [
++          "sdk:base_objc",
++          "sdk:default_codec_factory_objc",
++          "sdk:native_api",
++          "sdk:native_video",
++          "sdk:videocodec_objc",
++          "sdk:videotoolbox_objc",
++        ]
++      }
+     }
+   }
+ 

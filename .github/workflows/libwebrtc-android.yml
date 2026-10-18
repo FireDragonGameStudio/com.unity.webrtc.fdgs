@@ -1,0 +1,129 @@
+name: libwebrtc (Android)
+
+# Builds Google's libwebrtc for Android arm64-v8a and x86_64 with Chromium's own libc++ (use_custom_libcxx=true,
+# the upstream default), plus libwebrtc.aar with the Java classes. Each platform has its own
+# libwebrtc-<platform>.yml; the package format they all produce is described in BuildScripts~/libwebrtc/README.md.
+# Started manually with "publish" it uploads the package to the release libwebrtc-M<milestone>.
+on:
+  push:
+    branches: ['feat/libwebrtc-**']
+    paths:
+      - '.github/workflows/libwebrtc-android.yml'
+      - 'BuildScripts~/libwebrtc/fetch.sh'
+      - 'BuildScripts~/libwebrtc/build_android.sh'
+      - 'BuildScripts~/patches/m156/**'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Upload the packages to the release libwebrtc-M<milestone>
+        type: boolean
+        default: false
+
+concurrency:
+  group: libwebrtc-android-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  WEBRTC_MILESTONE: '156'
+  WEBRTC_BRANCH: '8078'
+  PATCH_DIR: BuildScripts~/patches/m156
+
+jobs:
+  android:
+    name: Android arm64 + x64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      # The Android checkout (SDK, NDK, JDK, emulator images) plus two builds needs about 60 GB.
+      # Chromium brings its own Android SDK, NDK and JDK, so the runner's copies can go.
+      - name: Free disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache \
+            /usr/local/share/boost /usr/share/swift /usr/local/share/powershell /usr/local/share/chromium \
+            /opt/microsoft /opt/google /opt/az /usr/lib/jvm /usr/local/julia* /usr/share/miniconda
+          sudo docker image prune --all --force > /dev/null || true
+          df -h /
+
+      - name: Fetch libwebrtc branch-heads/${{ env.WEBRTC_BRANCH }}
+        run: bash "BuildScripts~/libwebrtc/fetch.sh" "$WEBRTC_BRANCH" android 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Apply patches
+        run: |
+          set -o pipefail
+          {
+            for p in "$PATCH_DIR"/*.patch; do
+              echo "Applying $p"
+              git -C "$RUNNER_TEMP/webrtc/src" apply --verbose "$GITHUB_WORKSPACE/$p"
+            done
+            # Some Android patches change src/build, which is a separate repository; patch(1) does not care.
+            for p in "$PATCH_DIR"/android/*.patch; do
+              echo "Applying $p"
+              patch -p1 --forward --batch -d "$RUNNER_TEMP/webrtc/src" < "$GITHUB_WORKSPACE/$p"
+            done
+          } 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Build and package
+        run: |
+          set -o pipefail
+          bash "BuildScripts~/libwebrtc/build_android.sh" "$RUNNER_TEMP/webrtc" "$RUNNER_TEMP/package" 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+          (cd "$RUNNER_TEMP/package" && zip -qr "$GITHUB_WORKSPACE/webrtc-android.zip" .)
+          sha256sum webrtc-android.zip | tee webrtc-android.zip.sha256
+          ls -lh webrtc-android.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-android
+          path: |
+            webrtc-android.zip
+            webrtc-android.zip.sha256
+          if-no-files-found: error
+
+      - name: Publish to libwebrtc-M${{ env.WEBRTC_MILESTONE }}
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="libwebrtc-M$WEBRTC_MILESTONE"
+          gh release view "$tag" > /dev/null 2>&1 || gh release create "$tag" --prerelease --target "$GITHUB_SHA" \
+            --title "Prebuilt libwebrtc M$WEBRTC_MILESTONE" \
+            --notes "libwebrtc branch-heads/$WEBRTC_BRANCH built by the libwebrtc-<platform>.yml workflows of ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} with Chromium's libc++. See VERSIONS in each package."
+          gh release upload "$tag" webrtc-android.zip webrtc-android.zip.sha256 --clobber
+
+      # Workflow logs need a GitHub login to read; push the log and a description of the package to a branch.
+      - name: Push the log
+        if: always()
+        run: |
+          # Collect whatever exists; a failed build has no package directory.
+          set +e +o pipefail
+          branch="ci-logs/libwebrtc-android-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          # Keep the log below GitHub's file size limit.
+          tail -c 40000000 "$RUNNER_TEMP/build.log" > build.log 2>/dev/null || echo "no log" > build.log
+          grep -n -E 'error|Error|FAILED|failed' build.log | tail -n 200 > errors.log || true
+          pkg="$RUNNER_TEMP/package"
+          nm="$RUNNER_TEMP/webrtc/src/third_party/llvm-build/Release+Asserts/bin/llvm-nm"
+          {
+            echo "## disk"; df -h /
+            echo "## package files"; (cd "$pkg" 2>/dev/null && find . -maxdepth 3 -type f -not -path './include/*' -exec ls -l {} \;)
+            echo "## include size"; du -sh "$pkg/include" 2>/dev/null
+            echo "## VERSIONS"; cat "$pkg/VERSIONS" 2>/dev/null
+            echo "## cxx_flags.txt"; cat "$pkg/cxx_flags.txt" 2>/dev/null
+            echo "## args.gn"; cat "$pkg/args.gn" 2>/dev/null
+            for cpu in arm64 x64; do
+              lib="$pkg/lib/$cpu/libwebrtc.a"
+              echo "## lib/$cpu/libwebrtc.a"
+              "$nm" -C "$lib" 2>/dev/null | grep -c ' T ' | sed 's/^/defined text symbols: /'
+              "$nm" -C "$lib" 2>/dev/null | grep -c ' T std::__Cr::' | sed 's/^/defined std::__Cr text symbols (libc++): /'
+              "$nm" -C "$lib" 2>/dev/null | grep -c ' T __cxa_' | sed 's/^/defined __cxa_ symbols (libc++abi): /'
+              "$nm" -C "$lib" 2>/dev/null | grep -c ' T _Unwind_' | sed 's/^/defined _Unwind_ symbols (libunwind): /'
+            done
+            echo "## lib/libwebrtc.aar"; unzip -l "$pkg/lib/libwebrtc.aar" 2>/dev/null
+          } > package.txt 2>&1
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Log of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
