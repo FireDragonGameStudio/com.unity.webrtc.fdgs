@@ -21,6 +21,7 @@ gn gen "$out" --args='
   rtc_build_examples=false
   rtc_use_h264=false
   rtc_use_x11=false
+  rtc_use_pipewire=false
   use_rtti=true
   use_custom_libcxx=true
   rtc_rust=false
@@ -52,7 +53,7 @@ test "$size" -gt 50000000 || { echo "libwebrtc.a is only $size bytes"; exit 1; }
 clang="third_party/llvm-build/Release+Asserts/bin/clang"
 "$clang" -shared -fuse-ld=lld -o "$out/libwebrtc_link_check.so" \
   -Wl,--whole-archive "$package/lib/x64/libwebrtc.a" -Wl,--no-whole-archive \
-  -nostdlib++ -Wl,--no-undefined -lm -ldl -lpthread -lrt
+  -nostdlib++ -Wl,--no-undefined -Wl,--error-limit=0 -lm -ldl -lpthread -lrt
 echo "Link check passed: libwebrtc.a has no unresolved symbols"
 
 # Headers: every libwebrtc header and textual include (*.inc, e.g. abseil's int128_have_intrinsic.inc), plus the
