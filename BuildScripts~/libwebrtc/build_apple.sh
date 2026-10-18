@@ -16,11 +16,21 @@ case "$platform" in
     cpus="arm64 x64"
     # Unity 6 supports macOS 11 and later; Chromium defaults to 13.0.
     os_args='target_os="mac" mac_deployment_target="11.0" mac_min_system_version="11.0"'
+    sdk=macosx
+    min_version=-mmacosx-version-min=11.0
+    frameworks="AppKit ApplicationServices AudioToolbox AVFoundation CoreAudio CoreFoundation CoreGraphics CoreMedia
+      CoreServices CoreVideo Foundation IOKit IOSurface Metal MetalKit OpenGL QuartzCore ScreenCaptureKit Security
+      SystemConfiguration VideoToolbox"
     ;;
   ios)
     cpus="arm64"
     # Unity 6 supports iOS 13 and later; Chromium defaults to 18.0. Device build only.
     os_args='target_os="ios" ios_deployment_target="13.0" target_environment="device" ios_enable_code_signing=false'
+    sdk=iphoneos
+    min_version=-miphoneos-version-min=13.0
+    frameworks="AudioToolbox AVFoundation CoreAudio CoreFoundation CoreGraphics CoreMedia CoreTelephony CoreVideo
+      Foundation GLKit IOSurface Metal MetalKit Network OpenGLES QuartzCore Security SystemConfiguration UIKit
+      VideoToolbox"
     ;;
   *) echo "Unknown platform $platform"; exit 1 ;;
 esac
@@ -59,9 +69,19 @@ for cpu in $cpus; do
   libcxx_objects=$(find "$out/obj/buildtools/third_party/libc++" "$out/obj/buildtools/third_party/libc++abi" -name '*.o' | sort)
   echo "Adding $(echo "$libcxx_objects" | wc -l) libc++/libc++abi objects to $cpu"
   test -n "$libcxx_objects" || { echo "No libc++ objects found"; exit 1; }
-  "$ar" rs "$lib" $libcxx_objects
+  # Append with "q", not "r": "r" replaces members with the same name, and libc++'s random.o, vector.o or
+  # algorithm.o would overwrite libwebrtc's (rtc_base, libaom, BoringSSL) objects of the same name.
+  "$ar" q "$lib" $libcxx_objects
+  "$ar" s "$lib"
   size=$(stat -f %z "$lib")
   test "$size" -gt 30000000 || { echo "libwebrtc.a ($cpu) is only $size bytes"; exit 1; }
+
+  # Every symbol used inside libwebrtc.a must be defined in it or in the system libraries and frameworks:
+  # link all of it into a dynamic library without the system C++ library and refuse unresolved symbols.
+  arch=$([ "$cpu" = x64 ] && echo x86_64 || echo "$cpu")
+  framework_flags=$(for f in $frameworks; do printf -- '-framework %s ' "$f"; done)
+  xcrun --sdk "$sdk" clang -dynamiclib -arch "$arch" "$min_version" -o "$out/libwebrtc_link_check.dylib"     -Wl,-all_load "$lib" -nostdlib++ -lobjc $framework_flags -Wl,-undefined,error
+  echo "Link check passed: libwebrtc.a ($arch) has no unresolved symbols"
   libs+=("$lib")
 done
 # The first build (arm64) describes the package.
