@@ -112,8 +112,12 @@ jobs:
 
       - name: Check exports
         run: |
+          # Trace into the log that is pushed below: workflow logs need a login.
+          exec > >(tee -a "$RUNNER_TEMP/framework.txt") 2>&1
+          set -x
           bin=$FRAMEWORK/webrtc
-          test -f "$bin" || { echo "::error::$bin was not built"; ls -lR Runtime/Plugins/iOS; exit 1; }
+          ls -lR "$FRAMEWORK"
+          test -f "$bin" || { echo "::error::$bin was not built"; exit 1; }
           # Keep the exported symbols only (as Xcode's STRIP_STYLE non-global).
           strip -x "$bin"
           lipo "$bin" -verify_arch arm64 || { echo "::error::$bin has no arm64 slice"; exit 1; }
@@ -125,16 +129,14 @@ jobs:
           if otool -L "$bin" | grep -E 'libc\+\+|libstdc\+\+'; then
             echo "::error::$bin must not depend on a system C++ library"; exit 1
           fi
+          cat "$FRAMEWORK/Info.plist"
           plutil -lint "$FRAMEWORK/Info.plist"
-          {
-            plutil -p "$FRAMEWORK/Info.plist"
-            lipo -info "$bin"
-            vtool -show-build "$bin" | grep -E 'platform|minos|sdk'
-            otool -L "$bin"
-            otool -D "$bin"
-            echo "Exported symbols: $(nm -gU "$bin" | wc -l)"
-            ls -lR "$FRAMEWORK"
-          } | tee "$RUNNER_TEMP/framework.txt"
+          plutil -p "$FRAMEWORK/Info.plist"
+          lipo -info "$bin"
+          vtool -show-build "$bin" | grep -E 'platform|minos|sdk'
+          otool -L "$bin"
+          otool -D "$bin"
+          echo "Exported symbols: $(nm -gU "$bin" | wc -l)"
           # The keys Unity and Xcode need from the framework.
           for key in CFBundleExecutable CFBundleIdentifier CFBundlePackageType CFBundleVersion MinimumOSVersion; do
             /usr/libexec/PlistBuddy -c "Print :$key" "$FRAMEWORK/Info.plist" > /dev/null \
