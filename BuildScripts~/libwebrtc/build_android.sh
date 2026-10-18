@@ -83,10 +83,12 @@ for pair in $abis; do
   # Every symbol used inside libwebrtc.a must be defined in it or in the Android system libraries: link all of
   # it into a shared library without a C++ library or unwinder and refuse unresolved symbols.
   case "$cpu" in arm64) triple=aarch64-linux-android ;; x64) triple=x86_64-linux-android ;; esac
-  # The system libraries are the ones GN links into libjingle_peerconnection_so.so (libwebrtc plus the JNI
-  # code), at the API level of the build (GN's android_ndk_api_level), so a library newer than that fails here.
-  system_libs=$(grep -h -E '^\s*libs = ' "$out/obj/sdk/android/libjingle_peerconnection_so.ninja" | sed 's/^\s*libs = //' | tr ' ' '\n' \
-    | grep -E '^-l' | sort -u | tr '\n' ' ' || true)
+  # The system libraries are the "libs" GN collects for //:webrtc from all its dependencies, linked at the API
+  # level of the build (GN's android_ndk_api_level), so a library newer than that fails here.
+  gn desc "$out" //:webrtc libs > "$out/webrtc_libs.txt" || true
+  echo "gn desc //:webrtc libs:"; cat "$out/webrtc_libs.txt"
+  system_libs=$(grep -E '^\s*[A-Za-z0-9_+.-]+\s*$' "$out/webrtc_libs.txt" | sed -E 's/^\s*/-l/; s/\s*$//' | sort -u | tr '\n' ' ' || true)
+  echo "$system_libs" | grep -q -- '-lOpenSLES' || { echo "Expected -lOpenSLES in the GN libs of //:webrtc"; exit 1; }
   api_level=$(gn args "$out" --list=android_ndk_api_level --short | sed 's/.*= *//')
   echo "System libraries ($abi, API $api_level): $system_libs"
   if "$clang" --target="$triple$api_level" --sysroot="$sysroot" -shared -fuse-ld=lld --unwindlib=none \
@@ -151,7 +153,7 @@ WEBRTC_BRANCH=branch-heads/${WEBRTC_BRANCH:-unknown}
 WEBRTC_COMMIT=$(git rev-parse HEAD)
 LIBCXX_COMMIT=$(git -C third_party/libc++/src rev-parse HEAD)
 CLANG_REVISION=$(python3 tools/clang/scripts/update.py --print-revision)
-ANDROID_NDK_VERSION=$(gn args "$first_out" --list=android_ndk_version --short | sed 's/.*= *//; s/"//g')
+ANDROID_NDK_VERSION=$(grep -oE "'android_ndk_version': Str\('[^']+" DEPS | sed "s/.*('//; s/^[0-9]*@//")
 ANDROID_MIN_SDK=$api_level
 ANDROID_SYSTEM_LIBS=$system_libs
 VERSIONS
