@@ -81,6 +81,12 @@ if(WEBRTC_USES_BUNDLED_LIBCXX)
   if(NOT MSVC)
     add_link_options(-nostdlib++)
   endif()
+  if(Linux)
+    # Without a C++ library the driver does not link libm either, which libc++ needs. The plugin does not
+    # export the symbols of libwebrtc.a and its libc++.
+    link_libraries(m)
+    add_link_options(-Wl,--exclude-libs,libwebrtc.a)
+  endif()
 endif()
 
 if(iOS OR macOS)

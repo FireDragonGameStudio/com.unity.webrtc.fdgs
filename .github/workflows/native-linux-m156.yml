@@ -95,8 +95,6 @@ jobs:
             -DCMAKE_C_COMPILER="$RUNNER_TEMP/clang/bin/clang" \
             -DCMAKE_CXX_COMPILER="$RUNNER_TEMP/clang/bin/clang++" \
             -DCMAKE_CUDA_HOST_COMPILER=g++ \
-            -DCMAKE_AR="$RUNNER_TEMP/clang/bin/llvm-ar" \
-            -DCMAKE_RANLIB="$RUNNER_TEMP/clang/bin/llvm-ranlib" \
             -DPython3_EXECUTABLE="$(command -v python3)" 2>&1 | tee -a "$RUNNER_TEMP/build.log"
 
       # -k 0 reports every compile error in one run.
