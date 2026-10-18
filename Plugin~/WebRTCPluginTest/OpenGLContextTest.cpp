@@ -22,7 +22,7 @@ namespace webrtc
     TEST_P(OpenGLContextTest, CurrentContextOnOtherThread)
     {
         std::unique_ptr<GraphicsDeviceContainer> container = CreateGraphicsDeviceContainer(GetParam());
-        std::unique_ptr<rtc::Thread> thread = rtc::Thread::CreateWithSocketServer();
+        std::unique_ptr<::webrtc::Thread> thread = ::webrtc::Thread::CreateWithSocketServer();
         thread->Start();
 
         std::unique_ptr<OpenGLContext> context =
@@ -33,7 +33,7 @@ namespace webrtc
     TEST_P(OpenGLContextTest, CreateContextOnOtherThread)
     {
         std::unique_ptr<GraphicsDeviceContainer> container = CreateGraphicsDeviceContainer(GetParam());
-        std::unique_ptr<rtc::Thread> thread = rtc::Thread::CreateWithSocketServer();
+        std::unique_ptr<::webrtc::Thread> thread = ::webrtc::Thread::CreateWithSocketServer();
         thread->Start();
 
         std::unique_ptr<OpenGLContext> context = OpenGLContext::CurrentContext();

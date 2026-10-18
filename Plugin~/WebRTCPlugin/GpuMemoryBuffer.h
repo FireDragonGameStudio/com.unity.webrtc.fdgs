@@ -29,12 +29,12 @@ namespace webrtc
     };
 
     class ITexture2D;
-    class GpuMemoryBufferInterface : public rtc::RefCountInterface
+    class GpuMemoryBufferInterface : public ::webrtc::RefCountInterface
     {
     public:
         virtual Size GetSize() const = 0;
         virtual UnityRenderingExtTextureFormat GetFormat() const = 0;
-        virtual rtc::scoped_refptr<I420BufferInterface> ToI420() = 0;
+        virtual ::webrtc::scoped_refptr<I420BufferInterface> ToI420() = 0;
 
         virtual const GpuMemoryBufferHandle* handle() const = 0;
 
@@ -53,7 +53,7 @@ namespace webrtc
         bool CopyBuffer(NativeTexPtr ptr);
         UnityRenderingExtTextureFormat GetFormat() const override;
         Size GetSize() const override;
-        rtc::scoped_refptr<I420BufferInterface> ToI420() override;
+        ::webrtc::scoped_refptr<I420BufferInterface> ToI420() override;
         const GpuMemoryBufferHandle* handle() const override;
 
     protected:

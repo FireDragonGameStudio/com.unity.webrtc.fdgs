@@ -372,7 +372,7 @@ namespace webrtc
         return true;
     }
 
-    rtc::scoped_refptr<webrtc::I420Buffer> VulkanGraphicsDevice::ConvertRGBToI420(ITexture2D* tex)
+    ::webrtc::scoped_refptr<webrtc::I420Buffer> VulkanGraphicsDevice::ConvertRGBToI420(ITexture2D* tex)
     {
         VulkanTexture2D* vulkanTexture = static_cast<VulkanTexture2D*>(tex);
         const int32_t width = static_cast<int32_t>(tex->GetWidth());
@@ -389,7 +389,7 @@ namespace webrtc
         }
 
         // convert format to i420
-        rtc::scoped_refptr<webrtc::I420Buffer> i420Buffer = webrtc::I420Buffer::Create(width, height);
+        ::webrtc::scoped_refptr<webrtc::I420Buffer> i420Buffer = webrtc::I420Buffer::Create(width, height);
         libyuv::ARGBToI420(
             (const uint8_t*)data,
             rowPitch,

@@ -20,7 +20,7 @@ namespace webrtc
 
         virtual ~GpuMemoryBufferPool();
 
-        rtc::scoped_refptr<VideoFrame>
+        ::webrtc::scoped_refptr<VideoFrame>
         CreateFrame(NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format, Timestamp timestamp);
         void ReleaseStaleBuffers(Timestamp timestamp, TimeDelta timeLimit);
 
@@ -29,12 +29,12 @@ namespace webrtc
     private:
         struct FrameResources
         {
-            FrameResources(rtc::scoped_refptr<GpuMemoryBufferInterface> buffer)
+            FrameResources(::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer)
                 : buffer_(std::move(buffer))
                 , lastUsetime_(Timestamp::Zero())
             {
             }
-            rtc::scoped_refptr<GpuMemoryBufferInterface> buffer_;
+            ::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer_;
             bool IsUsed() { return isUsed_; }
             void MarkUsed(Timestamp timestamp)
             {
@@ -50,9 +50,9 @@ namespace webrtc
             bool isUsed_;
             Timestamp lastUsetime_;
         };
-        rtc::scoped_refptr<GpuMemoryBufferInterface>
+        ::webrtc::scoped_refptr<GpuMemoryBufferInterface>
         GetOrCreateFrameResources(NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format);
-        void OnReturnBuffer(rtc::scoped_refptr<GpuMemoryBufferInterface> buffer);
+        void OnReturnBuffer(::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer);
 
         static bool AreFrameResourcesCompatible(
             const FrameResources* resources, const Size& size, UnityRenderingExtTextureFormat format);

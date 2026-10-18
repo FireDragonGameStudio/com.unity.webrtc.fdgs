@@ -26,7 +26,7 @@ namespace webrtc
         [m_texture release];
     }
 
-    rtc::scoped_refptr<I420Buffer> MetalTexture2D::ConvertI420Buffer()
+    ::webrtc::scoped_refptr<I420Buffer> MetalTexture2D::ConvertI420Buffer()
     {
         RTC_DCHECK(m_texture);
         RTC_DCHECK_GT(m_width, 0);

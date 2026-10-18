@@ -68,8 +68,8 @@ namespace webrtc
         std::unique_ptr<FrameGeneratorInterface> CreateFrameGenerator(
             int width,
             int height,
-            absl::optional<FrameGeneratorInterface::OutputType> type,
-            absl::optional<int> num_squares) override
+            std::optional<FrameGeneratorInterface::OutputType> type,
+            std::optional<int> num_squares) override
         {
             return CreateVideoFrameGenerator(container_->device(), width, height, type, num_squares);
         }

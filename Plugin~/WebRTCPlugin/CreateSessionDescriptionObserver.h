@@ -15,7 +15,7 @@ namespace webrtc
     class CreateSessionDescriptionObserver : public ::webrtc::CreateSessionDescriptionObserver
     {
     public:
-        static rtc::scoped_refptr<CreateSessionDescriptionObserver> Create(PeerConnectionObject* connection);
+        static ::webrtc::scoped_refptr<CreateSessionDescriptionObserver> Create(PeerConnectionObject* connection);
         static void RegisterCallback(DelegateCreateSessionDesc callback) { s_createSessionDescCallback = callback; }
 
         void OnSuccess(SessionDescriptionInterface* desc) override;

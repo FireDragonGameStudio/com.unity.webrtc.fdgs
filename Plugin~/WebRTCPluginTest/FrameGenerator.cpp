@@ -14,8 +14,8 @@ namespace webrtc
         IGraphicsDevice* device,
         int width,
         int height,
-        absl::optional<FrameGeneratorInterface::OutputType> type,
-        absl::optional<int> num_squares)
+        std::optional<FrameGeneratorInterface::OutputType> type,
+        std::optional<int> num_squares)
     {
         return std::make_unique<VideoFrameGenerator>(
             device, width, height, type.value_or(FrameGeneratorInterface::OutputType::kI420), num_squares.value_or(10));
@@ -53,12 +53,12 @@ namespace webrtc
             device_->CreateDefaultTextureV(static_cast<uint32_t>(width_), static_cast<uint32_t>(height_), kFormat);
 
         queue_.push(std::unique_ptr<ITexture2D>(texture));
-        rtc::scoped_refptr<VideoFrame> frame = CreateTestFrame(device_, texture, kFormat);
+        ::webrtc::scoped_refptr<VideoFrame> frame = CreateTestFrame(device_, texture, kFormat);
         EXPECT_TRUE(device_->WaitIdleForTest());
 
         ::webrtc::VideoFrame videoFrame = VideoFrameAdapter::CreateVideoFrame(frame);
-        rtc::scoped_refptr<VideoFrameBuffer> buffer = videoFrame.video_frame_buffer();
-        return VideoFrameData(buffer, absl::nullopt);
+        ::webrtc::scoped_refptr<VideoFrameBuffer> buffer = videoFrame.video_frame_buffer();
+        return VideoFrameData(buffer, std::nullopt);
     }
 }
 }

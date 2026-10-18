@@ -148,10 +148,10 @@ namespace webrtc
         return new MetalTexture2D(width, height, texture);
     }
 
-    rtc::scoped_refptr<webrtc::I420Buffer> MetalGraphicsDevice::ConvertRGBToI420(ITexture2D* texture)
+    ::webrtc::scoped_refptr<webrtc::I420Buffer> MetalGraphicsDevice::ConvertRGBToI420(ITexture2D* texture)
     {
         MetalTexture2D* texture2D = static_cast<MetalTexture2D*>(texture);
-        rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer = texture2D->ConvertI420Buffer();
+        ::webrtc::scoped_refptr<webrtc::I420Buffer> i420_buffer = texture2D->ConvertI420Buffer();
 
         // Notify finishing usage of semaphore.
         dispatch_semaphore_t semaphore = texture2D->GetSemaphore();

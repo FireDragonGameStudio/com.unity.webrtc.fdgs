@@ -9,13 +9,13 @@ namespace webrtc
 {
     DelegateCollectStats PeerConnectionStatsCollectorCallback::s_collectStatsCallback = nullptr;
 
-    rtc::scoped_refptr<PeerConnectionStatsCollectorCallback>
+    ::webrtc::scoped_refptr<PeerConnectionStatsCollectorCallback>
     PeerConnectionStatsCollectorCallback::Create(PeerConnectionObject* connection)
     {
-        return rtc::make_ref_counted<PeerConnectionStatsCollectorCallback>(connection);
+        return ::webrtc::make_ref_counted<PeerConnectionStatsCollectorCallback>(connection);
     }
     void PeerConnectionStatsCollectorCallback::OnStatsDelivered(
-        const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
+        const ::webrtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
     {
         m_owner->ReceiveStatsReport(report);
         s_collectStatsCallback(m_owner, this, report.get());

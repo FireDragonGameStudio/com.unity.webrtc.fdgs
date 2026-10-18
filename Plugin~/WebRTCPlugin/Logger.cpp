@@ -14,7 +14,7 @@ namespace webrtc
 {
     DelegateDebugLog delegateDebugLog = nullptr;
 
-    void debugLog(rtc::LoggingSeverity severity, const char* buf)
+    void debugLog(::webrtc::LoggingSeverity severity, const char* buf)
     {
         if (delegateDebugLog != nullptr)
         {
@@ -22,7 +22,7 @@ namespace webrtc
         }
     }
 
-    void LogPrint(rtc::LoggingSeverity severity, const char* fmt, ...)
+    void LogPrint(::webrtc::LoggingSeverity severity, const char* fmt, ...)
     {
 #if _DEBUG
         va_list vl;

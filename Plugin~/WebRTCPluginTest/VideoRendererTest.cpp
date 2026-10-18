@@ -51,7 +51,7 @@ namespace webrtc
 
         ::webrtc::VideoFrame::Builder CreateBlackFrameBuilder(int width, int height)
         {
-            rtc::scoped_refptr<webrtc::I420Buffer> buffer = webrtc::I420Buffer::Create(width, height);
+            ::webrtc::scoped_refptr<webrtc::I420Buffer> buffer = webrtc::I420Buffer::Create(width, height);
 
             webrtc::I420Buffer::SetBlack(buffer.get());
             return ::webrtc::VideoFrame::Builder().set_video_frame_buffer(buffer).set_timestamp_us(

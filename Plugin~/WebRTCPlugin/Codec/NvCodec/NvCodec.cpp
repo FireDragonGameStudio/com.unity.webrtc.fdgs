@@ -75,7 +75,7 @@ namespace webrtc
         std::vector<H264Profile> supportedProfiles;
         for (auto& guid : profileGUIDs)
         {
-            absl::optional<H264Profile> profile = GuidToProfile(guid);
+            std::optional<H264Profile> profile = GuidToProfile(guid);
             if (profile.has_value())
                 supportedProfiles.push_back(profile.value());
         }
@@ -137,7 +137,7 @@ namespace webrtc
     }
 
     std::unique_ptr<NvEncoder> NvEncoder::Create(
-        const cricket::VideoCodec& codec,
+        const ::webrtc::Codec& codec,
         CUcontext context,
         CUmemorytype memoryType,
         NV_ENC_BUFFER_FORMAT format,
@@ -184,7 +184,7 @@ namespace webrtc
     }
 
     std::unique_ptr<NvDecoder>
-    NvDecoder::Create(const cricket::VideoCodec& codec, CUcontext context, ProfilerMarkerFactory* profiler)
+    NvDecoder::Create(const ::webrtc::Codec& codec, CUcontext context, ProfilerMarkerFactory* profiler)
     {
         return std::make_unique<NvDecoderImpl>(context, profiler);
     }
@@ -219,7 +219,7 @@ namespace webrtc
     std::unique_ptr<VideoEncoder> NvEncoderFactory::CreateVideoEncoder(const SdpVideoFormat& format)
     {
         // todo(kazuki):: add CUmemorytype::CU_MEMORYTYPE_DEVICE option
-        return NvEncoder::Create(cricket::CreateVideoCodec(format), context_, CU_MEMORYTYPE_ARRAY, format_, profiler_);
+        return NvEncoder::Create(::webrtc::CreateVideoCodec(format), context_, CU_MEMORYTYPE_ARRAY, format_, profiler_);
     }
 
     NvDecoderFactory::NvDecoderFactory(CUcontext context, ProfilerMarkerFactory* profiler)
@@ -236,7 +236,7 @@ namespace webrtc
 
     std::unique_ptr<VideoDecoder> NvDecoderFactory::CreateVideoDecoder(const SdpVideoFormat& format)
     {
-        return NvDecoder::Create(cricket::CreateVideoCodec(format), context_, profiler_);
+        return NvDecoder::Create(::webrtc::CreateVideoCodec(format), context_, profiler_);
     }
 }
 }

@@ -8,7 +8,7 @@ namespace webrtc
 {
 
     DataChannelObject::DataChannelObject(
-        rtc::scoped_refptr<webrtc::DataChannelInterface> channel, PeerConnectionObject& pc)
+        ::webrtc::scoped_refptr<webrtc::DataChannelInterface> channel, PeerConnectionObject& pc)
         : dataChannel(channel)
         , onMessage(nullptr)
         , onOpen(nullptr)

@@ -10,16 +10,16 @@ namespace unity
 namespace webrtc
 {
 
-    rtc::scoped_refptr<UnityAudioTrackSource> UnityAudioTrackSource::Create()
+    ::webrtc::scoped_refptr<UnityAudioTrackSource> UnityAudioTrackSource::Create()
     {
-        rtc::scoped_refptr<UnityAudioTrackSource> source(new rtc::RefCountedObject<UnityAudioTrackSource>());
+        ::webrtc::scoped_refptr<UnityAudioTrackSource> source(new ::webrtc::RefCountedObject<UnityAudioTrackSource>());
         return source;
     }
 
-    rtc::scoped_refptr<UnityAudioTrackSource> UnityAudioTrackSource::Create(const cricket::AudioOptions& audio_options)
+    ::webrtc::scoped_refptr<UnityAudioTrackSource> UnityAudioTrackSource::Create(const ::webrtc::AudioOptions& audio_options)
     {
-        rtc::scoped_refptr<UnityAudioTrackSource> source(
-            new rtc::RefCountedObject<UnityAudioTrackSource>(audio_options));
+        ::webrtc::scoped_refptr<UnityAudioTrackSource> source(
+            new ::webrtc::RefCountedObject<UnityAudioTrackSource>(audio_options));
         return source;
     }
 
@@ -75,7 +75,7 @@ namespace webrtc
     }
 
     UnityAudioTrackSource::UnityAudioTrackSource() { }
-    UnityAudioTrackSource::UnityAudioTrackSource(const cricket::AudioOptions& audio_options)
+    UnityAudioTrackSource::UnityAudioTrackSource(const ::webrtc::AudioOptions& audio_options)
         : _options(audio_options)
     {
     }

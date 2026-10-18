@@ -18,7 +18,7 @@ namespace webrtc
 
     GpuMemoryBufferPool::~GpuMemoryBufferPool() { }
 
-    rtc::scoped_refptr<VideoFrame> GpuMemoryBufferPool::CreateFrame(
+    ::webrtc::scoped_refptr<VideoFrame> GpuMemoryBufferPool::CreateFrame(
         NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format, Timestamp timestamp)
     {
         auto buffer = GetOrCreateFrameResources(ptr, size, format);
@@ -31,7 +31,7 @@ namespace webrtc
             size, buffer, callback, webrtc::TimeDelta::Micros(timestamp.us()));
     }
 
-    rtc::scoped_refptr<GpuMemoryBufferInterface> GpuMemoryBufferPool::GetOrCreateFrameResources(
+    ::webrtc::scoped_refptr<GpuMemoryBufferInterface> GpuMemoryBufferPool::GetOrCreateFrameResources(
         NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format)
     {
         std::lock_guard<std::mutex> lock(mutex_);
@@ -56,8 +56,8 @@ namespace webrtc
                 return resources->buffer_;
             }
         }
-        rtc::scoped_refptr<GpuMemoryBufferFromUnity> buffer =
-            rtc::make_ref_counted<GpuMemoryBufferFromUnity>(device_, size, format);
+        ::webrtc::scoped_refptr<GpuMemoryBufferFromUnity> buffer =
+            ::webrtc::make_ref_counted<GpuMemoryBufferFromUnity>(device_, size, format);
         if (!buffer->CopyBuffer(ptr))
         {
             RTC_LOG(LS_INFO) << "Copy buffer is failed.";
@@ -75,7 +75,7 @@ namespace webrtc
         return resources->buffer_->GetSize() == size && resources->buffer_->GetFormat() == format;
     }
 
-    void GpuMemoryBufferPool::OnReturnBuffer(rtc::scoped_refptr<GpuMemoryBufferInterface> buffer)
+    void GpuMemoryBufferPool::OnReturnBuffer(::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer)
     {
         std::lock_guard<std::mutex> lock(mutex_);
 

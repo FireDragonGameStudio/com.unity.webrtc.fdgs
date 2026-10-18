@@ -29,7 +29,7 @@ namespace webrtc
 
     void UnityVideoRenderer::OnFrame(const webrtc::VideoFrame& frame)
     {
-        rtc::scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer = frame.video_frame_buffer();
+        ::webrtc::scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer = frame.video_frame_buffer();
 
         if (frame_buffer->type() == webrtc::VideoFrameBuffer::Type::kNative)
         {
@@ -40,7 +40,7 @@ namespace webrtc
 
     uint32_t UnityVideoRenderer::GetId() { return m_id; }
 
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> UnityVideoRenderer::GetFrameBuffer()
+    ::webrtc::scoped_refptr<webrtc::VideoFrameBuffer> UnityVideoRenderer::GetFrameBuffer()
     {
         std::unique_lock<std::mutex> lock(m_mutex);
         if (!lock.owns_lock())
@@ -56,7 +56,7 @@ namespace webrtc
         return m_frameBuffer;
     }
 
-    void UnityVideoRenderer::SetFrameBuffer(rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer, int64_t timestamp)
+    void UnityVideoRenderer::SetFrameBuffer(::webrtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer, int64_t timestamp)
     {
         std::unique_lock<std::mutex> lock(m_mutex);
         if (!lock.owns_lock())
@@ -91,7 +91,7 @@ namespace webrtc
         if (!frame)
             return tempBuffer.data();
 
-        rtc::scoped_refptr<webrtc::I420BufferInterface> i420_buffer = frame->ToI420();
+        ::webrtc::scoped_refptr<webrtc::I420BufferInterface> i420_buffer = frame->ToI420();
         if (!i420_buffer)
             return tempBuffer.data();
 

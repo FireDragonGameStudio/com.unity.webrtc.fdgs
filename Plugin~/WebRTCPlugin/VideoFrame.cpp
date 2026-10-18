@@ -12,7 +12,7 @@ namespace webrtc
 
     VideoFrame::VideoFrame(
         const Size& size,
-        rtc::scoped_refptr<GpuMemoryBufferInterface> buffer,
+        ::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer,
         ReturnBufferToPoolCallback returnBufferToPoolCallback,
         TimeDelta timestamp)
         : size_(size)
@@ -30,13 +30,13 @@ namespace webrtc
         }
     }
 
-    rtc::scoped_refptr<VideoFrame> VideoFrame::WrapExternalGpuMemoryBuffer(
+    ::webrtc::scoped_refptr<VideoFrame> VideoFrame::WrapExternalGpuMemoryBuffer(
         const Size& size,
-        rtc::scoped_refptr<GpuMemoryBufferInterface> buffer,
+        ::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer,
         ReturnBufferToPoolCallback returnBufferToPoolCallback,
         TimeDelta timestamp)
     {
-        return rtc::make_ref_counted<VideoFrame>(size, std::move(buffer), returnBufferToPoolCallback, timestamp);
+        return ::webrtc::make_ref_counted<VideoFrame>(size, std::move(buffer), returnBufferToPoolCallback, timestamp);
     }
 
     bool VideoFrame::HasGpuMemoryBuffer() const { return gpu_memory_buffer_ != nullptr; }

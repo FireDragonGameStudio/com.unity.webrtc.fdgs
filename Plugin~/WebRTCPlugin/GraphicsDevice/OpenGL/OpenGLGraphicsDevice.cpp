@@ -233,7 +233,7 @@ namespace webrtc
 #endif
     }
 
-    rtc::scoped_refptr<webrtc::I420Buffer> OpenGLGraphicsDevice::ConvertRGBToI420(ITexture2D* tex)
+    ::webrtc::scoped_refptr<webrtc::I420Buffer> OpenGLGraphicsDevice::ConvertRGBToI420(ITexture2D* tex)
     {
         if (!EnsureContext())
             return nullptr;
@@ -263,7 +263,7 @@ namespace webrtc
         glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
         // RGBA -> I420
-        rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer = webrtc::I420Buffer::Create(width, height);
+        ::webrtc::scoped_refptr<webrtc::I420Buffer> i420_buffer = webrtc::I420Buffer::Create(width, height);
         libyuv::ABGRToI420(
             static_cast<uint8_t*>(data),
             width * 4,

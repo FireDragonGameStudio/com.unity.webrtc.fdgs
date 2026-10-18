@@ -120,8 +120,8 @@ namespace webrtc
         }
 
         m_h264_bitstream_parser.ParseBitstream(input_image);
-        absl::optional<int> qp = m_h264_bitstream_parser.GetLastSliceQp();
-        absl::optional<SpsParser::SpsState> sps = m_h264_bitstream_parser.sps();
+        std::optional<int> qp = m_h264_bitstream_parser.GetLastSliceQp();
+        std::optional<SpsParser::SpsState> sps = m_h264_bitstream_parser.sps();
 
         if (m_isConfiguredDecoder)
         {
@@ -159,7 +159,7 @@ namespace webrtc
             int64_t timeStamp;
             uint8_t* pFrame = m_decoder->GetFrame(&timeStamp);
 
-            rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer =
+            ::webrtc::scoped_refptr<webrtc::I420Buffer> i420_buffer =
                 m_buffer_pool.CreateI420Buffer(m_decoder->GetWidth(), m_decoder->GetHeight());
 
             int result;
@@ -195,7 +195,7 @@ namespace webrtc
                                            .build();
 
             // todo: measurement decoding time
-            absl::optional<int32_t> decodetime;
+            std::optional<int32_t> decodetime;
             m_decodedCompleteCallback->Decoded(decoded_frame, decodetime, qp);
         }
 

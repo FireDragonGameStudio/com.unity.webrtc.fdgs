@@ -19,7 +19,7 @@ namespace webrtc
     class DataChannelObject : public DataChannelObserver
     {
     public:
-        DataChannelObject(rtc::scoped_refptr<DataChannelInterface> channel, PeerConnectionObject& pc);
+        DataChannelObject(::webrtc::scoped_refptr<DataChannelInterface> channel, PeerConnectionObject& pc);
         ~DataChannelObject() override;
 
         void Close() { dataChannel->Close(); }
@@ -33,7 +33,7 @@ namespace webrtc
         //  A data buffer was successfully received.
         void OnMessage(const webrtc::DataBuffer& buffer) override;
 
-        rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel;
+        ::webrtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel;
         DelegateOnMessage onMessage;
         DelegateOnOpen onOpen;
         DelegateOnClose onClose;

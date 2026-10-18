@@ -17,7 +17,7 @@ namespace webrtc
 
     int32_t DummyAudioDevice::Init()
     {
-        taskQueue_ = std::make_unique<rtc::TaskQueue>(
+        taskQueue_ = (
             tackQueueFactory_->CreateTaskQueue("AudioDevice", TaskQueueFactory::Priority::NORMAL));
         task_ = RepeatingTaskHandle::Start(taskQueue_->Get(), [this]() {
             ProcessAudio();

@@ -34,7 +34,7 @@ namespace webrtc
             }
 
             VideoEncoderFactory::CodecSupport
-            QueryCodecSupport(const SdpVideoFormat& format, absl::optional<std::string> scalability_mode) const override
+            QueryCodecSupport(const SdpVideoFormat& format, std::optional<std::string> scalability_mode) const override
             {
                 // Format must be one of the internal formats.
                 RTC_DCHECK(format.IsCodecInList(internal_encoder_factory_->GetSupportedFormats()));
