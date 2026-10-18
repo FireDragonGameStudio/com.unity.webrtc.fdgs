@@ -41,7 +41,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif()
 
 set(CMAKE_C_STANDARD 17)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -72,6 +72,16 @@ find_package(Threads REQUIRED)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(WebRTC REQUIRED)
+
+if(WEBRTC_USES_BUNDLED_LIBCXX)
+  # libwebrtc was built with Chromium's libc++ (namespace std::__Cr). All C++ code that shares standard
+  # library types with it must be compiled against the same headers, and the C++ runtime comes from
+  # libwebrtc.a instead of the system. The CUDA kernels do not use the standard library.
+  add_compile_options("$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:${WEBRTC_CXX_FLAGS}>")
+  if(NOT MSVC)
+    add_link_options(-nostdlib++)
+  endif()
+endif()
 
 if(iOS OR macOS)
   find_package(Framework REQUIRED)
