@@ -35,9 +35,8 @@ namespace webrtc
         // to receive audio which is stereo channel usually, in this case we need to
         // resample audio monoural to stereo.
         webrtc::voe::RemixAndResample(
-            static_cast<const int16_t*>(audio_data),
-            number_of_frames,
-            number_of_channels,
+            ::webrtc::InterleavedView<const int16_t>(
+                static_cast<const int16_t*>(audio_data), number_of_frames, number_of_channels),
             sample_rate,
             &_resampler,
             &_frame);

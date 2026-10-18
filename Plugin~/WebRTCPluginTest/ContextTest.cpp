@@ -183,7 +183,7 @@ namespace webrtc
         EXPECT_NE(nullptr, track);
         const auto renderer = context->CreateVideoRenderer(callback_videoframeresize, true);
         EXPECT_NE(nullptr, renderer);
-        track->AddOrUpdateSink(renderer, rtc::VideoSinkWants());
+        track->AddOrUpdateSink(renderer, ::webrtc::VideoSinkWants());
         track->RemoveSink(renderer);
         context->DeleteVideoRenderer(renderer);
     }

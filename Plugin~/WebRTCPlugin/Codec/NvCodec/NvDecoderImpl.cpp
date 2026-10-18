@@ -120,8 +120,8 @@ namespace webrtc
         }
 
         m_h264_bitstream_parser.ParseBitstream(input_image);
-        absl::optional<int> qp = m_h264_bitstream_parser.GetLastSliceQp();
-        absl::optional<SpsParser::SpsState> sps = m_h264_bitstream_parser.sps();
+        std::optional<int> qp = m_h264_bitstream_parser.GetLastSliceQp();
+        std::optional<SpsParser::SpsState> sps = m_h264_bitstream_parser.sps();
 
         if (m_isConfiguredDecoder)
         {
@@ -136,7 +136,7 @@ namespace webrtc
         do
         {
             nFrameReturnd = m_decoder->Decode(
-                input_image.data(), static_cast<int>(input_image.size()), CUVID_PKT_TIMESTAMP, input_image.Timestamp());
+                input_image.data(), static_cast<int>(input_image.size()), CUVID_PKT_TIMESTAMP, input_image.RtpTimestamp());
         } while (nFrameReturnd == 0);
 
         m_isConfiguredDecoder = true;
@@ -159,7 +159,7 @@ namespace webrtc
             int64_t timeStamp;
             uint8_t* pFrame = m_decoder->GetFrame(&timeStamp);
 
-            rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer =
+            ::webrtc::scoped_refptr<webrtc::I420Buffer> i420_buffer =
                 m_buffer_pool.CreateI420Buffer(m_decoder->GetWidth(), m_decoder->GetHeight());
 
             int result;
@@ -190,12 +190,12 @@ namespace webrtc
 
             VideoFrame decoded_frame = VideoFrame::Builder()
                                            .set_video_frame_buffer(i420_buffer)
-                                           .set_timestamp_rtp(static_cast<uint32_t>(timeStamp))
+                                           .set_rtp_timestamp(static_cast<uint32_t>(timeStamp))
                                            .set_color_space(color_space)
                                            .build();
 
             // todo: measurement decoding time
-            absl::optional<int32_t> decodetime;
+            std::optional<int32_t> decodetime;
             m_decodedCompleteCallback->Decoded(decoded_frame, decodetime, qp);
         }
 

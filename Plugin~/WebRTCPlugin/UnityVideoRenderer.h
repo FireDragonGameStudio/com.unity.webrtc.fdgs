@@ -15,7 +15,7 @@ namespace webrtc
 
     using namespace ::webrtc;
 
-    class UnityVideoRenderer : public rtc::VideoSinkInterface<::webrtc::VideoFrame>
+    class UnityVideoRenderer : public ::webrtc::VideoSinkInterface<::webrtc::VideoFrame>
     {
     public:
         UnityVideoRenderer(uint32_t id, DelegateVideoFrameResize callback, bool needFlipVertical);
@@ -23,8 +23,8 @@ namespace webrtc
         void OnFrame(const ::webrtc::VideoFrame& frame) override;
 
         uint32_t GetId();
-        rtc::scoped_refptr<VideoFrameBuffer> GetFrameBuffer();
-        void SetFrameBuffer(rtc::scoped_refptr<VideoFrameBuffer> buffer, int64_t timestamp);
+        ::webrtc::scoped_refptr<VideoFrameBuffer> GetFrameBuffer();
+        void SetFrameBuffer(::webrtc::scoped_refptr<VideoFrameBuffer> buffer, int64_t timestamp);
 
         // used in UnityRenderingExtEventUpdateTexture
         // called on RenderThread
@@ -34,7 +34,7 @@ namespace webrtc
         uint32_t m_id;
         std::mutex m_mutex;
         std::vector<uint8_t> tempBuffer;
-        rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_frameBuffer;
+        ::webrtc::scoped_refptr<webrtc::VideoFrameBuffer> m_frameBuffer;
         int64_t m_last_renderered_timestamp;
         std::atomic<int64_t> m_timestamp;
         DelegateVideoFrameResize m_callback;

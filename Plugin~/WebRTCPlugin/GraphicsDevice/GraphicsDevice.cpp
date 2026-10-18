@@ -85,7 +85,7 @@ namespace webrtc
             RTC_DCHECK_NOTREACHED();
             return nullptr;
         }
-        rtc::scoped_refptr<::webrtc::I420Buffer> ConvertRGBToI420(ITexture2D* tex) override
+        ::webrtc::scoped_refptr<::webrtc::I420Buffer> ConvertRGBToI420(ITexture2D* tex) override
         {
             RTC_DCHECK_NOTREACHED();
             return nullptr;

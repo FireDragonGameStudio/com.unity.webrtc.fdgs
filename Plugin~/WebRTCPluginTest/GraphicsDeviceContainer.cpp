@@ -14,7 +14,14 @@
 #if SUPPORT_OPENGL_CORE
 #include "GraphicsDevice/OpenGL/OpenGLContext.h"
 #include <GLFW/glfw3.h>
+#endif
+
+// The leak sanitizer interface exists only in builds with AddressSanitizer or LeakSanitizer.
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer) || __has_feature(leak_sanitizer)
 #include <sanitizer/lsan_interface.h>
+#define HAS_LSAN_INTERFACE 1
+#endif
 #endif
 
 #if SUPPORT_OPENGL_ES
@@ -402,9 +409,13 @@ namespace webrtc
 
             const GLuint kWidth = 320;
             const GLuint kHeight = 240;
+#if HAS_LSAN_INTERFACE
             __lsan_disable();
+#endif
             s_window = glfwCreateWindow(kWidth, kHeight, "test", nullptr, nullptr);
+#if HAS_LSAN_INTERFACE
             __lsan_enable();
+#endif
             glfwMakeContextCurrent(s_window);
             s_glfwInitialized = true;
         }

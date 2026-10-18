@@ -13,6 +13,7 @@
 #include <common_video/h264/h264_common.h>
 #include <media/base/media_constants.h>
 #include <modules/video_coding/include/video_codec_interface.h>
+#include <modules/video_coding/include/video_error_codes.h>
 #include <modules/video_coding/utility/simulcast_utility.h>
 
 #include "Codec/H264ProfileLevelId.h"
@@ -41,7 +42,7 @@ namespace webrtc
 
     inline bool operator!=(const CUDA_ARRAY_DESCRIPTOR& lhs, const CUDA_ARRAY_DESCRIPTOR& rhs) { return !(lhs == rhs); }
 
-    inline absl::optional<webrtc::H264Level> NvEncSupportedLevel(std::vector<SdpVideoFormat>& formats, const GUID& guid)
+    inline std::optional<webrtc::H264Level> NvEncSupportedLevel(std::vector<SdpVideoFormat>& formats, const GUID& guid)
     {
         for (const auto& format : formats)
         {
@@ -54,10 +55,10 @@ namespace webrtc
                 return profileLevelId.value().level;
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    inline absl::optional<NV_ENC_LEVEL>
+    inline std::optional<NV_ENC_LEVEL>
     NvEncRequiredLevel(const VideoCodec& codec, std::vector<SdpVideoFormat>& formats, const GUID& guid)
     {
         int pixelCount = codec.width * codec.height;
@@ -66,25 +67,25 @@ namespace webrtc
 
         if (!requiredLevel)
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
 
         // Check NvEnc supported level.
         auto supportedLevel = NvEncSupportedLevel(formats, guid);
         if (!supportedLevel)
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
 
         // The supported level must be over the required level.
         if (static_cast<int>(requiredLevel.value()) > static_cast<int>(supportedLevel.value()))
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         return static_cast<NV_ENC_LEVEL>(requiredLevel.value());
     }
 
-    absl::optional<H264Level> NvEncoderImpl::s_maxSupportedH264Level;
+    std::optional<H264Level> NvEncoderImpl::s_maxSupportedH264Level;
     std::vector<SdpVideoFormat> NvEncoderImpl::s_formats;
 
 #if SUPPORT_CUDA_KERNEL
@@ -144,7 +145,7 @@ namespace webrtc
 #endif
 
     NvEncoderImpl::NvEncoderImpl(
-        const cricket::VideoCodec& codec,
+        const ::webrtc::Codec& codec,
         CUcontext context,
         CUmemorytype memoryType,
         NV_ENC_BUFFER_FORMAT format,
@@ -157,11 +158,11 @@ namespace webrtc
         , m_encodedCompleteCallback(nullptr)
         , m_profiler(profiler)
     {
-        RTC_CHECK(absl::EqualsIgnoreCase(codec.name, cricket::kH264CodecName));
+        RTC_CHECK(absl::EqualsIgnoreCase(codec.name, ::webrtc::kH264CodecName));
         // not implemented for host memory
         RTC_CHECK_NE(memoryType, CU_MEMORYTYPE_HOST);
         std::string profileLevelIdString;
-        RTC_CHECK(codec.GetParam(cricket::kH264FmtpProfileLevelId, &profileLevelIdString));
+        RTC_CHECK(codec.GetParam(::webrtc::kH264FmtpProfileLevelId, &profileLevelIdString));
 
         auto profileLevelId = ParseH264ProfileLevelId(profileLevelIdString.c_str());
         m_profileGuid = ProfileToGuid(profileLevelId.value().profile).value();
@@ -430,7 +431,7 @@ namespace webrtc
             return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
 
         auto videoFrameBuffer = static_cast<ScalableBufferInterface*>(frameBuffer.get());
-        rtc::scoped_refptr<VideoFrame> video_frame = videoFrameBuffer->scaled()
+        ::webrtc::scoped_refptr<VideoFrame> video_frame = videoFrameBuffer->scaled()
             ? static_cast<VideoFrameAdapter::ScaledBuffer*>(videoFrameBuffer)->GetVideoFrame()
             : static_cast<VideoFrameAdapter*>(videoFrameBuffer)->GetVideoFrame();
 
@@ -497,7 +498,7 @@ namespace webrtc
     {
         m_encodedImage._encodedWidth = m_encoder->GetEncodeWidth();
         m_encodedImage._encodedHeight = m_encoder->GetEncodeHeight();
-        m_encodedImage.SetTimestamp(inputFrame.timestamp());
+        m_encodedImage.SetRtpTimestamp(inputFrame.rtp_timestamp());
         m_encodedImage.SetSimulcastIndex(0);
         m_encodedImage.ntp_time_ms_ = inputFrame.ntp_time_ms();
         m_encodedImage.capture_time_ms_ = inputFrame.render_time_ms();
@@ -506,7 +507,7 @@ namespace webrtc
         m_encodedImage.timing_.flags = VideoSendTiming::kInvalid;
         m_encodedImage._frameType = VideoFrameType::kVideoFrameDelta;
         m_encodedImage.SetColorSpace(inputFrame.color_space());
-        std::vector<H264::NaluIndex> naluIndices = H264::FindNaluIndices(packet.data(), packet.size());
+        std::vector<H264::NaluIndex> naluIndices = H264::FindNaluIndices(packet);
         for (uint32_t i = 0; i < naluIndices.size(); i++)
         {
             const H264::NaluType naluType = H264::ParseNaluType(packet[naluIndices[i].payload_start_offset]);

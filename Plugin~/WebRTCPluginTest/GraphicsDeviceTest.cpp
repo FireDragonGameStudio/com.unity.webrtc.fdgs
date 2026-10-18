@@ -57,7 +57,7 @@ namespace webrtc
         const uint32_t width = 256;
         const uint32_t height = 256;
 
-        std::unique_ptr<rtc::Thread> thread = rtc::Thread::CreateWithSocketServer();
+        std::unique_ptr<::webrtc::Thread> thread = ::webrtc::Thread::CreateWithSocketServer();
         thread->Start();
         std::unique_ptr<ITexture2D> texture(device()->CreateDefaultTextureV(width, height, format()));
         EXPECT_TRUE(device()->WaitIdleForTest());

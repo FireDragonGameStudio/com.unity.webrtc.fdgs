@@ -3,6 +3,7 @@
 #include <cuda.h>
 #include <vector>
 
+#include <api/environment/environment.h>
 #include <api/video_codecs/h264_profile_level_id.h>
 #include <api/video_codecs/sdp_video_format.h>
 #include <api/video_codecs/video_decoder.h>
@@ -30,7 +31,7 @@ namespace webrtc
     {
     public:
         static std::unique_ptr<NvEncoder> Create(
-            const cricket::VideoCodec& codec,
+            const ::webrtc::Codec& codec,
             CUcontext context,
             CUmemorytype memoryType,
             NV_ENC_BUFFER_FORMAT format,
@@ -43,7 +44,7 @@ namespace webrtc
     {
     public:
         static std::unique_ptr<NvDecoder>
-        Create(const cricket::VideoCodec& codec, CUcontext context, ProfilerMarkerFactory* profiler);
+        Create(const ::webrtc::Codec& codec, CUcontext context, ProfilerMarkerFactory* profiler);
         static bool IsSupported();
 
         ~NvDecoder() override { }
@@ -56,7 +57,7 @@ namespace webrtc
         ~NvEncoderFactory() override;
 
         std::vector<SdpVideoFormat> GetSupportedFormats() const override;
-        std::unique_ptr<VideoEncoder> CreateVideoEncoder(const SdpVideoFormat& format) override;
+        std::unique_ptr<VideoEncoder> Create(const Environment& env, const SdpVideoFormat& format) override;
 
     private:
         CUcontext context_;
@@ -74,7 +75,8 @@ namespace webrtc
         ~NvDecoderFactory() override;
 
         std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const override;
-        std::unique_ptr<webrtc::VideoDecoder> CreateVideoDecoder(const webrtc::SdpVideoFormat& format) override;
+        std::unique_ptr<webrtc::VideoDecoder>
+        Create(const Environment& env, const webrtc::SdpVideoFormat& format) override;
 
     private:
         CUcontext context_;
@@ -89,7 +91,7 @@ namespace webrtc
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
 
-    static absl::optional<H264Profile> GuidToProfile(GUID& guid)
+    static std::optional<H264Profile> GuidToProfile(GUID& guid)
     {
         if (guid == NV_ENC_H264_PROFILE_BASELINE_GUID)
             return H264Profile::kProfileBaseline;
@@ -99,10 +101,10 @@ namespace webrtc
             return H264Profile::kProfileHigh;
         if (guid == NV_ENC_H264_PROFILE_CONSTRAINED_HIGH_GUID)
             return H264Profile::kProfileConstrainedHigh;
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    static absl::optional<GUID> ProfileToGuid(H264Profile profile)
+    static std::optional<GUID> ProfileToGuid(H264Profile profile)
     {
         if (profile == H264Profile::kProfileBaseline)
             return NV_ENC_H264_PROFILE_BASELINE_GUID;
@@ -116,7 +118,7 @@ namespace webrtc
             return NV_ENC_H264_PROFILE_HIGH_GUID;
         if (profile == H264Profile::kProfileConstrainedHigh)
             return NV_ENC_H264_PROFILE_CONSTRAINED_HIGH_GUID;
-        return absl::nullopt;
+        return std::nullopt;
     }
 #pragma clang diagnostic pop
 }

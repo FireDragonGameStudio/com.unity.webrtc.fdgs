@@ -19,7 +19,7 @@ namespace webrtc
 {
     constexpr TimeDelta kTimeout = TimeDelta::Millis(1000);
 
-    class MockVideoSink : public rtc::VideoSinkInterface<::webrtc::VideoFrame>
+    class MockVideoSink : public ::webrtc::VideoSinkInterface<::webrtc::VideoFrame>
     {
     public:
         ~MockVideoSink() override = default;
@@ -36,8 +36,8 @@ namespace webrtc
             : m_texture(nullptr)
             , m_taskQueueFactory(CreateDefaultTaskQueueFactory())
         {
-            m_trackSource = UnityVideoTrackSource::Create(false, absl::nullopt, m_taskQueueFactory.get());
-            m_trackSource->AddOrUpdateSink(&sink_, rtc::VideoSinkWants());
+            m_trackSource = UnityVideoTrackSource::Create(false, std::nullopt, m_taskQueueFactory.get());
+            m_trackSource->AddOrUpdateSink(&sink_, ::webrtc::VideoSinkWants());
         }
 
         ~VideoTrackSourceTest() override { m_trackSource->RemoveSink(&sink_); }
@@ -62,11 +62,11 @@ namespace webrtc
         std::unique_ptr<TaskQueueFactory> m_taskQueueFactory;
 
         MockVideoSink sink_;
-        rtc::scoped_refptr<UnityVideoTrackSource> m_trackSource;
+        ::webrtc::scoped_refptr<UnityVideoTrackSource> m_trackSource;
 
         ::webrtc::VideoFrame::Builder CreateBlackFrameBuilder(int width, int height)
         {
-            rtc::scoped_refptr<webrtc::I420Buffer> buffer = webrtc::I420Buffer::Create(width, height);
+            ::webrtc::scoped_refptr<webrtc::I420Buffer> buffer = webrtc::I420Buffer::Create(width, height);
 
             webrtc::I420Buffer::SetBlack(buffer.get());
             return ::webrtc::VideoFrame::Builder().set_video_frame_buffer(buffer);
@@ -81,7 +81,7 @@ namespace webrtc
 
     TEST_P(VideoTrackSourceTest, OnFrameCaptured)
     {
-        rtc::Event done;
+        ::webrtc::Event done;
         EXPECT_CALL(sink_, OnFrame(_)).WillOnce(Invoke([&done](const ::webrtc::VideoFrame& frame) { done.Set(); }));
         SendTestFrame();
         EXPECT_TRUE(done.Wait(kTimeout));

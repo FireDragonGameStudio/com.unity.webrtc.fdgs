@@ -80,7 +80,7 @@ namespace webrtc
 
     Size GpuMemoryBufferFromUnity::GetSize() const { return size_; }
 
-    rtc::scoped_refptr<I420BufferInterface> GpuMemoryBufferFromUnity::ToI420()
+    ::webrtc::scoped_refptr<I420BufferInterface> GpuMemoryBufferFromUnity::ToI420()
     {
         using namespace std::chrono_literals;
         if (!device_->WaitSync(textureCpuRead_.get()))

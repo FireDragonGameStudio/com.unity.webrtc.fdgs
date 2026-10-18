@@ -11,31 +11,31 @@ namespace webrtc
 
     void UnityLogStream::OnLogMessage(const std::string& message)
     {
-        logMessage(message, rtc::LoggingSeverity::LS_INFO);
+        logMessage(message, ::webrtc::LoggingSeverity::LS_INFO);
     }
 
-    void UnityLogStream::OnLogMessage(const std::string& message, rtc::LoggingSeverity severity)
+    void UnityLogStream::OnLogMessage(const std::string& message, ::webrtc::LoggingSeverity severity)
     {
         logMessage(message, severity);
     }
 
-    void UnityLogStream::AddLogStream(DelegateDebugLog callback, rtc::LoggingSeverity loggingSeverity)
+    void UnityLogStream::AddLogStream(DelegateDebugLog callback, ::webrtc::LoggingSeverity loggingSeverity)
     {
-        rtc::LogMessage::LogTimestamps(true);
+        ::webrtc::LogMessage::LogTimestamps(true);
         log_stream.reset(new UnityLogStream(callback));
-        rtc::LogMessage::AddLogToStream(log_stream.get(), loggingSeverity);
+        ::webrtc::LogMessage::AddLogToStream(log_stream.get(), loggingSeverity);
     }
 
     void UnityLogStream::RemoveLogStream()
     {
         if (log_stream)
         {
-            rtc::LogMessage::RemoveLogToStream(log_stream.get());
+            ::webrtc::LogMessage::RemoveLogToStream(log_stream.get());
             log_stream.reset();
         }
     }
 
-    void UnityLogStream::logMessage(const std::string& message, rtc::LoggingSeverity severity)
+    void UnityLogStream::logMessage(const std::string& message, ::webrtc::LoggingSeverity severity)
     {
         if (on_log_message != nullptr)
         {
