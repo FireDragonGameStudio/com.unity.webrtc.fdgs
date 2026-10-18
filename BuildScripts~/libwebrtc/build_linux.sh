@@ -23,6 +23,7 @@ gn gen "$out" --args='
   rtc_use_x11=false
   use_rtti=true
   use_custom_libcxx=true
+  rtc_rust=false
 '
 test -f "$out/args.gn" || { echo "gn gen did not create $out"; exit 1; }
 
@@ -53,7 +54,9 @@ done
 find "$package/include/buildtools/third_party/libc++" -name '*.gn' -delete
 
 # Compiler flags for code that uses this package. ${WEBRTC_INCLUDE_DIR} is replaced by the consumer.
-defines=$(gn desc "$out" //api:rtc_error defines | grep -E '^\s*(_LIBCPP|_LIBCXXABI|CR_)' | sed 's/^\s*/-D/' | tr '\n' ' ' || true)
+# The defines are libc++'s and libwebrtc's own configuration (e.g. WEBRTC_WITHOUT_RUST, RTC_ENABLE_VP9), so code
+# that includes the headers sees the same declarations as the library.
+defines=$(gn desc "$out" //api:rtc_error defines | grep -E '^\s*(_LIBCPP|_LIBCXXABI|CR_|WEBRTC_|RTC_|ABSL_)' | sed 's/^\s*/-D/' | tr '\n' ' ' || true)
 cat > "$package/cxx_flags.txt" <<FLAGS
 -nostdinc++ -isystem \${WEBRTC_INCLUDE_DIR}/buildtools/third_party/libc++ -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++/src/include -isystem \${WEBRTC_INCLUDE_DIR}/third_party/libc++abi/src/include $defines
 FLAGS
