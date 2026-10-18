@@ -52,15 +52,32 @@ $libcxxObjects = @(Get-ChildItem "$out/obj/buildtools/third_party/libc++" -Recur
 Write-Host "Adding $($libcxxObjects.Count) libc++ objects"
 if (-not $libcxxObjects) { throw 'No libc++ objects found' }
 # Chromium links with lld-link, whose /lib mode is llvm-lib; it merges the members of webrtc.lib with the objects.
+function Invoke-Lib {
+  if (Test-Path "$llvmBin\llvm-lib.exe") { & "$llvmBin\llvm-lib.exe" @args } else { & "$llvmBin\lld-link.exe" /lib @args }
+}
 $rsp = "$out/libcxx_objects.rsp"
 $libcxxObjects | ForEach-Object { '"' + ($_.FullName -replace '\\', '/') + '"' } | Set-Content -Encoding ascii $rsp
-if (Test-Path "$llvmBin\llvm-lib.exe") {
-  & "$llvmBin\llvm-lib.exe" "/out:$lib" "$out/obj/webrtc.lib" "@$rsp"
-} else {
-  & "$llvmBin\lld-link.exe" /lib "/out:$lib" "$out/obj/webrtc.lib" "@$rsp"
-}
+Invoke-Lib "/out:$lib" "$out/obj/webrtc.lib" "@$rsp"
 $size = (Get-Item $lib).Length
 if ($size -lt 50000000) { throw "webrtc.lib is only $size bytes" }
+# Members with the same name (libc++'s random.obj and rtc_base's, for example) must all be kept.
+$membersBefore = @(Invoke-Lib /list "$out/obj/webrtc.lib").Count
+$membersAfter = @(Invoke-Lib /list $lib).Count
+Write-Host "webrtc.lib members: $membersBefore + $($libcxxObjects.Count) libc++ = $membersAfter"
+if ($membersAfter -ne $membersBefore + $libcxxObjects.Count) { throw 'Merging the libc++ objects lost archive members' }
+
+# System libraries that code linking webrtc.lib needs: those of the webrtc target, plus Chromium's default
+# Windows libraries (build/config/win:default_libs), which only linkable targets get.
+$systemLibs = @(gn desc $out //:webrtc libs | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '\.lib$' }) + @(
+  'advapi32.lib', 'comdlg32.lib', 'dbghelp.lib', 'dnsapi.lib', 'gdi32.lib', 'msimg32.lib', 'odbc32.lib',
+  'odbccp32.lib', 'oleaut32.lib', 'shell32.lib', 'shlwapi.lib', 'user32.lib', 'usp10.lib', 'uuid.lib',
+  'version.lib', 'wininet.lib', 'winmm.lib', 'winspool.lib', 'ws2_32.lib', 'kernel32.lib', 'ole32.lib'
+) | Sort-Object -Unique
+$systemLibs | Set-Content -Encoding ascii "$Package\system_libs.txt"
+# The whole library must link without unresolved symbols (lld-link finds Visual Studio and the SDK itself).
+& "$llvmBin\lld-link.exe" /DLL /NOENTRY /MACHINE:X64 /NOLOGO /ERRORLIMIT:0 "/OUT:$out/link_check.dll" `
+  "/WHOLEARCHIVE:$lib" @systemLibs libcmt.lib libvcruntime.lib libucrt.lib
+Write-Host 'webrtc.lib links without unresolved symbols'
 
 # Headers: every libwebrtc header (*.h, and the *.inc files some of them include, e.g. abseil's int128), plus
 # the complete libc++ include directories (libc++ headers such as <vector> have no extension). libc++abi is

@@ -28,6 +28,7 @@ reads (`<cpu>` is `x64` or `arm64`):
 | `cxx_flags.txt` | flags for compiling against the bundled libc++: `-nostdinc++`, the three include directories as `-isystem ${WEBRTC_INCLUDE_DIR}/...`, and Chromium's `_LIBCPP_*`/`CR_*` defines. Windows (clang-cl syntax): `/external:I${WEBRTC_INCLUDE_DIR}/...` for the libc++ directories and `/D` defines; there is no `-nostdinc++`, because the MSVC include directory holds both the CRT and the MSVC STL, and the libc++ directories come first instead (as in Chromium) |
 | `VERSIONS` | `WEBRTC_BRANCH`, `WEBRTC_COMMIT`, `LIBCXX_COMMIT`, `CLANG_REVISION`; on Windows also `MSVC_RUNTIME` (`/MT` or `/MD`, which the plugin must use too) and `WINDOWS_SDK` |
 | `args.gn`, `gn_cflags_cc.txt` | the GN arguments and C++ flags of the build, for reference (Windows also has `gn_defines.txt`) |
+| `system_libs.txt` | Windows: the system libraries (`ws2_32.lib`, ...) to link together with `webrtc.lib` |
 | `LICENSE.md` | licenses of libwebrtc and its third-party code |
 
 Each static library contains the libc++ and libc++abi objects (`llvm-ar` adds them after the build), so
