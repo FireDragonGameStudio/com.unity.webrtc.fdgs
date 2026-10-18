@@ -1,0 +1,18 @@
+diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
+index c106acf..cf10b26 100644
+--- a/build/config/compiler/BUILD.gn
++++ b/build/config/compiler/BUILD.gn
+@@ -1365,6 +1365,13 @@ config("compiler_codegen") {
+     # TODO(crbug.com/40890229): Enable this on Windows if possible.
+     cflags += [ "-mno-outline" ]
+ 
++    # com.fdgs.webrtc: inline the LSE/LL-SC atomics instead of calling the
++    # __aarch64_* helpers from compiler-rt, which Unity's runtime cannot
++    # resolve when it loads the plugin (dlopen error).
++    if (is_android) {
++      cflags += [ "-mno-outline-atomics" ]
++    }
++
+     # This can be removed once https://bugs.llvm.org/show_bug.cgi?id=40348
+     # has been resolved, and -mno-outline is obeyed by the linker during
+     # ThinLTO.
