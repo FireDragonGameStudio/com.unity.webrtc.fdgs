@@ -80,6 +80,30 @@ if(EXISTS "${WEBRTC_DIR}/cxx_flags.txt")
   message(STATUS "libwebrtc uses its bundled libc++: ${WEBRTC_CXX_FLAGS}")
 endif()
 
+# Windows packages list the libraries to link together with webrtc.lib in libs.txt, by file name: system
+# libraries and clang's builtins, which the package ships next to webrtc.lib.
+set(WEBRTC_SYSTEM_LIBRARIES)
+if(EXISTS "${WEBRTC_DIR}/libs.txt")
+  file(STRINGS "${WEBRTC_DIR}/libs.txt" _webrtc_libs)
+  foreach(_lib IN LISTS _webrtc_libs)
+    string(STRIP "${_lib}" _lib)
+    if(_lib STREQUAL "")
+      continue()
+    elseif(EXISTS "${WEBRTC_LIBRARY_DIR}/${_lib}")
+      list(APPEND WEBRTC_SYSTEM_LIBRARIES "${WEBRTC_LIBRARY_DIR}/${_lib}")
+    else()
+      list(APPEND WEBRTC_SYSTEM_LIBRARIES "${_lib}")
+    endif()
+  endforeach()
+endif()
+
+# The C runtime the Windows package was built with (/MT or /MD); the plugin must use the same.
+set(WEBRTC_MSVC_RUNTIME)
+if(EXISTS "${WEBRTC_DIR}/VERSIONS")
+  file(STRINGS "${WEBRTC_DIR}/VERSIONS" _webrtc_runtime REGEX "^MSVC_RUNTIME=")
+  string(REGEX REPLACE "^MSVC_RUNTIME=" "" WEBRTC_MSVC_RUNTIME "${_webrtc_runtime}")
+endif()
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(WebRTC
   DEFAULT_MSG
