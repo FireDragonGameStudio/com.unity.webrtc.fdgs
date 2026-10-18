@@ -1,0 +1,249 @@
+name: Native plugin (Linux, libwebrtc M156)
+
+# Builds libwebrtc.so against the libwebrtc M156 package that libwebrtc-linux.yml builds (Chromium's libc++,
+# see BuildScripts~/libwebrtc/README.md), runs the native tests and then the Unity tests with that binary.
+# native-linux.yml keeps building against M116 until the switch; this workflow replaces it then.
+on:
+  push:
+    branches: ['claude/plugin-port-m156-**', 'feat/libwebrtc-m156**']
+    paths:
+      - 'Plugin~/**'
+      - '.github/workflows/native-linux-m156.yml'
+  workflow_dispatch:
+    inputs:
+      libwebrtc_run_id:
+        description: Run of libwebrtc-linux.yml whose webrtc-linux artifact to use
+        type: string
+        default: ''
+      unity_tests:
+        description: Run the Unity tests with the built plugin
+        type: boolean
+        default: true
+
+concurrency:
+  group: native-linux-m156-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Successful run of libwebrtc-linux.yml on feat/libwebrtc-m156-build.
+  LIBWEBRTC_RUN_ID: ${{ inputs.libwebrtc_run_id || '39132248722' }}
+  BUILD_DIR: Plugin~/out/build/x86_64-linux
+  CONFIG: Release
+
+jobs:
+  build:
+    name: Build libwebrtc.so
+    # Ubuntu 22.04 (glibc 2.35) is the oldest Ubuntu supported by Unity 6. The C++ runtime (Chromium's libc++)
+    # comes from libwebrtc.a, so only the glibc version matters.
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install build tools
+        run: |
+          sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config libvulkan-dev libx11-dev libgl-dev libglfw3-dev xvfb
+          python3 -m pip install --user glad2==2.0.8
+          cmake --version
+
+      - name: Install CUDA
+        id: cuda
+        uses: Jimver/cuda-toolkit@v0.2.36
+        with:
+          cuda: '12.9.1'
+          method: network
+          sub-packages: '["nvcc", "cudart-dev"]'
+
+      - name: Download libwebrtc M156
+        uses: actions/download-artifact@v7
+        with:
+          name: webrtc-linux
+          run-id: ${{ env.LIBWEBRTC_RUN_ID }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/libwebrtc
+
+      - name: Unpack libwebrtc
+        run: |
+          cd "$RUNNER_TEMP/libwebrtc"
+          sha256sum --check webrtc-linux.zip.sha256
+          unzip -q -o webrtc-linux.zip -d "$GITHUB_WORKSPACE/Plugin~/webrtc"
+          cat "$GITHUB_WORKSPACE/Plugin~/webrtc/VERSIONS" | tee -a "$RUNNER_TEMP/build.log"
+
+      # The plugin shares standard library types with libwebrtc, so it is compiled with the clang that built it.
+      - name: Install Chromium's clang
+        run: |
+          rev=$(sed -n 's/^CLANG_REVISION=//p' Plugin~/webrtc/VERSIONS)
+          mkdir -p "$RUNNER_TEMP/clang"
+          curl -fsSL "https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-$rev.tar.xz" \
+            | tar -xJ -C "$RUNNER_TEMP/clang"
+          echo "$RUNNER_TEMP/clang/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/clang/bin/clang++" --version
+          ls "$RUNNER_TEMP/clang/bin"
+
+      - name: Configure
+        working-directory: Plugin~
+        env:
+          CUDACXX: ${{ steps.cuda.outputs.CUDA_PATH }}/bin/nvcc
+        # The CUDA kernels do not use the C++ standard library; nvcc compiles them with the system gcc,
+        # because it does not support Chromium's clang as host compiler.
+        run: |
+          set -o pipefail
+          cmake --preset=x86_64-linux -Wno-dev \
+            -DCMAKE_C_COMPILER="$RUNNER_TEMP/clang/bin/clang" \
+            -DCMAKE_CXX_COMPILER="$RUNNER_TEMP/clang/bin/clang++" \
+            -DCMAKE_CUDA_HOST_COMPILER=g++ \
+            -DCMAKE_AR="$RUNNER_TEMP/clang/bin/llvm-ar" \
+            -DCMAKE_RANLIB="$RUNNER_TEMP/clang/bin/llvm-ranlib" \
+            -DPython3_EXECUTABLE="$(command -v python3)" 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      # -k 0 reports every compile error in one run.
+      - name: Build the plugin
+        working-directory: Plugin~
+        run: |
+          set -o pipefail
+          cmake --build out/build/x86_64-linux --config "$CONFIG" --target WebRTCPlugin -- -k 0 2>&1 \
+            | tee "$RUNNER_TEMP/plugin.log" | tee -a "$RUNNER_TEMP/build.log" > /dev/null
+
+      - name: Check exports
+        run: |
+          so=Runtime/Plugins/x86_64/libwebrtc.so
+          strip --strip-unneeded "$so"
+          exports=$(nm -D --defined-only "$so")
+          for name in ContextCreate GetBatchUpdateEventFunc UnityPluginLoad UnityPluginUnload; do
+            grep -qw "$name" <<<"$exports" || { echo "::error::Missing export $name"; exit 1; }
+          done
+          if objdump -p "$so" | grep -E 'NEEDED.*lib(std)?c\+\+'; then
+            echo "::error::libwebrtc.so must not depend on a system C++ library"; exit 1
+          fi
+          {
+            echo "Required glibc: $(objdump -T "$so" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"
+            objdump -p "$so" | grep NEEDED
+            echo "Exported std:: symbols: $(nm -DC --defined-only "$so" | grep -c ' std::' || true)"
+            ls -l "$so"
+          } | tee "$RUNNER_TEMP/so.txt"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-linux-x64-m156
+          path: Runtime/Plugins/x86_64/libwebrtc.so
+          if-no-files-found: error
+
+      - name: Build the native tests
+        id: build-tests
+        continue-on-error: true
+        working-directory: Plugin~
+        run: |
+          set -o pipefail
+          cmake --build out/build/x86_64-linux --config "$CONFIG" --target WebRTCLibTest -- -k 0 2>&1 \
+            | tee "$RUNNER_TEMP/test-build.log" | tee -a "$RUNNER_TEMP/build.log" > /dev/null
+
+      # The runner has no GPU: tests that need CUDA, Vulkan or OpenGL skip themselves or fail; see the log.
+      - name: Run the native tests
+        if: steps.build-tests.outcome == 'success'
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          exe=$(find "$BUILD_DIR" -name WebRTCLibTest -type f -perm -u+x | head -1)
+          xvfb-run -a "$exe" --gtest_brief=1 2>&1 | tee "$RUNNER_TEMP/gtest.log"
+
+      # Workflow logs on GitHub need a login to read; push the logs to a branch.
+      - name: Push the logs
+        if: always()
+        run: |
+          set +e +o pipefail
+          branch="ci-logs/plugin-m156-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          for f in build.log plugin.log test-build.log gtest.log so.txt; do
+            [ -f "$RUNNER_TEMP/$f" ] && tail -c 20000000 "$RUNNER_TEMP/$f" > "$f"
+          done
+          for f in plugin.log test-build.log; do
+            [ -f "$f" ] && grep -E 'error:|FAILED:|undefined (symbol|reference)' "$f" > "${f%.log}-errors.txt"
+          done
+          echo "${GITHUB_SHA}" > sha.txt
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Logs of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
+
+  unity-tests:
+    name: Unity 6000.3.26f1 (${{ matrix.testMode }})
+    needs: build
+    if: github.event_name != 'workflow_dispatch' || inputs.unity_tests
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        testMode: [editmode, playmode]
+    env:
+      UNITY_VERSION: 6000.3.26f1
+    steps:
+      - uses: actions/checkout@v7
+
+      # Test the plugin built above instead of the committed M116 binary.
+      - uses: actions/download-artifact@v7
+        with:
+          name: webrtc-linux-x64-m156
+          path: Runtime/Plugins/x86_64
+
+      - name: Select Unity
+        run: |
+          echo "m_EditorVersion: $UNITY_VERSION" > WebRTC~/ProjectSettings/ProjectVersion.txt
+          ls -l Runtime/Plugins/x86_64
+
+      - uses: actions/cache@v6
+        with:
+          path: WebRTC~/Library
+          key: Library-${{ env.UNITY_VERSION }}-${{ matrix.testMode }}-${{ hashFiles('WebRTC~/Packages/manifest.json', 'WebRTC~/ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: Library-${{ env.UNITY_VERSION }}-${{ matrix.testMode }}-
+
+      # Same settings as test.yml.
+      - uses: game-ci/unity-test-runner@v4.4.0
+        id: tests
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          cliVersion: v0.1.72
+          projectPath: WebRTC~
+          unityVersion: ${{ env.UNITY_VERSION }}
+          testMode: ${{ matrix.testMode }}
+          customParameters: -nographics
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: M156 Unity ${{ env.UNITY_VERSION }} ${{ matrix.testMode }} results
+
+      - uses: actions/upload-artifact@v7
+        if: always() && steps.tests.outputs.artifactsPath != ''
+        with:
+          name: m156-test-results-${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+
+      # Push a summary of the results next to the build logs.
+      - name: Push the results
+        if: always()
+        run: |
+          set +e
+          branch="ci-logs/plugin-m156-${GITHUB_RUN_ID}"
+          dir="$RUNNER_TEMP/results"
+          git clone -q --depth 1 --branch "$branch" "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "$dir" || exit 0
+          mkdir -p "$dir/unity-${{ matrix.testMode }}"
+          for f in $(find "${{ steps.tests.outputs.artifactsPath || 'artifacts' }}" -name '*.xml' 2>/dev/null); do
+            cp "$f" "$dir/unity-${{ matrix.testMode }}/"
+          done
+          python3 - "$dir/unity-${{ matrix.testMode }}" > "$dir/unity-${{ matrix.testMode }}/summary.txt" <<'PY'
+          import glob, sys, xml.etree.ElementTree as ET
+          for path in glob.glob(sys.argv[1] + '/*.xml'):
+              root = ET.parse(path).getroot()
+              print(path.split('/')[-1], {k: root.get(k) for k in ('result', 'total', 'passed', 'failed', 'skipped', 'inconclusive')})
+              for case in root.iter('test-case'):
+                  if case.get('result') == 'Failed':
+                      msg = case.find('failure/message')
+                      print('FAILED', case.get('fullname'), (msg.text or '').strip()[:500] if msg is not None else '')
+          PY
+          cd "$dir" && git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Unity ${{ matrix.testMode }} results of run ${GITHUB_RUN_ID}"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 5; done
