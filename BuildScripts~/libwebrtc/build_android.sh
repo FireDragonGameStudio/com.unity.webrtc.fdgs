@@ -16,10 +16,14 @@ min_sdk=24
 ar="third_party/llvm-build/Release+Asserts/bin/llvm-ar"
 nm="third_party/llvm-build/Release+Asserts/bin/llvm-nm"
 readelf="third_party/llvm-build/Release+Asserts/bin/llvm-readelf"
+clang="third_party/llvm-build/Release+Asserts/bin/clang"
+sysroot="third_party/android_toolchain/ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 
 # <gn cpu>:<Android ABI>. The out directories are named after the ABI.
 abis="arm64:arm64-v8a x64:x86_64"
 first_out=
+# Set when a link check fails; the script still writes the package so the log shows everything.
+link_check_failed=
 
 for pair in $abis; do
   cpu="${pair%%:*}"
@@ -57,17 +61,30 @@ for pair in $abis; do
   lib="$package/lib/$cpu/libwebrtc.a"
   mkdir -p "$(dirname "$lib")"
   cp "$out/obj/libwebrtc.a" "$lib"
-  runtime_objects=$(find "$out/obj/buildtools/third_party/libc++" "$out/obj/buildtools/third_party/libc++abi" \
-    "$out/obj/buildtools/third_party/libunwind" -name '*.o' 2>/dev/null | sort)
-  echo "Adding $(echo "$runtime_objects" | wc -l) libc++/libc++abi/libunwind objects to $lib"
+  runtime_dirs=
+  for dir in libc++ libc++abi libunwind; do
+    if [ -d "$out/obj/buildtools/third_party/$dir" ]; then runtime_dirs="$runtime_dirs $out/obj/buildtools/third_party/$dir"; fi
+  done
+  runtime_objects=$(find $runtime_dirs -name '*.o' | sort)
+  echo "Adding $(echo "$runtime_objects" | wc -l) objects from$runtime_dirs to $lib"
   test -n "$runtime_objects" || { echo "No libc++ objects found"; exit 1; }
-  "$ar" rs "$lib" $runtime_objects
+  # Append with "q", not "r": "r" replaces members with the same name, and libc++'s random.o, vector.o or
+  # algorithm.o would overwrite libwebrtc's (rtc_base, libaom, BoringSSL) objects of the same name.
+  "$ar" q "$lib" $runtime_objects
+  "$ar" s "$lib"
 
   size=$(stat -c %s "$lib")
   test "$size" -gt 50000000 || { echo "$lib is only $size bytes"; exit 1; }
   cxx_symbols=$("$nm" -C "$lib" 2>/dev/null | grep -c ' T std::__Cr::' || true)
   echo "$lib: $size bytes, $cxx_symbols defined std::__Cr text symbols"
   test "$cxx_symbols" -gt 100 || { echo "$lib does not contain libc++ (std::__Cr) symbols"; exit 1; }
+
+  # Every symbol used inside libwebrtc.a must be defined in it or in the Android system libraries: link all of
+  # it into a shared library without a C++ library or unwinder and refuse unresolved symbols.
+  case "$cpu" in arm64) triple=aarch64-linux-android ;; x64) triple=x86_64-linux-android ;; esac
+  "$clang" --target="$triple$min_sdk" --sysroot="$sysroot" -shared -fuse-ld=lld --unwindlib=none \
+    -o "$out/libwebrtc_link_check.so" -Wl,--whole-archive "$lib" -Wl,--no-whole-archive \
+    -nostdlib++ -Wl,--no-undefined -llog -landroid -lOpenSLES -laaudio -lEGL -lGLESv2 -lmediandk -lm -ldl     && echo "Link check passed: $lib has no unresolved symbols"     || { echo "Link check failed: $lib"; link_check_failed="$link_check_failed $cpu"; }
 
   # Chromium links Android 64-bit shared libraries with 16 KB pages by default (build/config/android/BUILD.gn).
   "$readelf" -lW "$out/libjingle_peerconnection_so.so" | awk '$1 == "LOAD" { print "LOAD align " $NF; if ($NF != "0x4000") bad = 1 } END { exit bad }' \
@@ -132,3 +149,5 @@ cp "$first_out/LICENSE.md" "$package/LICENSE.md"
 echo "Package:"
 cat "$package/VERSIONS" "$package/cxx_flags.txt"
 du -sh "$package/include" "$package"/lib/*/libwebrtc.a "$package/lib/libwebrtc.aar"
+
+if [ -n "$link_check_failed" ]; then echo "Link check failed for:$link_check_failed"; exit 1; fi
