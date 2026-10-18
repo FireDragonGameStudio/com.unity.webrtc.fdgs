@@ -1,0 +1,155 @@
+name: libwebrtc (Windows)
+
+# Builds Google's libwebrtc for Windows x64 with clang-cl and Chromium's own libc++ (use_custom_libcxx=true,
+# the upstream default). Each platform has its own libwebrtc-<platform>.yml; the package format they all
+# produce is described in BuildScripts~/libwebrtc/README.md.
+# Started manually with "publish" it uploads the package to the release libwebrtc-M<milestone>.
+on:
+  push:
+    branches: ['feat/libwebrtc-**']
+    paths:
+      - '.github/workflows/libwebrtc-windows.yml'
+      - 'BuildScripts~/libwebrtc/fetch.ps1'
+      - 'BuildScripts~/libwebrtc/build_windows.ps1'
+      - 'BuildScripts~/patches/m156/**'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Upload the packages to the release libwebrtc-M<milestone>
+        type: boolean
+        default: false
+
+concurrency:
+  group: libwebrtc-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  WEBRTC_MILESTONE: '156'
+  WEBRTC_BRANCH: '8078'
+  PATCH_DIR: BuildScripts~/patches/m156
+  # Use the installed Visual Studio and Windows SDK instead of Google's internal toolchain package.
+  DEPOT_TOOLS_WIN_TOOLCHAIN: '0'
+  # build/vs_toolchain.py SDK_VERSION of M156; no runner image has it.
+  WINDOWS_SDK_VERSION: '10.0.28000.0'
+  WINDOWS_SDK_URL: https://download.microsoft.com/download/06fc99ac-527e-451e-a536-8866695a2e7e/KIT_BUNDLE_WINDOWSSDK_MEDIACREATION/winsdksetup.exe
+  WINDOWS_SDK_SHA256: 02988EA51EAB2A2DB53E19735E51C97A6D221ADA74B9174FA0868870B9403BA0
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  windows:
+    name: Windows x64
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 340
+    permissions:
+      contents: write
+    steps:
+      # Patches must apply to LF sources, and Chromium's checkout has very long paths.
+      - name: Configure Git
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.longpaths true
+
+      - uses: actions/checkout@v7
+
+      - name: Choose the build drive
+        shell: pwsh
+        run: |
+          Get-PSDrive -PSProvider FileSystem | Format-Table -AutoSize
+          # The drive with the most free space; a short root keeps paths below MAX_PATH.
+          $drive = Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Name -in 'C', 'D' -and $_.Free } |
+            Sort-Object Free -Descending | Select-Object -First 1
+          "WEBRTC_ROOT=$($drive.Name):/w" >> $env:GITHUB_ENV
+          New-Item -ItemType Directory -Force "$($drive.Name):/w" | Out-Null
+          New-Item -ItemType File -Force "$env:RUNNER_TEMP/build.log" | Out-Null
+
+      - name: Install Windows SDK ${{ env.WINDOWS_SDK_VERSION }}
+        shell: pwsh
+        run: |
+          $setup = "$env:RUNNER_TEMP\winsdksetup.exe"
+          Invoke-WebRequest $env:WINDOWS_SDK_URL -OutFile $setup
+          $hash = (Get-FileHash $setup -Algorithm SHA256).Hash
+          if ($hash -ne $env:WINDOWS_SDK_SHA256) { throw "winsdksetup.exe has SHA-256 $hash" }
+          # Desktop C++ headers and libraries, plus the debuggers (vs_toolchain.py copies dbghelp.dll).
+          $sdkArgs = '/features OptionId.DesktopCPPx64 OptionId.DesktopCPPx86 OptionId.WindowsDesktopDebuggers /quiet /norestart /log ' + "$env:RUNNER_TEMP\winsdk.log"
+          $p = Start-Process $setup -ArgumentList $sdkArgs -Wait -PassThru
+          Write-Host "winsdksetup exit code $($p.ExitCode)"
+          $kits = 'C:\Program Files (x86)\Windows Kits\10'
+          foreach ($f in "Include\$env:WINDOWS_SDK_VERSION\um\windows.h", "Lib\$env:WINDOWS_SDK_VERSION\ucrt\x64\ucrt.lib", 'Debuggers\x64\dbghelp.dll') {
+            if (-not (Test-Path "$kits\$f")) { Get-Content "$env:RUNNER_TEMP\winsdk.log" -Tail 50; throw "$f is missing" }
+          }
+          Get-ChildItem "$kits\Include" | Format-Table Name
+
+      - name: Fetch libwebrtc branch-heads/${{ env.WEBRTC_BRANCH }}
+        run: pwsh -NoProfile -File "BuildScripts~/libwebrtc/fetch.ps1" "$WEBRTC_BRANCH" 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Apply patches
+        run: |
+          for p in "$PATCH_DIR"/*.patch; do
+            echo "Applying $p"
+            git -C "$WEBRTC_ROOT/src" apply --verbose "$GITHUB_WORKSPACE/$p"
+          done 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Build and package
+        run: |
+          pwsh -NoProfile -File "BuildScripts~/libwebrtc/build_windows.ps1" "$WEBRTC_ROOT" "$RUNNER_TEMP/package" 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+          # The library must contain libc++ (std::__Cr, MSVC-mangled as ...@__Cr@std@@).
+          nm="C:/Program Files/LLVM/bin/llvm-nm.exe"
+          count=$("$nm" --defined-only "$RUNNER_TEMP/package/lib/x64/webrtc.lib" 2>/dev/null | grep -c ' T .*@__Cr@std@@' || true)
+          echo "defined std::__Cr text symbols: $count" | tee -a "$RUNNER_TEMP/build.log"
+          test "$count" -gt 100
+          (cd "$RUNNER_TEMP/package" && 7z a -tzip -bd -mx=5 "$GITHUB_WORKSPACE/webrtc-win.zip" . > /dev/null)
+          sha256sum webrtc-win.zip | tee webrtc-win.zip.sha256
+          ls -lh webrtc-win.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-win
+          path: |
+            webrtc-win.zip
+            webrtc-win.zip.sha256
+          if-no-files-found: error
+
+      - name: Publish to libwebrtc-M${{ env.WEBRTC_MILESTONE }}
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="libwebrtc-M$WEBRTC_MILESTONE"
+          gh release view "$tag" > /dev/null 2>&1 || gh release create "$tag" --prerelease --target "$GITHUB_SHA" \
+            --title "Prebuilt libwebrtc M$WEBRTC_MILESTONE" \
+            --notes "libwebrtc branch-heads/$WEBRTC_BRANCH built by the libwebrtc-<platform>.yml workflows of ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} with Chromium's libc++. See VERSIONS in each package."
+          gh release upload "$tag" webrtc-win.zip webrtc-win.zip.sha256 --clobber
+
+      # Workflow logs need a GitHub login to read; push the log and a description of the package to a branch.
+      - name: Push the log
+        if: always()
+        run: |
+          # Collect whatever exists; a failed build has no package directory.
+          set +e +o pipefail
+          branch="ci-logs/libwebrtc-windows-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          # Keep the log below GitHub's file size limit.
+          tail -c 40000000 "$RUNNER_TEMP/build.log" > build.log 2>/dev/null || echo "no log" > build.log
+          grep -n -E 'error|Error|FAILED|failed' build.log | tail -n 200 > errors.log || true
+          tail -c 200000 "$RUNNER_TEMP/winsdk.log" > winsdk.log 2>/dev/null
+          pkg="$RUNNER_TEMP/package"
+          lib="$pkg/lib/x64/webrtc.lib"
+          nm="C:/Program Files/LLVM/bin/llvm-nm.exe"
+          {
+            echo "## disk"; df -h
+            echo "## package files"; (cd "$pkg" 2>/dev/null && find . -maxdepth 3 -type f -not -path './include/*' -exec ls -l {} \;)
+            echo "## include size"; du -sh "$pkg/include" 2>/dev/null
+            echo "## VERSIONS"; cat "$pkg/VERSIONS" 2>/dev/null
+            echo "## cxx_flags.txt"; cat "$pkg/cxx_flags.txt" 2>/dev/null
+            echo "## webrtc.lib"
+            "$nm" --defined-only "$lib" 2>/dev/null > "$RUNNER_TEMP/nm.txt"
+            grep -c ' T ' "$RUNNER_TEMP/nm.txt" | sed 's/^/defined text symbols: /'
+            grep -c ' T .*@__Cr@std@@' "$RUNNER_TEMP/nm.txt" | sed 's/^/defined std::__Cr text symbols (libc++): /'
+            echo "## sample libc++ symbols"; grep ' T .*@__Cr@std@@' "$RUNNER_TEMP/nm.txt" | head -n 10
+          } > package.txt 2>&1
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Log of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
