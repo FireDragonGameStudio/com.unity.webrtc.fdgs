@@ -96,9 +96,9 @@ echo "$class_file"
 echo "classes.jar class file version: $class_version"
 test "$class_version" -le 61 || { echo "classes.jar targets class file version $class_version, newer than Java 17"; exit 1; }
 
-# Headers: every libwebrtc header, plus the complete libc++ and libc++abi include directories
+# Headers: every libwebrtc header (and .inc file, e.g. abseil int128), plus the complete libc++ and libc++abi include directories
 # (libc++ headers such as <vector> have no extension).
-find . -name '*.h' -not -path './out/*' -not -path './third_party/llvm-build/*' \
+find . \( -name '*.h' -o -name '*.inc' \)-not -path './out/*' -not -path './third_party/llvm-build/*' \
   -not -path './third_party/android_sdk/*' -not -path './third_party/android_toolchain/*' \
   -not -path './third_party/jdk/*' | cpio -pdm --quiet "$package/include"
 for dir in third_party/libc++/src/include third_party/libc++abi/src/include buildtools/third_party/libc++; do
