@@ -30,6 +30,7 @@ rtc_build_examples = false
 rtc_use_h264 = false
 use_rtti = true
 use_custom_libcxx = true
+rtc_rust = false
 '@ | Set-Content -Encoding ascii "$out/args.gn"
 gn gen $out
 
@@ -77,9 +78,10 @@ Get-ChildItem "$Package\include\buildtools\third_party\libc++" -Recurse -Filter 
 
 # Compiler flags for code that uses this package, in clang-cl syntax. ${WEBRTC_INCLUDE_DIR} is replaced by the
 # consumer. Chromium puts the libc++ headers in front of the MSVC include directories (which hold both the CRT
-# and the MSVC STL, so there is no -nostdinc++ equivalent); /external:I does the same as -isystem.
+# and the MSVC STL, so there is no -nostdinc++ equivalent); /external:I does the same as -isystem. The defines
+# are libc++'s and libwebrtc's own configuration (e.g. WEBRTC_WIN, WEBRTC_WITHOUT_RUST).
 $defines = @(gn desc $out //api:rtc_error defines | ForEach-Object { $_.Trim() } |
-  Where-Object { $_ -match '^(_LIBCPP|_LIBCXXABI|CR_)' } | ForEach-Object { "/D$_" })
+  Where-Object { $_ -match '^(_LIBCPP|_LIBCXXABI|CR_|WEBRTC_|RTC_|ABSL_)' } | ForEach-Object { "/D$_" })
 $flags = @(
   '/external:I${WEBRTC_INCLUDE_DIR}/buildtools/third_party/libc++'
   '/external:I${WEBRTC_INCLUDE_DIR}/third_party/libc++/src/include'
