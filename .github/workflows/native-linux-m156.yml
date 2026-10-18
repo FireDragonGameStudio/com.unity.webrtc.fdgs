@@ -39,6 +39,8 @@ jobs:
     permissions:
       contents: write
       actions: read
+    outputs:
+      resolved: ${{ steps.unresolved.outcome }}
     steps:
       - uses: actions/checkout@v7
 
@@ -145,6 +147,19 @@ jobs:
           path: Runtime/Plugins/x86_64/libwebrtc.so
           if-no-files-found: error
 
+      # Symbols without a version come neither from glibc nor libgcc: objects missing from libwebrtc.a.
+      # Unity could load such a plugin but would crash once it calls one of them.
+      - name: Check for unresolved symbols
+        id: unresolved
+        continue-on-error: true
+        run: |
+          so=Runtime/Plugins/x86_64/libwebrtc.so
+          nm -DC --undefined-only "$so" | grep -v '@' | grep -v -E ' w ' > "$RUNNER_TEMP/undefined.txt" || true
+          cat "$RUNNER_TEMP/undefined.txt"
+          if [ -s "$RUNNER_TEMP/undefined.txt" ]; then
+            echo "::error::$(wc -l < "$RUNNER_TEMP/undefined.txt") unresolved symbols in $so"; exit 1
+          fi
+
       - name: Build the native tests
         id: build-tests
         continue-on-error: true
@@ -171,7 +186,7 @@ jobs:
           branch="ci-logs/plugin-m156-${GITHUB_RUN_ID}"
           mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
           git init -q && git checkout -q -b "$branch"
-          for f in build.log plugin.log test-build.log gtest.log so.txt; do
+          for f in build.log plugin.log test-build.log gtest.log so.txt undefined.txt; do
             [ -f "$RUNNER_TEMP/$f" ] && tail -c 20000000 "$RUNNER_TEMP/$f" > "$f"
           done
           for f in plugin.log test-build.log; do
@@ -184,7 +199,7 @@ jobs:
   unity-tests:
     name: Unity 6000.3.26f1 (${{ matrix.testMode }})
     needs: build
-    if: github.event_name != 'workflow_dispatch' || inputs.unity_tests
+    if: needs.build.outputs.resolved == 'success' && (github.event_name != 'workflow_dispatch' || inputs.unity_tests)
     runs-on: ubuntu-24.04
     permissions:
       contents: write
