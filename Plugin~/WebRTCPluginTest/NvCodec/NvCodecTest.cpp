@@ -6,6 +6,7 @@
 #include "GraphicsDeviceContainer.h"
 #include "NvCodecUtils.h"
 #include "VideoCodecTest.h"
+#include <api/array_view.h>
 #include <common_video/h264/h264_bitstream_parser.h>
 #include <rtc_base/thread.h>
 
@@ -322,7 +323,7 @@ namespace webrtc
         std::optional<uint8_t> decoded_qp;
         ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
         ASSERT_TRUE(decoded_frame);
-        EXPECT_EQ(encoded_frame.Timestamp(), decoded_frame->timestamp());
+        EXPECT_EQ(encoded_frame.RtpTimestamp(), decoded_frame->rtp_timestamp());
     }
 
     INSTANTIATE_TEST_SUITE_P(GfxDevice, NvCodecTest, testing::ValuesIn(supportedGfxDevices));

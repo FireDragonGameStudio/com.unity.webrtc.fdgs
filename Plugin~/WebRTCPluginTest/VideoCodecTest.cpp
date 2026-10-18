@@ -56,7 +56,7 @@ namespace webrtc
 
         // I420Buffer::SetBlack(frame_data.buffer);
         const uint32_t timestamp = lastInputFrameTimestamp_ + kVideoPayloadTypeFrequency / codecSettings_.maxFramerate;
-        input_frame.set_timestamp(timestamp);
+        input_frame.set_rtp_timestamp(timestamp);
 
         lastInputFrameTimestamp_ = timestamp;
         return input_frame;

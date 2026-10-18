@@ -136,7 +136,7 @@ namespace webrtc
         do
         {
             nFrameReturnd = m_decoder->Decode(
-                input_image.data(), static_cast<int>(input_image.size()), CUVID_PKT_TIMESTAMP, input_image.Timestamp());
+                input_image.data(), static_cast<int>(input_image.size()), CUVID_PKT_TIMESTAMP, input_image.RtpTimestamp());
         } while (nFrameReturnd == 0);
 
         m_isConfiguredDecoder = true;
@@ -190,7 +190,7 @@ namespace webrtc
 
             VideoFrame decoded_frame = VideoFrame::Builder()
                                            .set_video_frame_buffer(i420_buffer)
-                                           .set_timestamp_rtp(static_cast<uint32_t>(timeStamp))
+                                           .set_rtp_timestamp(static_cast<uint32_t>(timeStamp))
                                            .set_color_space(color_space)
                                            .build();
 

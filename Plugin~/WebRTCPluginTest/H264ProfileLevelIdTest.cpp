@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include <api/video_codecs/sdp_video_format.h>
+
 #include "Codec/H264ProfileLevelId.h"
 
 namespace unity

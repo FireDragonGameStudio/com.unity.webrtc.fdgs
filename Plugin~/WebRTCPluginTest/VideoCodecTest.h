@@ -13,6 +13,7 @@
 #include <api/video_codecs/video_encoder.h>
 #include <media/base/codec.h>
 #include <modules/video_coding/include/video_codec_interface.h>
+#include <modules/video_coding/include/video_error_codes.h>
 
 namespace unity
 {
@@ -94,6 +95,7 @@ namespace webrtc
             {
             }
             Result OnEncodedImage(const EncodedImage& frame, const CodecSpecificInfo* codec_specific_info) override;
+            void OnFrameDropped(uint32_t rtp_timestamp, int spatial_id, bool is_end_of_temporal_unit) override { }
 
         private:
             VideoCodecTest* _test;

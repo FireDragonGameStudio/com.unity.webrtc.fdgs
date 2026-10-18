@@ -13,6 +13,7 @@
 #include <common_video/h264/h264_common.h>
 #include <media/base/media_constants.h>
 #include <modules/video_coding/include/video_codec_interface.h>
+#include <modules/video_coding/include/video_error_codes.h>
 #include <modules/video_coding/utility/simulcast_utility.h>
 
 #include "Codec/H264ProfileLevelId.h"
@@ -497,7 +498,7 @@ namespace webrtc
     {
         m_encodedImage._encodedWidth = m_encoder->GetEncodeWidth();
         m_encodedImage._encodedHeight = m_encoder->GetEncodeHeight();
-        m_encodedImage.SetTimestamp(inputFrame.timestamp());
+        m_encodedImage.SetRtpTimestamp(inputFrame.rtp_timestamp());
         m_encodedImage.SetSimulcastIndex(0);
         m_encodedImage.ntp_time_ms_ = inputFrame.ntp_time_ms();
         m_encodedImage.capture_time_ms_ = inputFrame.render_time_ms();
@@ -506,7 +507,7 @@ namespace webrtc
         m_encodedImage.timing_.flags = VideoSendTiming::kInvalid;
         m_encodedImage._frameType = VideoFrameType::kVideoFrameDelta;
         m_encodedImage.SetColorSpace(inputFrame.color_space());
-        std::vector<H264::NaluIndex> naluIndices = H264::FindNaluIndices(packet.data(), packet.size());
+        std::vector<H264::NaluIndex> naluIndices = H264::FindNaluIndices(packet);
         for (uint32_t i = 0; i < naluIndices.size(); i++)
         {
             const H264::NaluType naluType = H264::ParseNaluType(packet[naluIndices[i].payload_start_offset]);

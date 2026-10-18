@@ -216,7 +216,7 @@ namespace webrtc
         return SupportedNvDecoderCodecs(context_);
     }
 
-    std::unique_ptr<VideoEncoder> NvEncoderFactory::CreateVideoEncoder(const SdpVideoFormat& format)
+    std::unique_ptr<VideoEncoder> NvEncoderFactory::Create(const Environment& env, const SdpVideoFormat& format)
     {
         // todo(kazuki):: add CUmemorytype::CU_MEMORYTYPE_DEVICE option
         return NvEncoder::Create(::webrtc::CreateVideoCodec(format), context_, CU_MEMORYTYPE_ARRAY, format_, profiler_);
@@ -234,7 +234,7 @@ namespace webrtc
         return SupportedNvDecoderCodecs(context_);
     }
 
-    std::unique_ptr<VideoDecoder> NvDecoderFactory::CreateVideoDecoder(const SdpVideoFormat& format)
+    std::unique_ptr<VideoDecoder> NvDecoderFactory::Create(const Environment& env, const SdpVideoFormat& format)
     {
         return NvDecoder::Create(::webrtc::CreateVideoCodec(format), context_, profiler_);
     }
