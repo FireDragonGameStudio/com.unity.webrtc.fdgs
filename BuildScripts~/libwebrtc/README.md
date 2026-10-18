@@ -11,6 +11,12 @@ with clang (clang-cl on Windows), ideally the exact Chromium clang listed in `VE
 
 - `fetch.sh <branch> <target_os>`: checks out `branch-heads/<branch>` with `gclient` into `$RUNNER_TEMP/webrtc`.
 - `build_<platform>.sh` (or `.ps1`): runs `gn gen` and the build, then writes the package directory.
+- `build_apple.sh <root> <package> <mac|ios>`: the same for macOS (arm64 + x64, combined with `lipo`;
+  deployment target 11.0) and iOS (arm64 devices, deployment target 13.0).
+
+The macOS and iOS workflows also apply `BuildScripts~/patches/m156/apple/`: `disable_task_queue_gcd.patch`
+(the stdlib task queue instead of GCD, whose threads the Unity profiler cannot follow) and
+`add_objc_deps.patch` (links the VideoToolbox codec factories and ObjC adapters into `libwebrtc.a`).
 
 ## Package format
 
