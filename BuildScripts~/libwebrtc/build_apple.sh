@@ -73,9 +73,10 @@ else
 fi
 lipo -info "$package/lib/libwebrtc.a"
 
-# Headers: every libwebrtc header (including the ObjC SDK in sdk/objc), plus the complete libc++ and
-# libc++abi include directories (libc++ headers such as <vector> have no extension).
-find . -name '*.h' -not -path './out/*' -not -path './third_party/llvm-build/*' | cpio -pdm --quiet "$package/include"
+# Headers: every libwebrtc header and .inc file (including the ObjC SDK in sdk/objc; abseil's int128.h
+# includes an .inc), plus the complete libc++ and libc++abi include directories (libc++ headers such as
+# <vector> have no extension).
+find . \( -name '*.h' -o -name '*.inc' \) -not -path './out/*' -not -path './third_party/llvm-build/*' | cpio -pdm --quiet "$package/include"
 for dir in third_party/libc++/src/include third_party/libc++abi/src/include buildtools/third_party/libc++; do
   mkdir -p "$package/include/$dir"
   cp -R "$dir/." "$package/include/$dir/"
