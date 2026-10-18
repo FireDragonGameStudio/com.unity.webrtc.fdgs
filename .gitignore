@@ -394,3 +394,6 @@ Runtime/Plugins/x86_64/*.pdb.meta
 
 
 
+
+# Chromium clang downloaded by BuildScripts~/build_plugin_mac.sh and build_plugin_ios.sh
+Plugin~/out/
