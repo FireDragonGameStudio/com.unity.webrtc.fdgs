@@ -43,10 +43,10 @@ namespace webrtc
             specs->push_back(spec);
         }
         static AudioCodecInfo QueryAudioEncoder(const Config& config) { return T::QueryAudioEncoder(config); }
-        static std::unique_ptr<AudioEncoder> MakeAudioEncoder(
-            const Config& config, int payload_type, std::optional<AudioCodecPairId> codec_pair_id = std::nullopt)
+        static std::unique_ptr<AudioEncoder>
+        MakeAudioEncoder(const Environment& env, Config config, const AudioEncoderFactory::Options& options)
         {
-            return T::MakeAudioEncoder(config, payload_type, codec_pair_id);
+            return T::MakeAudioEncoder(env, std::move(config), options);
         }
     };
 

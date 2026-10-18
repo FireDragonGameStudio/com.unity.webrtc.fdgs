@@ -43,9 +43,9 @@ namespace webrtc
             specs->push_back(spec);
         }
         static std::unique_ptr<AudioDecoder>
-        MakeAudioDecoder(const Config& config, std::optional<AudioCodecPairId> codec_pair_id)
+        MakeAudioDecoder(const Environment& env, Config config)
         {
-            return T::MakeAudioDecoder(config, codec_pair_id);
+            return T::MakeAudioDecoder(env, std::move(config));
         }
     };
 

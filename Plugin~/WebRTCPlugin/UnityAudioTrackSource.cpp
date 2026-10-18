@@ -74,9 +74,13 @@ namespace webrtc
         }
     }
 
-    UnityAudioTrackSource::UnityAudioTrackSource() { }
+    UnityAudioTrackSource::UnityAudioTrackSource()
+        : LocalAudioSource(nullptr)
+    {
+    }
     UnityAudioTrackSource::UnityAudioTrackSource(const ::webrtc::AudioOptions& audio_options)
-        : _options(audio_options)
+        : LocalAudioSource(&audio_options)
+        , _options(audio_options)
     {
     }
 
