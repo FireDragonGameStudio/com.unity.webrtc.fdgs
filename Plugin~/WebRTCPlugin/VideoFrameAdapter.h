@@ -1,5 +1,6 @@
 #pragma once
 
+#include <api/array_view.h>
 #include <api/video/video_frame.h>
 #include <vector>
 

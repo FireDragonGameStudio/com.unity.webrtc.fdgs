@@ -1,5 +1,9 @@
 #include "pch.h"
 
+#include <api/array_view.h>
+#include <span>
+#include <variant>
+
 #include "Context.h"
 #include "CreateSessionDescriptionObserver.h"
 #include "EncodedStreamTransformer.h"
@@ -981,6 +985,24 @@ extern "C"
         int32_t sdpMLineIndex;
     };
 
+    // The candidate types as libwebrtc named them before M120 (cricket::LOCAL_PORT_TYPE etc.), which
+    // Runtime/Scripts/RTCIceCandidate.cs expects.
+    const char* CandidateTypeToString(::webrtc::IceCandidateType type)
+    {
+        switch (type)
+        {
+        case ::webrtc::IceCandidateType::kHost:
+            return "local";
+        case ::webrtc::IceCandidateType::kSrflx:
+            return "stun";
+        case ::webrtc::IceCandidateType::kPrflx:
+            return "prflx";
+        case ::webrtc::IceCandidateType::kRelay:
+            return "relay";
+        }
+        return "";
+    }
+
     struct Candidate
     {
         char* candidate;
@@ -1010,7 +1032,7 @@ extern "C"
             relatedAddress = ConvertString(obj.related_address().ToString());
             relatedPort = obj.related_address().port();
             tcpType = ConvertString(obj.tcptype());
-            type = ConvertString(obj.type());
+            type = ConvertString(CandidateTypeToString(obj.type()));
             usernameFragment = ConvertString(obj.username());
             return *this;
         }
@@ -1030,7 +1052,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT void DeleteIceCandidate(IceCandidateInterface* candidate) { delete candidate; }
 
-    UNITY_INTERFACE_EXPORT void IceCandidateGetCandidate(const IceCandidateInterface* candidate, Candidate* dst)
+    UNITY_INTERFACE_EXPORT void IceCandidateGetCandidate(const IceCandidateInterface* candidate, ::Candidate* dst)
     {
         *dst = candidate->candidate();
     }
@@ -1211,7 +1233,7 @@ extern "C"
         RTCRtpExtension& operator=(const RtpExtension& src)
         {
             uri = ConvertString(src.uri);
-            id = static_cast<uint16_t>(src.id);
+            id = static_cast<uint16_t>(src.id.value());
             encrypted = src.encrypt;
             return *this;
         }
@@ -1348,7 +1370,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT void SenderSetTransform(RtpSenderInterface* sender, FrameTransformerInterface* transformer)
     {
-        sender->SetEncoderToPacketizerFrameTransformer(::webrtc::scoped_refptr<FrameTransformerInterface>(transformer));
+        sender->SetFrameTransformer(::webrtc::scoped_refptr<FrameTransformerInterface>(transformer));
     }
 
     UNITY_INTERFACE_EXPORT MediaStreamTrackInterface* ReceiverGetTrack(RtpReceiverInterface* receiver)
@@ -1377,7 +1399,7 @@ extern "C"
             rtpTimestamp = src.rtp_timestamp();
             source = src.source_id();
             sourceType = static_cast<uint8_t>(src.source_type());
-            timestamp = src.timestamp_ms();
+            timestamp = src.timestamp().ms();
         }
     };
 
@@ -1397,7 +1419,7 @@ extern "C"
     UNITY_INTERFACE_EXPORT void
     ReceiverSetTransform(RtpReceiverInterface* receiver, FrameTransformerInterface* transformer)
     {
-        receiver->SetDepacketizerToDecoderFrameTransformer(::webrtc::scoped_refptr<FrameTransformerInterface>(transformer));
+        receiver->SetFrameTransformer(::webrtc::scoped_refptr<FrameTransformerInterface>(transformer));
     }
 
     UNITY_INTERFACE_EXPORT char* DataChannelGetLabel(DataChannelInterface* channel)
@@ -1412,12 +1434,13 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT uint16_t DataChannelGetMaxRetransmits(DataChannelInterface* channel)
     {
-        return channel->maxRetransmits();
+        // Unset is reported as 0xFFFF, as libwebrtc did before M156.
+        return static_cast<uint16_t>(channel->maxRetransmitsOpt().value_or(-1));
     }
 
     UNITY_INTERFACE_EXPORT uint16_t DataChannelGetMaxRetransmitTime(DataChannelInterface* channel)
     {
-        return channel->maxRetransmitTime();
+        return static_cast<uint16_t>(channel->maxPacketLifeTime().value_or(-1));
     }
 
     UNITY_INTERFACE_EXPORT bool DataChannelGetOrdered(DataChannelInterface* channel) { return channel->ordered(); }
@@ -1524,7 +1547,8 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT uint32_t FrameGetTimestamp(TransformableFrameInterface* frame)
     {
-        return frame->GetTimestamp();
+        return std::visit(
+            [](const auto& timestamp) { return static_cast<uint32_t>(timestamp); }, frame->GetRtpTimestampInfo());
     }
 
     UNITY_INTERFACE_EXPORT uint32_t FrameGetSsrc(TransformableFrameInterface* frame) { return frame->GetSsrc(); }
@@ -1556,7 +1580,7 @@ extern "C"
         data->height = metadata.GetHeight();
         data->simulcastIndex = metadata.GetSimulcastIdx();
         data->temporalIndex = metadata.GetTemporalIndex();
-        data->dependencies = metadata.GetFrameDependencies();
+        data->dependencies = metadata.GetDependencies().value_or(std::span<const int64_t>());
 
         return data;
     }

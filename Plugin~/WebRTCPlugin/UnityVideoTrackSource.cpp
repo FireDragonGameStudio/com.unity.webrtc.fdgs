@@ -22,9 +22,9 @@ namespace webrtc
         , frame_(nullptr)
         , syncApplicationFramerate_(true)
     {
-        taskQueue_ = (
-            taskQueueFactory->CreateTaskQueue("VideoFrameScheduler", TaskQueueFactory::Priority::NORMAL));
-        scheduler_ = std::make_unique<VideoFrameScheduler>(taskQueue_->Get());
+        taskQueue_ =
+            taskQueueFactory->CreateTaskQueue("VideoFrameScheduler", TaskQueueFactory::Priority::NORMAL);
+        scheduler_ = std::make_unique<VideoFrameScheduler>(taskQueue_.get());
         scheduler_->Start(std::bind(&UnityVideoTrackSource::OnUpdateVideoFrame, this));
         if (syncApplicationFramerate_)
             scheduler_->Pause(true);

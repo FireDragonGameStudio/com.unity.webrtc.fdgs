@@ -93,7 +93,6 @@ namespace webrtc
         // A new ICE candidate has been gathered.
         void OnIceCandidate(const IceCandidateInterface* candidate) override;
         // Ice candidates have been removed.
-        void OnIceCandidatesRemoved(const std::vector<::webrtc::Candidate>& candidates) override { }
         // Called when the ICE connection receiving status changes.
         void OnIceConnectionReceivingChange(bool Receiving) override { }
         // This is called when signaling indicates a transceiver will be receiving
