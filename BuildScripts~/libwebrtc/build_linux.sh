@@ -40,9 +40,20 @@ cp "$out/obj/libwebrtc.a" "$package/lib/x64/libwebrtc.a"
 libcxx_objects=$(find "$out/obj/buildtools/third_party/libc++" "$out/obj/buildtools/third_party/libc++abi" -name '*.o' | sort)
 echo "Adding $(echo "$libcxx_objects" | wc -l) libc++/libc++abi objects"
 test -n "$libcxx_objects" || { echo "No libc++ objects found"; exit 1; }
-"$ar" rs "$package/lib/x64/libwebrtc.a" $libcxx_objects
+# Append with "q", not "r": "r" replaces members with the same name, and libc++'s random.o, vector.o or
+# algorithm.o would overwrite libwebrtc's (rtc_base, libaom, BoringSSL) objects of the same name.
+"$ar" q "$package/lib/x64/libwebrtc.a" $libcxx_objects
+"$ar" s "$package/lib/x64/libwebrtc.a"
 size=$(stat -c %s "$package/lib/x64/libwebrtc.a")
 test "$size" -gt 50000000 || { echo "libwebrtc.a is only $size bytes"; exit 1; }
+
+# Every symbol used inside libwebrtc.a must be defined in it or in the system C libraries: link all of it
+# into a shared library without the system C++ library and refuse unresolved symbols.
+clang="third_party/llvm-build/Release+Asserts/bin/clang"
+"$clang" -shared -fuse-ld=lld -o "$out/libwebrtc_link_check.so" \
+  -Wl,--whole-archive "$package/lib/x64/libwebrtc.a" -Wl,--no-whole-archive \
+  -nostdlib++ -Wl,--no-undefined -lm -ldl -lpthread -lrt
+echo "Link check passed: libwebrtc.a has no unresolved symbols"
 
 # Headers: every libwebrtc header and textual include (*.inc, e.g. abseil's int128_have_intrinsic.inc), plus the
 # complete libc++ and libc++abi include directories (libc++ headers such as <vector> have no extension).
