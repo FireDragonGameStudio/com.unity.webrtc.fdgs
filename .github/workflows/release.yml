@@ -75,8 +75,9 @@ jobs:
 
   build-windows:
     needs: prepare
+    # The called workflow pushes its logs to a ci-logs branch.
     permissions:
-      contents: read
+      contents: write
     uses: ./.github/workflows/native-windows.yml
 
   build-linux:

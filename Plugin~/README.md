@@ -8,50 +8,27 @@ Install dependencies to make development environment.
 
 ### Windows
 
-#### Visual Studio 2026 (recommended)
+libwebrtc M156 is built with Chromium's own libc++, so the plugin is compiled with the same Chromium `clang-cl` (`CLANG_REVISION` in `Plugin~/webrtc/VERSIONS`) against the libc++ headers in the package, and linked with `lld-link`. MSVC cannot build it. Visual Studio still provides the C runtime (`/MT`), the Windows SDK and `cl.exe`, which `nvcc` uses as host compiler for the CUDA kernels.
 
 Install the following:
 
-- **Visual Studio 2026** with the *Desktop development with C++* workload
-- **CUDA Toolkit** 12.x or 13.x, including its Visual Studio integration (`winget install Nvidia.CUDA`)
+- **Visual Studio 2022 or 2026** with the *Desktop development with C++* workload
+- **CUDA Toolkit** 12.x or 13.x (`winget install Nvidia.CUDA`)
 - **Vulkan SDK** (`winget install KhronosGroup.VulkanSDK`)
-- **7-Zip** (used by the build script to extract the prebuilt libwebrtc)
+- **7-Zip** and **curl** (used by the build script)
 
-Use the CMake bundled with Visual Studio 2026 (version 4.2 or later is needed for the `Visual Studio 18 2026` generator), for example from a *Developer PowerShell for VS 2026*:
+Then run from the repository root:
 
-```powershell
-cd Plugin~
-cmake --preset=x64-windows-vs2026
-cmake --build --preset=release-windows-vs2026 --target=WebRTCPlugin
+```bat
+BuildScripts~\build_plugin_win.cmd
 ```
 
-Visual Studio finds CUDA through the environment variables the CUDA installer sets (`CUDA_PATH_V<major>_<minor>`), so open a new terminal after installing CUDA. You can also run `BuildScripts~\build_plugin_win.cmd release vs2026` from the repository root, which downloads the prebuilt libwebrtc first.
+It downloads the libwebrtc package (SHA-256 checked) and Chromium's clang into `Plugin~\out`, sets up the Visual Studio x64 environment unless it is already set, and builds `Runtime\Plugins\x86_64\webrtc.dll` with the `x64-windows` preset (Ninja, Release; the package has no debug library). Pass `WebRTCLibTest` to build the native tests instead. From a *x64 Native Tools Command Prompt* the preset can also be used directly, with Chromium's `clang-cl.exe` and `lld-link.exe` first in `PATH`:
 
-#### Visual Studio 2022
-
-On windows, first, you need to install **Visual Studio 2022**. The build process use the **clang** compiler. To install clang, see [MSDN](https://docs.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170). And [chocolatey](https://chocolatey.org/) is used to install.
-
-```powershell
-# Install CUDA
-choco install cuda --version=11.0.3
-
-# Install Windows SDK
-# WARNING: If you have versions of Windows SDK earlier than Version 22H2,
-# compiling the plugin will fail. Make sure to uninstall earlier versions.
-choco install -y vcredist2010 vcredist2013 vcredist140 windows-sdk-11-version-22h2-all
-
-# Install Vulkan
-choco install vulkan-sdk --version=1.2.182.0
-
-# Install CMake 3.24.3
-choco install cmake -y --version=3.24.3
-
-# Install 7zip (used to extract Google's webrtc library after download)
-choco install 7zip
-
-# Setting up environment variables
-setx CUDA_PATH "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0" /m
-setx VULKAN_SDK "C:\VulkanSDK\1.2.182.0" /m
+```bat
+cd Plugin~
+cmake --preset=x64-windows
+cmake --build out/build/x64-windows --config Release --target WebRTCPlugin
 ```
 
 ### Ubuntu
