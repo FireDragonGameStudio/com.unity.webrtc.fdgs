@@ -72,6 +72,22 @@ jobs:
           unzip -q -o webrtc-linux.zip -d "$GITHUB_WORKSPACE/Plugin~/webrtc"
           cat "$GITHUB_WORKSPACE/Plugin~/webrtc/VERSIONS" | tee -a "$RUNNER_TEMP/build.log"
 
+      # Workaround: packages up to run 39132248722 contain only *.h, but abseil's headers also include *.inc
+      # files. Add the missing ones from the third_party revision pinned by the package's WEBRTC_COMMIT.
+      - name: Add abseil's .inc headers
+        run: |
+          commit=$(sed -n 's/^WEBRTC_COMMIT=//p' Plugin~/webrtc/VERSIONS)
+          rev=$(curl -fsSL "https://webrtc.googlesource.com/src/+/$commit/DEPS?format=TEXT" | base64 -d \
+            | grep -A1 "'src/third_party':" | grep -o 'third_party@[0-9a-f]*' | cut -d@ -f2)
+          echo "chromium/src/third_party@$rev"
+          mkdir -p "$RUNNER_TEMP/absl"
+          curl -fsSL "https://chromium.googlesource.com/chromium/src/third_party/+archive/$rev/abseil-cpp/absl.tar.gz" \
+            | tar -xz -C "$RUNNER_TEMP/absl"
+          dst=Plugin~/webrtc/include/third_party/abseil-cpp/absl
+          (cd "$RUNNER_TEMP/absl" && find . -name '*.inc') | while read -r f; do
+            [ -f "$dst/$f" ] || { mkdir -p "$(dirname "$dst/$f")"; cp "$RUNNER_TEMP/absl/$f" "$dst/$f"; echo "added $f"; }
+          done
+
       # The plugin shares standard library types with libwebrtc, so it is compiled with the clang that built it.
       - name: Install Chromium's clang
         run: |
