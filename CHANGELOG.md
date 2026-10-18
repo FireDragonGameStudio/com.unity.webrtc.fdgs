@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- GitHub Actions workflows that build libwebrtc M156 (branch-heads/8078) for Linux, Windows, macOS, iOS and Android with Chromium's libc++, and publish the packages to the release `libwebrtc-M156`. The plugin does not use them yet.
+
 ## [3.1.0] - 2026-10-18
 
 ### Changed

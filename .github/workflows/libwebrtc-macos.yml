@@ -1,0 +1,136 @@
+name: libwebrtc (macOS)
+
+# Builds Google's libwebrtc for macOS (universal arm64 + x86_64) with Chromium's own libc++
+# (use_custom_libcxx=true, the upstream default). Each platform has its own libwebrtc-<platform>.yml; the
+# package format they all produce is described in BuildScripts~/libwebrtc/README.md.
+# Started manually with "publish" it uploads the package to the release libwebrtc-M<milestone>.
+on:
+  push:
+    branches: ['feat/libwebrtc-**']
+    paths:
+      - '.github/workflows/libwebrtc-macos.yml'
+      - 'BuildScripts~/libwebrtc/fetch.sh'
+      - 'BuildScripts~/libwebrtc/build_apple.sh'
+      - 'BuildScripts~/patches/m156/**'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Upload the packages to the release libwebrtc-M<milestone>
+        type: boolean
+        default: false
+
+concurrency:
+  group: libwebrtc-macos-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  WEBRTC_MILESTONE: '156'
+  WEBRTC_BRANCH: '8078'
+  PATCH_DIR: BuildScripts~/patches/m156
+  # M156 needs the macOS 15 SDK or newer (mac_sdk_min in build/config/mac/mac_sdk_overrides.gni) and is
+  # built upstream with the 26.x SDK; use the newest stable Xcode 26 of the runner.
+  XCODE_MAJOR: '26'
+
+jobs:
+  macos:
+    name: macOS universal
+    runs-on: macos-15
+    timeout-minutes: 300
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Select Xcode and free disk space
+        run: |
+          df -h /
+          ls -d /Applications/Xcode*.app
+          xcode=$(ls -d /Applications/Xcode_${XCODE_MAJOR}*.app | grep -E 'Xcode_[0-9.]+\.app$' | sort -V | tail -n 1)
+          test -n "$xcode" || { echo "No Xcode $XCODE_MAJOR on this runner"; exit 1; }
+          sudo xcode-select -s "$xcode/Contents/Developer"
+          xcodebuild -version
+          xcrun --sdk macosx --show-sdk-version
+          # Other Xcode versions, the Android SDK and the tool cache are not needed.
+          for app in /Applications/Xcode*.app; do
+            [ "$(cd "$app" && pwd -P)" = "$(cd "$xcode" && pwd -P)" ] || sudo rm -rf "$app"
+          done
+          sudo rm -rf "$HOME/Library/Android" "$HOME/hostedtoolcache" /Users/runner/hostedtoolcache || true
+          df -h /
+
+      - name: Fetch libwebrtc branch-heads/${{ env.WEBRTC_BRANCH }}
+        run: |
+          set -o pipefail
+          bash "BuildScripts~/libwebrtc/fetch.sh" "$WEBRTC_BRANCH" mac 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Apply patches
+        run: |
+          set -o pipefail
+          for p in "$PATCH_DIR"/*.patch "$PATCH_DIR"/apple/*.patch; do
+            echo "Applying $p"
+            git -C "$RUNNER_TEMP/webrtc/src" apply --verbose "$GITHUB_WORKSPACE/$p" || exit 1
+          done 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+
+      - name: Build and package
+        run: |
+          set -o pipefail
+          bash "BuildScripts~/libwebrtc/build_apple.sh" "$RUNNER_TEMP/webrtc" "$RUNNER_TEMP/package" mac 2>&1 | tee -a "$RUNNER_TEMP/build.log"
+          (cd "$RUNNER_TEMP/package" && zip -qr "$GITHUB_WORKSPACE/webrtc-mac.zip" .)
+          shasum -a 256 webrtc-mac.zip | tee webrtc-mac.zip.sha256
+          ls -lh webrtc-mac.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: webrtc-mac
+          path: |
+            webrtc-mac.zip
+            webrtc-mac.zip.sha256
+          if-no-files-found: error
+
+      - name: Publish to libwebrtc-M${{ env.WEBRTC_MILESTONE }}
+        if: github.event_name == 'workflow_dispatch' && inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="libwebrtc-M$WEBRTC_MILESTONE"
+          gh release view "$tag" > /dev/null 2>&1 || gh release create "$tag" --prerelease --target "$GITHUB_SHA" \
+            --title "Prebuilt libwebrtc M$WEBRTC_MILESTONE" \
+            --notes "libwebrtc branch-heads/$WEBRTC_BRANCH built by the libwebrtc-<platform>.yml workflows of ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} with Chromium's libc++. See VERSIONS in each package."
+          gh release upload "$tag" webrtc-mac.zip webrtc-mac.zip.sha256 --clobber
+
+      # Workflow logs need a GitHub login to read; push the log and a description of the package to a branch.
+      - name: Push the log
+        if: always()
+        run: |
+          # Collect whatever exists; a failed build has no package directory.
+          set +e +o pipefail
+          branch="ci-logs/libwebrtc-macos-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          # Keep the log below GitHub's file size limit.
+          tail -c 40000000 "$RUNNER_TEMP/build.log" > build.log 2>/dev/null || echo "no log" > build.log
+          grep -n -E 'error|Error|FAILED|failed' build.log | tail -n 200 > errors.log || true
+          pkg="$RUNNER_TEMP/package"
+          lib="$pkg/lib/libwebrtc.a"
+          {
+            echo "## disk"; df -h /
+            echo "## xcode"; xcodebuild -version
+            echo "## package files"; (cd "$pkg" 2>/dev/null && find . -maxdepth 3 -type f -not -path './include/*' -exec ls -l {} \;)
+            echo "## include size"; du -sh "$pkg/include" 2>/dev/null
+            echo "## objc headers"; ls "$pkg/include/sdk/objc" 2>/dev/null
+            echo "## VERSIONS"; cat "$pkg/VERSIONS" 2>/dev/null
+            echo "## cxx_flags.txt"; cat "$pkg/cxx_flags.txt" 2>/dev/null
+            echo "## libwebrtc.a"; lipo -info "$lib" 2>/dev/null
+            for arch in arm64 x86_64; do
+              nm -arch "$arch" -C "$lib" 2>/dev/null > "$RUNNER_TEMP/nm.txt"
+              echo "[$arch]"
+              grep -c ' T ' "$RUNNER_TEMP/nm.txt" | sed 's/^/defined text symbols: /'
+              grep -c ' T std::__Cr::' "$RUNNER_TEMP/nm.txt" | sed 's/^/defined std::__Cr text symbols (libc++): /'
+              grep -c ' T ___cxa_\| T __cxa_' "$RUNNER_TEMP/nm.txt" | sed 's/^/defined __cxa_ symbols (libc++abi): /'
+              grep -c 'RTCVideoEncoderFactoryH264' "$RUNNER_TEMP/nm.txt" | sed 's/^/RTCVideoEncoderFactoryH264 symbols (VideoToolbox): /'
+              grep -c 'TaskQueueGcd\|GcdTaskQueue' "$RUNNER_TEMP/nm.txt" | sed 's/^/GCD task queue symbols (should be 0 defined): /'
+              grep -c ' T .*TaskQueueStdlib\| T .*CreateTaskQueueStdlibFactory' "$RUNNER_TEMP/nm.txt" | sed 's/^/stdlib task queue symbols: /'
+            done
+            echo "## minimum OS (arm64 object)"; (cd "$RUNNER_TEMP" && rm -rf obj && mkdir obj && cd obj && { lipo "$lib" -thin arm64 -output thin.a || cp "$lib" thin.a; } && ar -x thin.a && otool -l "$(ls *.o | head -n 1)" | grep -A4 -E 'LC_BUILD_VERSION|LC_VERSION_MIN')
+          } > package.txt 2>&1
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Log of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
