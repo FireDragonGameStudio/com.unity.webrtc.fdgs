@@ -88,8 +88,10 @@ jobs:
         working-directory: Plugin~
         # Errors are repeated as annotations so they show on the run summary without opening the log.
         # Unity only ships the device framework, so only arm64 is built (set by the preset).
+        # CMake writes the framework's Info.plist when generating, so the old framework is removed first.
         run: |
           set -o pipefail
+          rm -rf "../$FRAMEWORK"
           cmake --preset=ios -Wno-dev \
             -DCMAKE_C_COMPILER="$RUNNER_TEMP/clang/bin/clang" \
             -DCMAKE_CXX_COMPILER="$RUNNER_TEMP/clang/bin/clang++" 2>&1 | tee "$RUNNER_TEMP/configure.log" || {
@@ -103,7 +105,6 @@ jobs:
         working-directory: Plugin~
         run: |
           set -o pipefail
-          rm -rf "../$FRAMEWORK"
           cmake --build out/build/ios --config ${{ matrix.config }} --target WebRTCPlugin -- -k 0 2>&1 \
             | tee "$RUNNER_TEMP/plugin.log" > /dev/null || {
             echo "::error title=Build::$(grep -E -A3 'error:|FAILED:|Undefined symbols' "$RUNNER_TEMP/plugin.log" | head -80 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
