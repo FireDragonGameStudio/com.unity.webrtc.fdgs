@@ -1,18 +1,16 @@
-name: libwebrtc
+name: libwebrtc (Linux)
 
-# Builds Google's libwebrtc for the native plugin, with Chromium's own libc++ (use_custom_libcxx=true,
-# the upstream default). Each package contains:
-#   include/                 libwebrtc headers, plus the libc++ and libc++abi headers it was built with
-#   lib/<cpu>/libwebrtc.a    libwebrtc, with the libc++ and libc++abi objects added
-#   cxx_flags.txt            compiler flags the plugin must use to compile against that libc++
-#   VERSIONS, LICENSE.md
-# Started manually with "publish" it uploads the packages to the release libwebrtc-M<milestone>.
+# Builds Google's libwebrtc for Linux x64 with Chromium's own libc++ (use_custom_libcxx=true, the upstream
+# default). Each platform has its own libwebrtc-<platform>.yml; the package format they all produce is
+# described in BuildScripts~/libwebrtc/README.md.
+# Started manually with "publish" it uploads the package to the release libwebrtc-M<milestone>.
 on:
   push:
     branches: ['feat/libwebrtc-**']
     paths:
-      - '.github/workflows/libwebrtc.yml'
-      - 'BuildScripts~/libwebrtc/**'
+      - '.github/workflows/libwebrtc-linux.yml'
+      - 'BuildScripts~/libwebrtc/fetch.sh'
+      - 'BuildScripts~/libwebrtc/build_linux.sh'
       - 'BuildScripts~/patches/m156/**'
   workflow_dispatch:
     inputs:
@@ -22,7 +20,7 @@ on:
         default: false
 
 concurrency:
-  group: libwebrtc-${{ github.ref }}
+  group: libwebrtc-linux-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -81,7 +79,7 @@ jobs:
           tag="libwebrtc-M$WEBRTC_MILESTONE"
           gh release view "$tag" > /dev/null 2>&1 || gh release create "$tag" --prerelease --target "$GITHUB_SHA" \
             --title "Prebuilt libwebrtc M$WEBRTC_MILESTONE" \
-            --notes "libwebrtc branch-heads/$WEBRTC_BRANCH built by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/workflows/libwebrtc.yml with Chromium's libc++. See VERSIONS in each package."
+            --notes "libwebrtc branch-heads/$WEBRTC_BRANCH built by the libwebrtc-<platform>.yml workflows of ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} with Chromium's libc++. See VERSIONS in each package."
           gh release upload "$tag" webrtc-linux.zip webrtc-linux.zip.sha256 --clobber
 
       # Workflow logs need a GitHub login to read; push the log and a description of the package to a branch.
