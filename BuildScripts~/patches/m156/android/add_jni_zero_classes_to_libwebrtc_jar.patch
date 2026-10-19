@@ -1,8 +1,8 @@
 diff --git a/sdk/android/BUILD.gn b/sdk/android/BUILD.gn
-index 2522e5a..bd5cbdc 100644
+index 2522e5a..71592ed 100644
 --- a/sdk/android/BUILD.gn
 +++ b/sdk/android/BUILD.gn
-@@ -58,9 +58,73 @@ if (is_android) {
+@@ -58,9 +58,75 @@ if (is_android) {
        ":video_java",
        "../../rtc_base:base_java",
        "../../third_party/jni_zero:jni_zero_java",
@@ -68,7 +68,9 @@ index 2522e5a..bd5cbdc 100644
      ]
    }
  
-+  android_library("libwebrtc_jni_registration_java") {
++  # Not android_library, which leaves GEN_JNI out of libraries with JNI srcjars.
++  java_library("libwebrtc_jni_registration_java") {
++    supports_android = true
 +    srcjar_deps = [ ":libwebrtc_jni_registration" ]
 +    deps = [ "../../third_party/jni_zero:jni_zero_java" ]
 +  }
