@@ -27,7 +27,7 @@ concurrency:
 env:
   # Keep in sync with BuildScripts~/build_plugin_android.sh.
   LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M156/webrtc-android.zip
-  LIBWEBRTC_SHA256: 7096abd6019bb083296324cd68861e864e4f7763eff6a69b1ef2aa80232ab65e
+  LIBWEBRTC_SHA256: a16a45af0ca78f72fe89cc8df42067fbe3bcdf941085be17a43b393fcd864b11
   # Used when the NDK in the package's VERSIONS cannot be installed with sdkmanager. Only its sysroot is used.
   FALLBACK_NDK_VERSION: '28.2.13676358'
 

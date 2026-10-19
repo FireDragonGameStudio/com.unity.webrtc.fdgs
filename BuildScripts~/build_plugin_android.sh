@@ -7,7 +7,7 @@
 # (default: Plugin~/out/clang): libwebrtc is built with Chromium's libc++, whose headers the NDK's clang cannot use.
 
 export LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M156/webrtc-android.zip
-export LIBWEBRTC_SHA256=7096abd6019bb083296324cd68861e864e4f7763eff6a69b1ef2aa80232ab65e
+export LIBWEBRTC_SHA256=a16a45af0ca78f72fe89cc8df42067fbe3bcdf941085be17a43b393fcd864b11
 export SOLUTION_DIR=$(pwd)/Plugin~
 export PLUGIN_DIR=$(pwd)/Runtime/Plugins/Android
 
