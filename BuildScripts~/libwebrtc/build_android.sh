@@ -2,11 +2,14 @@
 # Builds libwebrtc for Android arm64-v8a and x86_64 with Chromium's libc++ and writes the package to
 # <package dir>: a static libwebrtc.a per ABI and libwebrtc.aar with the Java classes for both ABIs.
 # Usage: build_android.sh <webrtc root (contains src and depot_tools)> <package dir>
+# Needs patches/m156/android/add_jni_zero_classes_to_libwebrtc_jar.patch, without which classes.jar lacks the
+# JNI Zero classes (check_android_jar.py fails).
 
 set -euo pipefail
 
 root="$1"
 package="$2"
+script_dir=$(cd "$(dirname "$0")" && pwd)
 export PATH="$root/depot_tools:$PATH"
 cd "$root/src"
 
@@ -100,6 +103,11 @@ for pair in $abis; do
     link_check_failed="$link_check_failed $cpu"
   fi
 
+  # The Java classes call the natives of libwebrtc.a through J.N (JNI Zero hashed names, Java_J_N_M...).
+  "$nm" --defined-only -j "$lib" > "$out/libwebrtc_symbols.txt"
+  python3 "$script_dir/check_android_jar.py" --registration-srcjar "$out/gen/sdk/android/libwebrtc_jni_registration.srcjar" \
+    "$out/lib.java/sdk/android/libwebrtc.jar" "$out/libwebrtc_symbols.txt"
+
   # Chromium links Android 64-bit shared libraries with 16 KB pages by default (build/config/android/BUILD.gn).
   "$readelf" -lW "$out/libjingle_peerconnection_so.so" | awk '$1 == "LOAD" { print "LOAD align " $NF; if ($NF != "0x4000") bad = 1 } END { exit bad }' \
     || { echo "libjingle_peerconnection_so.so ($abi) is not 16 KB aligned"; exit 1; }
@@ -120,13 +128,12 @@ unzip -l "$package/lib/libwebrtc.aar"
 for entry in classes.jar AndroidManifest.xml jni/arm64-v8a/libjingle_peerconnection_so.so jni/x86_64/libjingle_peerconnection_so.so; do
   unzip -l "$package/lib/libwebrtc.aar" "$entry" > /dev/null || { echo "libwebrtc.aar has no $entry"; exit 1; }
 done
-# Unity 6 builds with JDK 17, which reads class files up to version 61.
+# classes.jar must be complete (JNI Zero classes), match libwebrtc.a of both ABIs and target Java 17 (Unity 6).
 unzip -p "$package/lib/libwebrtc.aar" classes.jar > "$root/classes.jar"
-class_file=$(unzip -Z1 "$root/classes.jar" | awk '/^org\/webrtc\/.*\.class$/ && !found { print; found = 1 }')
-class_version=$(unzip -p "$root/classes.jar" "$class_file" | od -An -j6 -N2 -tu1 | awk '{ print $1 * 256 + $2 }')
-echo "$class_file"
-echo "classes.jar class file version: $class_version"
-test "$class_version" -le 61 || { echo "classes.jar targets class file version $class_version, newer than Java 17"; exit 1; }
+symbol_files=
+for pair in $abis; do symbol_files="$symbol_files out/android/${pair##*:}/libwebrtc_symbols.txt"; done
+python3 "$script_dir/check_android_jar.py" --registration-srcjar "$first_out/gen/sdk/android/libwebrtc_jni_registration.srcjar" \
+  "$root/classes.jar" $symbol_files
 
 # Headers: every libwebrtc header (and .inc file, e.g. abseil int128), plus the complete libc++ and libc++abi include directories
 # (libc++ headers such as <vector> have no extension).
