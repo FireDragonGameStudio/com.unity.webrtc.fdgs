@@ -11,6 +11,7 @@ on:
       - '.github/workflows/libwebrtc-android.yml'
       - 'BuildScripts~/libwebrtc/fetch.sh'
       - 'BuildScripts~/libwebrtc/build_android.sh'
+      - 'BuildScripts~/libwebrtc/check_android_jar.py'
       - 'BuildScripts~/patches/m156/**'
   workflow_dispatch:
     inputs:
