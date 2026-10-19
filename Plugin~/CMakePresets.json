@@ -99,12 +99,9 @@
       "hidden": true,
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "generator": "Unix Makefiles",
+      "toolchainFile": "${sourceDir}/cmake/android-chromium-clang.cmake",
       "cacheVariables": {
-        "CMAKE_SYSTEM_NAME": "Android",
-        "CMAKE_ANDROID_API_MIN": "24",
-        "CMAKE_ANDROID_API": "24",
-        "CMAKE_ANDROID_NDK": "$env{ANDROID_NDK}",
-        "CMAKE_ANDROID_STL_TYPE": "c++_static"
+        "ANDROID_PLATFORM": "24"
       }
     },
     {
@@ -141,14 +138,6 @@
       "name": "ios",
       "description": "Sets arm64 arch (devices), generator, compilers",
       "inherits": "default-ios"
-    },
-    {
-      "name": "armv7-android",
-      "description": "Sets armv7 arch, generator, compilers",
-      "inherits": "default-android",
-      "cacheVariables": {
-        "CMAKE_ANDROID_ARCH_ABI": "armeabi-v7a"
-      }
     },
     {
       "name": "arm64-android",

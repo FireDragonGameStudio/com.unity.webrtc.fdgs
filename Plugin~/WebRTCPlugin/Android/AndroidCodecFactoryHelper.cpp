@@ -26,7 +26,8 @@ namespace webrtc
         ScopedJavaLocalRef<jclass> factory_class = GetClass(env, "org/webrtc/HardwareVideoEncoderFactory");
         jmethodID factory_constructor =
             env->GetMethodID(factory_class.obj(), "<init>", "(Lorg/webrtc/EglBase$Context;ZZ)V");
-        ScopedJavaLocalRef<jobject> factory_object(
+        // jni_zero only adopts a local reference explicitly.
+        ScopedJavaLocalRef<jobject> factory_object = ScopedJavaLocalRef<jobject>::Adopt(
             env,
             env->NewObject(
                 factory_class.obj(),
@@ -44,7 +45,7 @@ namespace webrtc
         ScopedJavaLocalRef<jclass> factory_class = GetClass(env, "org/webrtc/HardwareVideoDecoderFactory");
         jmethodID factory_constructor =
             env->GetMethodID(factory_class.obj(), "<init>", "(Lorg/webrtc/EglBase$Context;)V");
-        ScopedJavaLocalRef<jobject> factory_object(
+        ScopedJavaLocalRef<jobject> factory_object = ScopedJavaLocalRef<jobject>::Adopt(
             env, env->NewObject(factory_class.obj(), factory_constructor, nullptr /* shared_context */));
         return JavaToNativeVideoDecoderFactory(env, factory_object.obj());
     }
