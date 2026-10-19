@@ -10,7 +10,9 @@ namespace unity
 namespace webrtc
 {
     AudioTrackSinkAdapter::AudioTrackSinkAdapter()
-        : _buffer(nullptr)
+        : _channels(0)
+        , _sampleRate(0)
+        , _buffer(nullptr)
     {
     }
 
@@ -34,6 +36,16 @@ namespace webrtc
         // the `number_of_channels` argument is passed as `1`. However, Unity expects
         // to receive audio which is stereo channel usually, in this case we need to
         // resample audio monoural to stereo.
+        // RemixAndResample writes 10 ms of audio in the format of `_frame`, so the sample count
+        // has to match the sample rate (it is 0 in a default constructed AudioFrame, and the
+        // resampler aborts on an empty destination).
+        if (number_of_frames != static_cast<size_t>(sample_rate / 100) ||
+            SampleRateToDefaultChannelSize(_sampleRate) * std::max(_channels, number_of_channels) >
+                AudioFrame::kMaxDataSizeSamples)
+            return;
+        _frame.num_channels_ = _channels;
+        _frame.SetSampleRateAndChannelSize(_sampleRate);
+
         webrtc::voe::RemixAndResample(
             ::webrtc::InterleavedView<const int16_t>(
                 static_cast<const int16_t*>(audio_data), number_of_frames, number_of_channels),
@@ -57,9 +69,8 @@ namespace webrtc
             WebRtc_FreeBuffer(_buffer);
         _buffer = WebRtc_CreateBuffer(bufferSize, sizeof(int16_t));
 
-        // reset audio frame.
-        _frame.num_channels_ = channels;
-        _frame.sample_rate_hz_ = sampleRate;
+        _channels = channels;
+        _sampleRate = sampleRate;
 
         // reallocate temporary buffer.
         _bufferIn.resize(length);
@@ -78,8 +89,7 @@ namespace webrtc
 
         // Reallocate audio buffer when Unity changes channel count, sample rate,
         // or data length.
-        if (_buffer == nullptr || _frame.num_channels_ != channels || _frame.sample_rate_hz_ != sampleRate ||
-            _bufferIn.size() != length)
+        if (_buffer == nullptr || _channels != channels || _sampleRate != sampleRate || _bufferIn.size() != length)
         {
             ResizeBuffer(channels, sampleRate, length);
         }

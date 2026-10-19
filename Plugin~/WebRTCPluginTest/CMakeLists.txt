@@ -4,6 +4,7 @@ target_sources(
   WebRTCLibTest
   PRIVATE pch.cpp
           pch.h
+          AudioTrackSinkAdapterTest.cpp
           ContextTest.cpp
           CreateVideoCodecFactoryTest.cpp
           FrameGenerator.cpp
