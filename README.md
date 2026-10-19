@@ -35,6 +35,7 @@ The native plugin (C++, built on Google's libwebrtc) lives in [`Plugin~`](Plugin
 | ------- | --------- | ----- |
 | `3.0.0` | [M116](https://groups.google.com/g/discuss-webrtc/c/bEsO8Lz7psE) | Starting point of this fork, identical to the last Apache-2.0 release of `com.unity.webrtc`. |
 | `3.1.0` | [M116](https://groups.google.com/g/discuss-webrtc/c/bEsO8Lz7psE) | First release of the fork: native plugins built in CI for all platforms, Unity 6.3 support, crash and batch mode fixes. |
+| `3.2.0` | [M156](https://webrtc.googlesource.com/src/+/refs/branch-heads/8078) | libwebrtc M156 (branch-heads/8078), built in this repository's CI for all platforms with Chromium's libc++; new RTC stats fields. |
 
 Planned work is tracked in [GitHub Issues](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/issues). See [CHANGELOG.md](CHANGELOG.md) for the history of this package, including the releases made by Unity Technologies.
 
