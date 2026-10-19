@@ -1,0 +1,92 @@
+diff --git a/sdk/android/BUILD.gn b/sdk/android/BUILD.gn
+index 2522e5a..bd5cbdc 100644
+--- a/sdk/android/BUILD.gn
++++ b/sdk/android/BUILD.gn
+@@ -58,9 +58,73 @@ if (is_android) {
+       ":video_java",
+       "../../rtc_base:base_java",
+       "../../third_party/jni_zero:jni_zero_java",
++
++      # com.fdgs.webrtc: direct_deps_only leaves out the JNI Zero classes the
++      # classes above call: the generated <Class>Jni classes, the classes they
++      # use (gendeps_java) and J.N / GEN_JNI with the native methods.
++      ":generated_audio_device_module_base_jni_java",
++      ":generated_base_jni_java",
++      ":generated_builtin_audio_codecs_jni_java",
++      ":generated_environment_jni_java",
++      ":generated_java_audio_device_module_native_jni_java",
++      ":generated_java_audio_jni_java",
++      ":generated_libaom_av1_encoder_jni_java",
++      ":generated_libvpx_vp8_jni_java",
++      ":generated_libvpx_vp9_jni_java",
++      ":generated_logging_jni_java",
++      ":generated_metrics_jni_java",
++      ":generated_native_api_jni_java",
++      ":generated_peerconnection_jni_java",
++      ":generated_rtcerror_jni_java",
++      ":generated_swcodecs_jni_java",
++      ":generated_video_egl_jni_java",
++      ":generated_video_jni_java",
++      ":libwebrtc_jni_registration_java",
++      "../../rtc_base:base_java_jni_java",
++      "../../third_party/jni_zero:gendeps_java",
++      "../../third_party/jni_zero:generate_jni_java",
++    ]
++  }
++
++  # com.fdgs.webrtc: J.N and GEN_JNI for the Java classes of libwebrtc.jar. An
++  # APK gets them from the __jni_registration target of its shared library;
++  # the AAR has none. The native methods have hashed names (Java_J_N_M...).
++  # Lists the Java targets of libwebrtc.jar instead of :libwebrtc, which
++  # depends on this target. Without native_deps the natives of all of them
++  # are declared.
++  generate_final_jni("libwebrtc_jni_registration") {
++    java_targets = [
++      ":audio_api_java",
++      ":base_java",
++      ":builtin_audio_codecs_java",
++      ":camera_java",
++      ":default_video_codec_factory_java",
++      ":environment_java",
++      ":filevideo_java",
++      ":hwcodecs_java",
++      ":java_audio_device_module_java",
++      ":libaom_av1_encoder_java",
++      ":libjingle_peerconnection_java",
++      ":libjingle_peerconnection_metrics_default_java",
++      ":libvpx_vp8_java",
++      ":libvpx_vp9_java",
++      ":logging_java",
++      ":peerconnection_java",
++      ":screencapturer_java",
++      ":surfaceviewrenderer_java",
++      ":swcodecs_java",
++      ":video_api_java",
++      ":video_java",
++      "../../rtc_base:base_java",
++      "../../third_party/jni_zero:jni_zero_java",
+     ]
+   }
+ 
++  android_library("libwebrtc_jni_registration_java") {
++    srcjar_deps = [ ":libwebrtc_jni_registration" ]
++    deps = [ "../../third_party/jni_zero:jni_zero_java" ]
++  }
++
+   # The native API is currently experimental and may change without notice.
+   group("native_api") {
+     deps = [
+diff --git a/third_party/jni_zero/BUILD.gn b/third_party/jni_zero/BUILD.gn
+index da1a4181..102ac6e6 100644
+--- a/third_party/jni_zero/BUILD.gn
++++ b/third_party/jni_zero/BUILD.gn
+@@ -29,6 +29,9 @@ generate_jni("generate_jni") {
+   visibility = [
+     ":*",
+     "//components/cronet/android/*",
++
++    # com.fdgs.webrtc: libwebrtc.jar includes generate_jni_java.
++    "//sdk/android:*",
+   ]
+ }
+ 
