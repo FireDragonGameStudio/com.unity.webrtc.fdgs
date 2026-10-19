@@ -270,7 +270,11 @@ static void UNITY_INTERFACE_API OnBatchUpdateEvent(int eventID, void* data)
         return;
     }
 
+    // No graphics device, for example when the plugin was loaded after Unity had created its Vulkan device (a
+    // package update in a running Editor) and could not hook the device creation.
     IGraphicsDevice* device = Plugin::GraphicsDevice();
+    if (!device || !s_bufferPool)
+        return;
     UnityGfxRenderer gfxRenderer = device->GetGfxRenderer();
     Timestamp timestamp = s_clock->CurrentTime();
 
