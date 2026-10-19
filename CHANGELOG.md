@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Native plugin: Unity aborted (exception `0xc0000409` on Windows, no crash report) as soon as received audio was played through an `AudioSource`, because the audio sink resampled into a frame without a sample count, which libwebrtc M156 requires. Regression in 3.2.0-rc.1.
+
 ## [3.2.0] - 2026-10-19
 
 ### Added

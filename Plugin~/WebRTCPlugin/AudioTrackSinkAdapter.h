@@ -32,6 +32,9 @@ namespace webrtc
         void ResizeBuffer(size_t channels, int32_t sampleRate, size_t length);
 
         AudioFrame _frame;
+        // Format Unity expects; RemixAndResample changes _frame.num_channels_ while upmixing.
+        size_t _channels;
+        int32_t _sampleRate;
         std::mutex _mutex;
         RingBuffer* _buffer;
         std::vector<int16_t> _bufferIn;
