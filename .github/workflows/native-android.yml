@@ -1,5 +1,8 @@
 name: Native plugin (Android)
 
+# Builds libwebrtc.so for arm64-v8a and x86_64 against the libwebrtc M156 package published on the release
+# libwebrtc-M156 (built by libwebrtc-android.yml with Chromium's libc++, see BuildScripts~/libwebrtc/README.md),
+# with the exact Chromium clang that built it and the NDK's sysroot, and adds it to the package's libwebrtc.aar.
 on:
   push:
     branches: ['**']
@@ -22,32 +25,24 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_android.sh.
-  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-android.zip
-  LIBWEBRTC_SHA256: f561153cf06dc5d0c95cb7272168582df9cb37a960c8fb7907dd775547766d4a
-  # NDK r28c. r28 and newer align shared libraries to 16 KB pages by default.
-  NDK_VERSION: '28.2.13676358'
+  # Keep in sync with BuildScripts~/build_plugin_android.sh.
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M156/webrtc-android.zip
+  LIBWEBRTC_SHA256: 7096abd6019bb083296324cd68861e864e4f7763eff6a69b1ef2aa80232ab65e
+  # Used when the NDK in the package's VERSIONS cannot be installed with sdkmanager. Only its sysroot is used.
+  FALLBACK_NDK_VERSION: '28.2.13676358'
 
 jobs:
   build:
     name: Build libwebrtc.aar (${{ matrix.config }})
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
         config: [Release]
     steps:
       - uses: actions/checkout@v7
-
-      - name: Install Android NDK
-        run: |
-          ndk="$ANDROID_SDK_ROOT/ndk/$NDK_VERSION"
-          if [ ! -d "$ndk" ]; then
-            yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$NDK_VERSION" > /dev/null
-          fi
-          echo "ANDROID_NDK=$ndk" >> "$GITHUB_ENV"
-          grep Pkg.Revision "$ndk/source.properties"
-          cmake --version
 
       - name: Cache libwebrtc
         id: libwebrtc-cache
@@ -59,15 +54,48 @@ jobs:
       - name: Download libwebrtc
         if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL -o webrtc.zip "$LIBWEBRTC_URL"
-          echo "$LIBWEBRTC_SHA256  webrtc.zip" | sha256sum --check --strict
-          unzip -q -o webrtc.zip -d Plugin~/webrtc
+          curl -fsSL -o "$RUNNER_TEMP/webrtc.zip" "$LIBWEBRTC_URL"
+          echo "$LIBWEBRTC_SHA256  $RUNNER_TEMP/webrtc.zip" | sha256sum --check --strict
+          unzip -q -o "$RUNNER_TEMP/webrtc.zip" -d Plugin~/webrtc
+
+      - name: Show libwebrtc version
+        run: cat Plugin~/webrtc/VERSIONS | tee -a "$RUNNER_TEMP/build.log"
+
+      # Only the NDK's sysroot (headers and system library stubs) is used; the compiler is Chromium's.
+      - name: Install Android NDK
+        run: |
+          version=$(sed -n 's/^ANDROID_NDK_VERSION=//p' Plugin~/webrtc/VERSIONS)
+          sdkmanager="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          for v in $version $FALLBACK_NDK_VERSION; do
+            ndk="$ANDROID_SDK_ROOT/ndk/$v"
+            [ -d "$ndk" ] || yes | "$sdkmanager" --install "ndk;$v" > /dev/null 2>&1 || true
+            [ -f "$ndk/source.properties" ] && break
+            echo "::warning::NDK $v is not available from sdkmanager"
+          done
+          test -f "$ndk/source.properties"
+          echo "ANDROID_NDK=$ndk" >> "$GITHUB_ENV"
+          grep Pkg.Revision "$ndk/source.properties" | tee -a "$RUNNER_TEMP/build.log"
+          cmake --version
+
+      # The plugin shares C++ standard library types and the vtable ABI with libwebrtc, so it is compiled with the
+      # clang that built it. Chromium ships the Android compiler-rt builtins in a separate package.
+      - name: Install Chromium's clang
+        run: |
+          rev=$(sed -n 's/^CLANG_REVISION=//p' Plugin~/webrtc/VERSIONS)
+          url=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64
+          clang="$RUNNER_TEMP/clang"
+          mkdir -p "$clang"
+          curl -fsSL "$url/clang-$rev.tar.xz" | tar -xJ -C "$clang"
+          curl -fsSL "$url/clang-android-runtime-library-$rev.tar.xz" | tar -xJ -C "$clang"
+          echo "CHROMIUM_CLANG=$clang" >> "$GITHUB_ENV"
+          "$clang/bin/clang++" --version
+          ls "$clang/bin" "$clang"/lib/clang/*/lib/linux | grep -E 'builtins-(aarch64|x86_64)-android|^ld.lld|^llvm-'
 
       - name: Build
         working-directory: Plugin~
         # Same steps as BuildScripts~/build_plugin_android.sh: build libwebrtc.so per ABI and add it to the
-        # libwebrtc.aar from the prebuilt libwebrtc. Errors are repeated as annotations so they show on the run
-        # summary without opening the log.
+        # libwebrtc.aar from the package. Errors are repeated as annotations so they show on the run summary
+        # without opening the log.
         run: |
           set -o pipefail
           plugin_dir=../Runtime/Plugins/Android
@@ -77,16 +105,19 @@ jobs:
               arm64-v8a) preset=arm64-android ;;
               x86_64) preset=x86_64-android ;;
             esac
-            cmake --preset=$preset -Wno-dev -DCMAKE_BUILD_TYPE=${{ matrix.config }} 2>&1 | tee configure-$abi.log || {
+            cmake --preset=$preset -Wno-dev -DCMAKE_BUILD_TYPE=${{ matrix.config }} 2>&1 | tee configure-$abi.log | tee -a "$RUNNER_TEMP/build.log" || {
               echo "::error title=CMake configure ($abi)::$({ grep -A8 'CMake Error' configure-$abi.log || tail -30 configure-$abi.log; } | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
               exit 1
             }
-            cmake --build out/build/$preset --target WebRTCPlugin --parallel 2>&1 | tee build-$abi.log || {
+            # -k reports every compile error in one run.
+            cmake --build out/build/$preset --target WebRTCPlugin --parallel -- -k 2>&1 | tee build-$abi.log > "$RUNNER_TEMP/plugin-$abi.log" || {
+              cat build-$abi.log >> "$RUNNER_TEMP/build.log"
               echo "::error title=Build ($abi)::$(grep -E -A3 'error:|Error [0-9]|undefined' build-$abi.log | head -60 | awk '{gsub(/%/, "%25"); printf "%s%%0A", $0}')"
               exit 1
             }
             mkdir -p "$plugin_dir/jni/$abi"
-            mv "$plugin_dir/libwebrtc.so" "$plugin_dir/jni/$abi/"
+            "$CHROMIUM_CLANG/bin/llvm-strip" --strip-unneeded -o "$plugin_dir/jni/$abi/libwebrtc.so" "$plugin_dir/libwebrtc.so"
+            rm "$plugin_dir/libwebrtc.so"
           done
           cd "$plugin_dir"
           zip -g libwebrtc.aar jni/*/libwebrtc.so
@@ -94,7 +125,7 @@ jobs:
       - name: Check exports and 16 KB page alignment
         run: |
           plugin_dir=Runtime/Plugins/Android
-          llvm="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          llvm="$CHROMIUM_CLANG/bin"
           # Google Play requires 16 KB aligned LOAD segments for Android 15+ on 64-bit devices.
           check_alignment() {
             for align in $("$llvm/llvm-readelf" -lW "$1" | awk '$1 == "LOAD" { print $NF }'); do
@@ -110,20 +141,83 @@ jobs:
             for name in ContextCreate GetBatchUpdateEventFunc UnityPluginLoad UnityPluginUnload JNI_OnLoad; do
               grep -qw "$name" <<<"$exports" || { echo "::error::Missing export $name ($abi)"; exit 1; }
             done
+            # The native methods of libwebrtc's Java classes (jni_zero names), see Plugin~/tools/android/jni_symbols.txt.
+            missing=$(grep -v -x -F -f <(awk '{ print $NF }' <<<"$exports") Plugin~/tools/android/jni_symbols.txt || true)
+            if [ -n "$missing" ]; then
+              echo "::error::$(wc -l <<<"$missing") JNI symbols are not exported ($abi): $(head -5 <<<"$missing" | tr '\n' ' ')"; exit 1
+            fi
+            if "$llvm/llvm-readelf" -dW "$so" | grep -E 'NEEDED.*lib(c\+\+|stdc\+\+|c\+\+_shared)\.so'; then
+              echo "::error::libwebrtc.so ($abi) must not depend on a C++ library; libc++ comes from libwebrtc.a"; exit 1
+            fi
             check_alignment "$so"
-            "$llvm/llvm-readelf" -dW "$so" | grep NEEDED
-            ls -l "$so"
+            {
+              echo "== $abi"
+              "$llvm/llvm-readelf" -dW "$so" | grep NEEDED
+              echo "Exported Java_ symbols: $(grep -c ' Java_' <<<"$exports")"
+              ls -l "$so"
+            } | tee -a "$RUNNER_TEMP/so.txt"
           done
-          # Every native library in the aar, including libjingle_peerconnection_so.so from the prebuilt libwebrtc,
-          # must be 16 KB aligned.
+          # Every native library in the aar, including libjingle_peerconnection_so.so from the package, must be
+          # 16 KB aligned.
           mkdir -p aar && unzip -q -o "$plugin_dir/libwebrtc.aar" -d aar
           for so in aar/jni/*/*.so; do
             check_alignment "$so"
           done
-          unzip -l "$plugin_dir/libwebrtc.aar"
+          # Unity 6 builds with JDK 17, which reads class files up to version 61.
+          mkdir -p classes && unzip -q -o aar/classes.jar -d classes
+          version=$(od -An -j6 -N2 -tu1 classes/org/webrtc/PeerConnectionFactory.class | awk '{ print $1 * 256 + $2 }')
+          echo "classes.jar class file version: $version" | tee -a "$RUNNER_TEMP/so.txt"
+          (( version <= 61 )) || { echo "::error::classes.jar has class file version $version (> 61, Java 17)"; exit 1; }
+          # jni_zero: the Java classes call their native methods through generated org/webrtc/*Jni classes.
+          if grep -q -a 'org/webrtc/DataChannelJni' classes/org/webrtc/DataChannel.class && [ ! -f classes/org/webrtc/DataChannelJni.class ]; then
+            echo "::warning::classes.jar lacks the jni_zero generated classes (org/webrtc/*Jni, J/N); Java code that calls native methods fails at runtime. The package must include them."
+            echo "classes.jar lacks the jni_zero generated *Jni classes" >> "$RUNNER_TEMP/so.txt"
+          fi
+          unzip -l "$plugin_dir/libwebrtc.aar" | tee -a "$RUNNER_TEMP/so.txt"
+
+      # Every undefined symbol must be defined by one of the system libraries the .so needs, at the API level it was
+      # linked for (the link uses --no-undefined as well). Otherwise Android refuses to load the plugin.
+      - name: Check for unresolved symbols
+        run: |
+          llvm="$CHROMIUM_CLANG/bin"
+          api=$(sed -n 's/.*ANDROID_PLATFORM:STRING=//p' Plugin~/out/build/arm64-android/CMakeCache.txt)
+          echo "API level: $api"
+          sysroot="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib"
+          : > "$RUNNER_TEMP/undefined.txt"
+          for abi in arm64-v8a x86_64; do
+            case $abi in arm64-v8a) triple=aarch64-linux-android ;; x86_64) triple=x86_64-linux-android ;; esac
+            so=Runtime/Plugins/Android/jni/$abi/libwebrtc.so
+            defined=$(for lib in $("$llvm/llvm-readelf" -dW "$so" | sed -n 's/.*NEEDED.*\[\(.*\)\]/\1/p'); do
+              "$llvm/llvm-nm" -D --defined-only "$sysroot/$triple/$api/$lib" | awk '{ print $NF }'
+            done | sed 's/@.*//' | sort -u)
+            "$llvm/llvm-nm" -D --undefined-only "$so" | awk '$1 != "w" && $1 != "v" { print $NF }' | sed 's/@.*//' | sort -u \
+              | comm -23 - <(echo "$defined") | sed "s/^/$abi: /" >> "$RUNNER_TEMP/undefined.txt"
+          done
+          cat "$RUNNER_TEMP/undefined.txt"
+          if [ -s "$RUNNER_TEMP/undefined.txt" ]; then
+            echo "::error::$(wc -l < "$RUNNER_TEMP/undefined.txt") unresolved symbols: $(head -5 "$RUNNER_TEMP/undefined.txt" | tr '\n' ' ')"; exit 1
+          fi
 
       - uses: actions/upload-artifact@v7
         with:
           name: webrtc-android-${{ matrix.config }}
           path: Runtime/Plugins/Android/libwebrtc.aar
           if-no-files-found: error
+
+      # Workflow logs on GitHub need a login to read; push the logs to a branch.
+      - name: Push the logs
+        if: always()
+        run: |
+          set +e +o pipefail
+          branch="ci-logs/plugin-android-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          for f in build.log plugin-arm64-v8a.log plugin-x86_64.log so.txt undefined.txt; do
+            [ -f "$RUNNER_TEMP/$f" ] && tail -c 20000000 "$RUNNER_TEMP/$f" > "$f"
+          done
+          for f in plugin-*.log; do
+            [ -f "$f" ] && grep -E 'error:|Error [0-9]|undefined (symbol|reference)' "$f" > "${f%.log}-errors.txt"
+          done
+          echo "${GITHUB_SHA}" > sha.txt
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Logs of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"
