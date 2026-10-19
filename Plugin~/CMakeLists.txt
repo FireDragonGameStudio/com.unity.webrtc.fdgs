@@ -41,7 +41,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif()
 
 set(CMAKE_C_STANDARD 17)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -73,6 +73,33 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(WebRTC REQUIRED)
 
+if(WEBRTC_USES_BUNDLED_LIBCXX)
+  # libwebrtc was built with Chromium's libc++ (namespace std::__Cr). All C++ code that shares standard
+  # library types with it must be compiled against the same headers, and the C++ runtime comes from
+  # libwebrtc.a instead of the system. The CUDA kernels do not use the standard library.
+  add_compile_options("$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:${WEBRTC_CXX_FLAGS}>")
+  if(NOT MSVC)
+    add_link_options(-nostdlib++)
+  endif()
+  if(Linux)
+    # Without a C++ library the driver does not link libm either, which libc++ needs. The plugin does not
+    # export the symbols of libwebrtc.a and its libc++.
+    link_libraries(m)
+    add_link_options(-Wl,--exclude-libs,libwebrtc.a)
+  endif()
+  if(Windows)
+    # webrtc.lib contains libc++ and uses the MSVC C++ ABI (vcruntime). The libc++ include directories in
+    # cxx_flags.txt come before the MSVC include directory, which holds both the CRT and the MSVC STL, so
+    # only clang-cl can compile the plugin: MSVC cannot use libc++.
+    if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+      message(FATAL_ERROR "libwebrtc uses Chromium's libc++: build the plugin with clang-cl")
+    endif()
+    if(NOT WEBRTC_MSVC_RUNTIME STREQUAL "/MT")
+      message(FATAL_ERROR "The plugin links the static C runtime (/MT), libwebrtc uses ${WEBRTC_MSVC_RUNTIME}")
+    endif()
+  endif()
+endif()
+
 if(iOS OR macOS)
   find_package(Framework REQUIRED)
 endif()
@@ -82,10 +109,13 @@ if(Windows OR Linux)
 
   find_package(CUDA REQUIRED)
 
-  # Building CUDA kernel is not supported with Clang compiler on Windows.
-  # https://gitlab.kitware.com/cmake/cmake/-/issues/20776
-  if((Windows AND CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR Linux)
+  # nvcc does not support clang-cl as host compiler
+  # (https://gitlab.kitware.com/cmake/cmake/-/issues/20776). With the Ninja generator the CUDA kernels are
+  # compiled with MSVC instead (CMAKE_CUDA_HOST_COMPILER=cl); they do not use the C++ standard library.
+  if(Linux OR (Windows AND (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR NOT CMAKE_GENERATOR MATCHES "Visual Studio")))
     enable_language(CUDA)
+  else()
+    add_compile_definitions(NO_CUDA_KERNEL=1)
   endif()
   add_subdirectory(NvCodec)
 endif()

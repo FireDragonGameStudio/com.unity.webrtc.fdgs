@@ -44,7 +44,7 @@ namespace webrtc
             void SetStreamState(bool send_stream);
         };
         NvEncoderImpl(
-            const cricket::VideoCodec& codec,
+            const ::webrtc::Codec& codec,
             CUcontext context,
             CUmemorytype memoryType,
             NV_ENC_BUFFER_FORMAT format,
@@ -101,7 +101,7 @@ namespace webrtc
 
         std::vector<LayerConfig> m_configurations;
 
-        static absl::optional<webrtc::H264Level> s_maxSupportedH264Level;
+        static std::optional<webrtc::H264Level> s_maxSupportedH264Level;
         static std::vector<SdpVideoFormat> s_formats;
     };
 } // end namespace webrtc

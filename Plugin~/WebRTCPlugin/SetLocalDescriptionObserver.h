@@ -16,7 +16,7 @@ namespace webrtc
     class SetLocalDescriptionObserver : public ::webrtc::SetLocalDescriptionObserverInterface
     {
     public:
-        static rtc::scoped_refptr<SetLocalDescriptionObserver> Create(PeerConnectionObject* connection);
+        static ::webrtc::scoped_refptr<SetLocalDescriptionObserver> Create(PeerConnectionObject* connection);
         static void RegisterCallback(DelegateSetLocalDesc callback) { s_setLocalDescCallback = callback; }
 
         void OnSetLocalDescriptionComplete(RTCError error) override;

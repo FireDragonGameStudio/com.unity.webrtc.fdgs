@@ -16,7 +16,7 @@ namespace webrtc
     class SetRemoteDescriptionObserver : public ::webrtc::SetRemoteDescriptionObserverInterface
     {
     public:
-        static rtc::scoped_refptr<SetRemoteDescriptionObserver> Create(PeerConnectionObject* connection);
+        static ::webrtc::scoped_refptr<SetRemoteDescriptionObserver> Create(PeerConnectionObject* connection);
         static void RegisterCallback(DelegateSetRemoteDesc callback) { s_setRemoteDescCallback = callback; }
 
         void OnSetRemoteDescriptionComplete(RTCError error) override;

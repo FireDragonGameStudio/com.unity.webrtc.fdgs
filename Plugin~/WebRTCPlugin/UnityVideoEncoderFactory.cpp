@@ -76,7 +76,7 @@ namespace webrtc
         int32_t Encode(const VideoFrame& frame, const std::vector<VideoFrameType>* frame_types) override
         {
             // Eagerly check for a valid I420 buffer to handle GPU timeouts.
-            rtc::scoped_refptr<VideoFrameBuffer> vfb = frame.video_frame_buffer();
+            ::webrtc::scoped_refptr<VideoFrameBuffer> vfb = frame.video_frame_buffer();
             if (vfb && vfb->type() == VideoFrameBuffer::Type::kI420)
             {
                 if (!vfb->GetI420())
@@ -154,18 +154,20 @@ namespace webrtc
     }
 
     webrtc::VideoEncoderFactory::CodecSupport UnityVideoEncoderFactory::QueryCodecSupport(
-        const SdpVideoFormat& format, absl::optional<std::string> scalability_mode) const
+        const SdpVideoFormat& format,
+        std::optional<std::string> scalability_mode,
+        std::optional<Resolution> resolution) const
     {
         VideoEncoderFactory* factory = FindCodecFactory(factories_, format);
         RTC_DCHECK(format.IsCodecInList(factory->GetSupportedFormats()));
-        return factory->QueryCodecSupport(format, scalability_mode);
+        return factory->QueryCodecSupport(format, scalability_mode, resolution);
     }
 
     std::unique_ptr<webrtc::VideoEncoder>
-    UnityVideoEncoderFactory::CreateVideoEncoder(const webrtc::SdpVideoFormat& format)
+    UnityVideoEncoderFactory::Create(const Environment& env, const webrtc::SdpVideoFormat& format)
     {
         VideoEncoderFactory* factory = FindCodecFactory(factories_, format);
-        auto encoder = factory->CreateVideoEncoder(format);
+        auto encoder = factory->Create(env, format);
         if (!profiler_)
             return encoder;
 

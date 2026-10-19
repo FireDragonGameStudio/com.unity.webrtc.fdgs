@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include <rtc_base/arraysize.h>
+#include <iterator>
 
 #include "H264ProfileLevelId.h"
 
@@ -41,12 +41,12 @@ namespace webrtc
     static const int kPixelsPerMacroblock = 16 * 16;
     static const int kUnitMaxBRWithNAL = 1200;
 
-    absl::optional<webrtc::H264Level> H264SupportedLevel(int maxFramePixelCount, int maxFramerate, int maxBitrate)
+    std::optional<webrtc::H264Level> H264SupportedLevel(int maxFramePixelCount, int maxFramerate, int maxBitrate)
     {
         if (maxFramePixelCount <= 0 || maxFramerate <= 0 || maxBitrate <= 0)
-            return absl::nullopt;
+            return std::nullopt;
 
-        for (size_t i = 0; i < arraysize(kLevelConstraints); i++)
+        for (size_t i = 0; i < std::size(kLevelConstraints); i++)
         {
             const LevelConstraint& level_constraint = kLevelConstraints[i];
             if (level_constraint.max_macroblock_frame_size * kPixelsPerMacroblock >= maxFramePixelCount &&
@@ -59,12 +59,12 @@ namespace webrtc
         }
 
         // No level supported.
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     int SupportedMaxFramerate(H264Level level, int maxFramePixelCount)
     {
-        for (size_t i = 0; i < arraysize(kLevelConstraints); i++)
+        for (size_t i = 0; i < std::size(kLevelConstraints); i++)
         {
             const LevelConstraint& level_constraint = kLevelConstraints[i];
             if (level_constraint.level == level)

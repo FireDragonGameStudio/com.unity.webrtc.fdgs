@@ -9,6 +9,6 @@ namespace webrtc
 {
     using namespace ::webrtc;
 
-    rtc::scoped_refptr<AudioDecoderFactory> CreateAudioDecoderFactory();
+    ::webrtc::scoped_refptr<AudioDecoderFactory> CreateAudioDecoderFactory();
 } // end namespace webrtc
 } // end namespace unity

@@ -1,5 +1,8 @@
 name: Native plugin (Windows)
 
+# Builds webrtc.dll against the libwebrtc M156 package published on the release libwebrtc-M156 (built by
+# libwebrtc-windows.yml with Chromium's libc++, see BuildScripts~/libwebrtc/README.md), with the exact Chromium
+# clang-cl that built it. Then runs the native tests (the runner has no GPU, so most GPU tests skip).
 on:
   push:
     branches: ['**']
@@ -22,20 +25,21 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Prebuilt libwebrtc M116, mirrored unmodified from Unity's release. Keep in sync with BuildScripts~/build_plugin_win.cmd.
-  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-win.zip
-  LIBWEBRTC_SHA256: e3f2e88746dbd0b9b82ed7cdcab623131252d773712b41798f8be1a8ac948f79
+  # Keep in sync with BuildScripts~/build_plugin_win.cmd.
+  LIBWEBRTC_URL: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M156/webrtc-win.zip
+  LIBWEBRTC_SHA256: 469f828dd72df5097b1dd9c7772cd24624584cf13b755a102a84a65ed86d189b
   VULKAN_SDK_VERSION: '1.4.304.1'
+  BUILD_DIR: Plugin~/out/build/x64-windows
+  CONFIG: Release
 
 jobs:
   build:
-    name: Build webrtc.dll (${{ matrix.config }})
-    # Visual Studio 2022 + CUDA 12 keeps the minimum NVIDIA driver version low for users.
+    name: Build webrtc.dll
+    # Visual Studio 2022 + CUDA 12 keeps the minimum NVIDIA driver version low for users. Visual Studio provides
+    # the C runtime, the Windows SDK and cl.exe, which nvcc uses as host compiler for the CUDA kernels.
     runs-on: windows-2022
-    strategy:
-      fail-fast: false
-      matrix:
-        config: [Release]
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
 
@@ -44,7 +48,7 @@ jobs:
         with:
           cuda: '12.9.1'
           method: network
-          sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
+          sub-packages: '["nvcc", "cudart"]'
 
       # setup-vulkan-sdk's own cache uses actions/cache@v4 (Node.js 20), so cache its install folder here instead.
       - name: Cache Vulkan headers and loader
@@ -82,38 +86,166 @@ jobs:
         if: steps.libwebrtc-cache.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri $env:LIBWEBRTC_URL -OutFile webrtc.zip
-          $hash = (Get-FileHash webrtc.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          $zip = Join-Path $env:RUNNER_TEMP 'webrtc.zip'
+          Invoke-WebRequest -Uri $env:LIBWEBRTC_URL -OutFile $zip
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($hash -ne $env:LIBWEBRTC_SHA256) { throw "webrtc.zip checksum mismatch: $hash" }
-          7z x -aoa webrtc.zip -o"Plugin~/webrtc"
+          7z x -aoa $zip -o"Plugin~/webrtc" | Out-Null
 
+      - name: Show libwebrtc version
+        id: versions
+        shell: pwsh
+        run: |
+          Get-Content Plugin~/webrtc/VERSIONS | Tee-Object -Append -FilePath "$env:RUNNER_TEMP/build.log"
+          $rev = (Select-String -Path Plugin~/webrtc/VERSIONS -Pattern '^CLANG_REVISION=(.+)$').Matches[0].Groups[1].Value
+          "clang=$rev" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
+
+      # The plugin shares standard library types with libwebrtc, so it is compiled with the clang-cl that built it.
+      - name: Cache Chromium's clang
+        id: clang-cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ runner.temp }}/clang
+          key: chromium-clang-win-${{ steps.versions.outputs.clang }}
+
+      - name: Install Chromium's clang
+        if: steps.clang-cache.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $rev = '${{ steps.versions.outputs.clang }}'
+          $archive = Join-Path $env:RUNNER_TEMP 'clang.tar.xz'
+          Invoke-WebRequest -Uri "https://commondatastorage.googleapis.com/chromium-browser-clang/Win/clang-$rev.tar.xz" -OutFile $archive
+          7z x $archive -o"$env:RUNNER_TEMP" | Out-Null
+          7z x (Join-Path $env:RUNNER_TEMP 'clang.tar') -o"$env:RUNNER_TEMP/clang" | Out-Null
+
+      # Ninja + clang-cl need the environment of a Visual Studio x64 developer prompt (INCLUDE, LIB, cl.exe, ninja).
+      - name: Set up the Visual Studio environment
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $before = @{}
+          Get-ChildItem env: | ForEach-Object { $before[$_.Name] = $_.Value }
+          cmd /c "`"$vs\VC\Auxiliary\Build\vcvars64.bat`" >nul && set" | ForEach-Object {
+            if ($_ -match '^([^=]+)=(.*)$' -and $before[$Matches[1]] -ne $Matches[2]) {
+              $value = $Matches[2]
+              if ($Matches[1] -eq 'Path') { $value = "$env:RUNNER_TEMP\clang\bin;$value" }
+              "$($Matches[1])=$value" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+            }
+          }
+          & "$env:RUNNER_TEMP\clang\bin\clang-cl.exe" --version
+
+      # bash: cmake and ninja write warnings to stderr, which PowerShell would turn into errors.
       - name: Configure
-        shell: pwsh
+        shell: bash
         working-directory: Plugin~
-        # Point the Visual Studio generator at the CUDA toolkit installed in this job.
-        run: cmake --preset=x64-windows-msvc -T "cuda=$env:CUDA_PATH" -Wno-dev
+        run: |
+          set -o pipefail
+          clang=$(cygpath -m "$RUNNER_TEMP/clang/bin")
+          cmake --preset=x64-windows -Wno-dev \
+            -DCMAKE_C_COMPILER="$clang/clang-cl.exe" \
+            -DCMAKE_CXX_COMPILER="$clang/clang-cl.exe" \
+            -DCMAKE_LINKER="$clang/lld-link.exe" \
+            -DCMAKE_CUDA_COMPILER="$(cygpath -m "$CUDA_PATH")/bin/nvcc.exe" 2>&1 | tee -a "$RUNNER_TEMP/build.log"
 
-      - name: Build
-        shell: pwsh
+      # -k 0 reports every compile error in one run.
+      - name: Build the plugin
+        shell: bash
         working-directory: Plugin~
-        run: cmake --build out/build/x64-windows-msvc --config ${{ matrix.config }} --target WebRTCPlugin --parallel
+        run: |
+          status=0
+          cmake --build out/build/x64-windows --config "$CONFIG" --target WebRTCPlugin -- -k 0 > "$RUNNER_TEMP/plugin.log" 2>&1 || status=$?
+          cat "$RUNNER_TEMP/plugin.log" >> "$RUNNER_TEMP/build.log"
+          grep -E 'error|FAILED|warning:' "$RUNNER_TEMP/plugin.log" | head -100 || true
+          tail -3 "$RUNNER_TEMP/plugin.log"
+          exit $status
 
       - name: Check exports
         shell: pwsh
         run: |
           $dll = 'Runtime/Plugins/x86_64/webrtc.dll'
           if (-not (Test-Path $dll)) { throw "$dll was not built" }
-          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-          $vs = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          $dumpbin = Get-ChildItem "$vs\VC\Tools\MSVC\*\bin\Hostx64\x64\dumpbin.exe" | Select-Object -First 1
-          $exports = & $dumpbin.FullName /exports $dll
+          $exports = dumpbin /nologo /exports $dll
           foreach ($name in 'ContextCreate', 'GetBatchUpdateEventFunc', 'UnityPluginLoad', 'UnityPluginUnload') {
             if (-not ($exports -match "\b$name\b")) { throw "Missing export $name" }
           }
-          Get-Item $dll | Format-List Name, Length, LastWriteTime
+          & {
+            $exports | Select-String 'number of names'
+            "Exported std::__Cr symbols: $(@($exports -match '__Cr@std@@').Count)"
+            dumpbin /nologo /dependents $dll
+            Get-Item $dll | Format-List Name, Length, LastWriteTime
+          } | Tee-Object -FilePath "$env:RUNNER_TEMP/dll.txt"
 
       - uses: actions/upload-artifact@v7
         with:
-          name: webrtc-win-x64-${{ matrix.config }}
+          name: webrtc-win-x64-Release
           path: Runtime/Plugins/x86_64/webrtc.dll
           if-no-files-found: error
+
+      # lld-link has resolved every symbol, so check the DLLs it imports from: system DLLs only (no C++ runtime,
+      # no /MD CRT, no CUDA runtime DLL), and the NVIDIA driver DLLs only delay-loaded, so the plugin loads on
+      # machines without an NVIDIA GPU.
+      - name: Check dependencies
+        shell: pwsh
+        run: |
+          $dll = 'Runtime/Plugins/x86_64/webrtc.dll'
+          $lines = dumpbin /nologo /dependents $dll
+          $direct = @(); $delayed = @(); $section = ''
+          foreach ($line in $lines) {
+            if ($line -match 'has the following dependencies') { $section = 'direct'; continue }
+            if ($line -match 'has the following delay load dependencies') { $section = 'delayed'; continue }
+            if ($line -match '^\s+Summary') { break }
+            if ($line -match '^\s+(\S+\.dll)\s*$') {
+              if ($section -eq 'direct') { $direct += $Matches[1] } elseif ($section -eq 'delayed') { $delayed += $Matches[1] }
+            }
+          }
+          $bad = @()
+          foreach ($name in $direct) {
+            if ($name -match '^(msvcp|vcruntime|concrt|cudart|api-ms-win-crt-|ucrtbase|libc\+\+|nvcuda|nvcuvid|nvEncodeAPI)' -or
+                -not (Test-Path (Join-Path "$env:SystemRoot\System32" $name))) { $bad += $name }
+          }
+          foreach ($name in $delayed) {
+            if ($name -notin 'nvcuda.dll', 'nvcuvid.dll', 'nvEncodeAPI64.dll') { $bad += "$name (delay-loaded)" }
+          }
+          "Imports: $($direct -join ', ')", "Delay-loaded: $($delayed -join ', ')" | Tee-Object -FilePath "$env:RUNNER_TEMP/dependents.txt"
+          if ($bad) { throw "webrtc.dll depends on non-system DLLs: $($bad -join ', ')" }
+
+      - name: Build the native tests
+        id: build-tests
+        continue-on-error: true
+        shell: bash
+        working-directory: Plugin~
+        run: |
+          set -o pipefail
+          cmake --build out/build/x64-windows --config "$CONFIG" --target WebRTCLibTest -- -k 0 2>&1 \
+            | tee "$RUNNER_TEMP/test-build.log" | tee -a "$RUNNER_TEMP/build.log" > /dev/null
+
+      # The runner has no GPU: tests that need CUDA or a hardware graphics device skip themselves or fail; see the log.
+      - name: Run the native tests
+        if: steps.build-tests.outcome == 'success'
+        continue-on-error: true
+        timeout-minutes: 30
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem $env:BUILD_DIR -Recurse -Filter WebRTCLibTest.exe | Select-Object -First 1
+          & $exe.FullName --gtest_brief=1 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP/gtest.log"
+          exit $LASTEXITCODE
+
+      # Workflow logs on GitHub need a login to read; push the logs to a branch.
+      - name: Push the logs
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          branch="ci-logs/plugin-windows-${GITHUB_RUN_ID}"
+          mkdir -p "$RUNNER_TEMP/logs" && cd "$RUNNER_TEMP/logs"
+          git init -q && git checkout -q -b "$branch"
+          for f in build.log plugin.log test-build.log gtest.log dll.txt dependents.txt; do
+            [ -f "$RUNNER_TEMP/$f" ] && tail -c 20000000 "$RUNNER_TEMP/$f" > "$f"
+          done
+          for f in plugin.log test-build.log; do
+            [ -f "$f" ] && grep -E 'error|FAILED|undefined symbol' "$f" > "${f%.log}-errors.txt"
+          done
+          echo "${GITHUB_SHA}" > sha.txt
+          git add . && git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -q -m "Logs of run ${GITHUB_RUN_ID}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$branch"

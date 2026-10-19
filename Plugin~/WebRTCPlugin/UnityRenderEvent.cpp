@@ -115,7 +115,7 @@ static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType ev
         {
             s_gfxDevice->InitV();
         }
-        s_bufferPool = std::make_unique<GpuMemoryBufferPool>(s_gfxDevice.get(), s_clock.get());
+        s_bufferPool = std::make_unique<GpuMemoryBufferPool>(s_gfxDevice.get(), s_clock.get(), kLimitBufferCount);
         break;
     }
     case kUnityGfxDeviceEventShutdown:
@@ -307,15 +307,14 @@ static void UNITY_INTERFACE_API OnBatchUpdateEvent(int eventID, void* data)
             }
             unity::webrtc::Size size(trackData->width, trackData->height);
 
-            if (s_bufferPool->bufferCount() < kLimitBufferCount)
-            {
-                std::unique_ptr<const ScopedProfiler> profiler;
-                if (s_ProfilerMarkerFactory)
-                    profiler = s_ProfilerMarkerFactory->CreateScopedProfiler(*s_MarkerEncode);
+            std::unique_ptr<const ScopedProfiler> profiler;
+            if (s_ProfilerMarkerFactory)
+                profiler = s_ProfilerMarkerFactory->CreateScopedProfiler(*s_MarkerEncode);
 
-                auto frame = s_bufferPool->CreateFrame(ptr, size, trackData->format, timestamp);
+            // The pool returns nullptr when all of its buffers are in use: skip this frame.
+            auto frame = s_bufferPool->CreateFrame(ptr, size, trackData->format, timestamp);
+            if (frame)
                 source->OnFrameCaptured(std::move(frame));
-            }
         }
 #if 0
         else if (trackData->action == VideoStreamTrackAction::Decode)

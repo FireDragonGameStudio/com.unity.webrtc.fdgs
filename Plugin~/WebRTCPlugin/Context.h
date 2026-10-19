@@ -2,6 +2,8 @@
 
 #include <mutex>
 
+#include <api/stats/attribute.h>
+
 #include "AudioTrackSinkAdapter.h"
 #include "DummyAudioDevice.h"
 #include "GraphicsDevice/IGraphicsDevice.h"
@@ -72,19 +74,19 @@ namespace webrtc
         explicit Context(ContextDependencies& dependencies);
         ~Context();
 
-        bool ExistsRefPtr(const rtc::RefCountInterface* ptr) const
+        bool ExistsRefPtr(const ::webrtc::RefCountInterface* ptr) const
         {
             return m_mapRefPtr.find(ptr) != m_mapRefPtr.end();
         }
         template<typename T>
-        void AddRefPtr(rtc::scoped_refptr<T> refptr)
+        void AddRefPtr(::webrtc::scoped_refptr<T> refptr)
         {
             m_mapRefPtr.emplace(refptr.get(), refptr);
         }
-        void AddRefPtr(rtc::RefCountInterface* ptr) { m_mapRefPtr.emplace(ptr, ptr); }
+        void AddRefPtr(::webrtc::RefCountInterface* ptr) { m_mapRefPtr.emplace(ptr, ptr); }
 
         template<typename T>
-        void RemoveRefPtr(rtc::scoped_refptr<T>& refptr)
+        void RemoveRefPtr(::webrtc::scoped_refptr<T>& refptr)
         {
             std::lock_guard<std::mutex> lock(mutex);
             m_mapRefPtr.erase(refptr.get());
@@ -97,24 +99,24 @@ namespace webrtc
         }
 
         // MediaStream
-        rtc::scoped_refptr<MediaStreamInterface> CreateMediaStream(const std::string& streamId);
+        ::webrtc::scoped_refptr<MediaStreamInterface> CreateMediaStream(const std::string& streamId);
         void RegisterMediaStreamObserver(webrtc::MediaStreamInterface* stream);
         void UnRegisterMediaStreamObserver(webrtc::MediaStreamInterface* stream);
         MediaStreamObserver* GetObserver(const webrtc::MediaStreamInterface* stream);
 
         // Audio Source
-        rtc::scoped_refptr<AudioSourceInterface> CreateAudioSource();
+        ::webrtc::scoped_refptr<AudioSourceInterface> CreateAudioSource();
         // Audio Renderer
         AudioTrackSinkAdapter* CreateAudioTrackSinkAdapter();
         void DeleteAudioTrackSinkAdapter(AudioTrackSinkAdapter* sink);
 
         // Video Source
-        rtc::scoped_refptr<UnityVideoTrackSource> CreateVideoSource();
+        ::webrtc::scoped_refptr<UnityVideoTrackSource> CreateVideoSource();
 
         // MediaStreamTrack
-        rtc::scoped_refptr<VideoTrackInterface>
+        ::webrtc::scoped_refptr<VideoTrackInterface>
         CreateVideoTrack(const std::string& label, webrtc::VideoTrackSourceInterface* source);
-        rtc::scoped_refptr<AudioTrackInterface>
+        ::webrtc::scoped_refptr<AudioTrackInterface>
         CreateAudioTrack(const std::string& label, webrtc::AudioSourceInterface* source);
         void StopMediaStreamTrack(webrtc::MediaStreamTrackInterface* track);
 
@@ -124,14 +126,16 @@ namespace webrtc
 
         // StatsReport
         std::mutex mutexStatsReport;
-        void AddStatsReport(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report);
+        void AddStatsReport(const ::webrtc::scoped_refptr<const webrtc::RTCStatsReport>& report);
         const RTCStats** GetStatsList(const RTCStatsReport* report, size_t* length, uint32_t** types);
         void DeleteStatsReport(const webrtc::RTCStatsReport* report);
+        // The attributes (members) of a stats object of a report held by any context, or nullptr.
+        static const std::vector<::webrtc::Attribute>* GetStatsAttributes(const RTCStats* stats);
 
         // DataChannel
         DataChannelInterface*
         CreateDataChannel(PeerConnectionObject* obj, const char* label, const DataChannelInit& options);
-        void AddDataChannel(rtc::scoped_refptr<DataChannelInterface> channel, PeerConnectionObject& pc);
+        void AddDataChannel(::webrtc::scoped_refptr<DataChannelInterface> channel, PeerConnectionObject& pc);
         DataChannelObject* GetDataChannelObject(const DataChannelInterface* channel);
         void DeleteDataChannel(DataChannelInterface* channel);
 
@@ -141,30 +145,30 @@ namespace webrtc
         void DeleteVideoRenderer(UnityVideoRenderer* renderer);
 
         // RtpSender
-        void GetRtpSenderCapabilities(cricket::MediaType kind, RtpCapabilities* capabilities) const;
+        void GetRtpSenderCapabilities(::webrtc::MediaType kind, RtpCapabilities* capabilities) const;
 
         // RtpReceiver
-        void GetRtpReceiverCapabilities(cricket::MediaType kind, RtpCapabilities* capabilities) const;
+        void GetRtpReceiverCapabilities(::webrtc::MediaType kind, RtpCapabilities* capabilities) const;
 
         // AudioDevice
-        rtc::scoped_refptr<DummyAudioDevice> GetAudioDevice() const { return m_audioDevice; }
+        ::webrtc::scoped_refptr<DummyAudioDevice> GetAudioDevice() const { return m_audioDevice; }
 
         // mutex;
         std::mutex mutex;
 
     private:
-        std::unique_ptr<rtc::Thread> m_workerThread;
-        std::unique_ptr<rtc::Thread> m_signalingThread;
+        std::unique_ptr<::webrtc::Thread> m_workerThread;
+        std::unique_ptr<::webrtc::Thread> m_signalingThread;
         std::unique_ptr<TaskQueueFactory> m_taskQueueFactory;
-        rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_peerConnectionFactory;
-        rtc::scoped_refptr<DummyAudioDevice> m_audioDevice;
-        std::vector<rtc::scoped_refptr<const webrtc::RTCStatsReport>> m_listStatsReport;
+        ::webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_peerConnectionFactory;
+        ::webrtc::scoped_refptr<DummyAudioDevice> m_audioDevice;
+        std::vector<::webrtc::scoped_refptr<const webrtc::RTCStatsReport>> m_listStatsReport;
         std::map<const PeerConnectionObject*, std::unique_ptr<PeerConnectionObject>> m_mapClients;
         std::map<const webrtc::MediaStreamInterface*, std::unique_ptr<MediaStreamObserver>> m_mapMediaStreamObserver;
         std::map<const DataChannelInterface*, std::unique_ptr<DataChannelObject>> m_mapDataChannels;
         std::map<const uint32_t, std::shared_ptr<UnityVideoRenderer>> m_mapVideoRenderer;
         std::map<const AudioTrackSinkAdapter*, std::unique_ptr<AudioTrackSinkAdapter>> m_mapAudioTrackAndSink;
-        std::map<const rtc::RefCountInterface*, rtc::scoped_refptr<rtc::RefCountInterface>> m_mapRefPtr;
+        std::map<const ::webrtc::RefCountInterface*, ::webrtc::scoped_refptr<::webrtc::RefCountInterface>> m_mapRefPtr;
 
         static uint32_t s_rendererId;
         static uint32_t GenerateRendererId();

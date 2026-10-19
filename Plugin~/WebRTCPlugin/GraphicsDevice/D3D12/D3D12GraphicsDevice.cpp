@@ -334,7 +334,7 @@ namespace webrtc
     }
 
     //----------------------------------------------------------------------------------------------------------------------
-    rtc::scoped_refptr<webrtc::I420Buffer> D3D12GraphicsDevice::ConvertRGBToI420(ITexture2D* texture)
+    ::webrtc::scoped_refptr<webrtc::I420Buffer> D3D12GraphicsDevice::ConvertRGBToI420(ITexture2D* texture)
     {
         D3D12Texture2D* d3dTexture2d = reinterpret_cast<D3D12Texture2D*>(texture);
         if (!d3dTexture2d)
@@ -363,7 +363,7 @@ namespace webrtc
         }
 
         // RGBA -> I420
-        rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer = webrtc::I420Buffer::Create(width, height);
+        ::webrtc::scoped_refptr<webrtc::I420Buffer> i420_buffer = webrtc::I420Buffer::Create(width, height);
         libyuv::ARGBToI420(
             static_cast<uint8_t*>(data),
             rowPitch,

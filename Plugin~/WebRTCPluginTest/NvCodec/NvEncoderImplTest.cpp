@@ -40,8 +40,8 @@ namespace webrtc
 
     TEST_P(NvEncoderImplTest, CanInitializeWithDefaultParameters)
     {
-        cricket::VideoCodec codec = cricket::CreateVideoCodec(cricket::kH264CodecName);
-        codec.SetParam(cricket::kH264FmtpProfileLevelId, kProfileLevelIdString());
+        ::webrtc::Codec codec = ::webrtc::CreateVideoCodec(::webrtc::kH264CodecName);
+        codec.SetParam(::webrtc::kH264FmtpProfileLevelId, kProfileLevelIdString());
         NvEncoderImpl encoder(codec, context_, CU_MEMORYTYPE_ARRAY, NV_ENC_BUFFER_FORMAT_ARGB, nullptr);
 
         VideoCodec codec_settings;
@@ -53,8 +53,8 @@ namespace webrtc
     {
         H264ProfileLevelId profileLevelId(H264Profile::kProfileBaseline, H264Level::kLevel5_1);
 
-        cricket::VideoCodec codec = cricket::CreateVideoCodec(cricket::kH264CodecName);
-        codec.SetParam(cricket::kH264FmtpProfileLevelId, *H264ProfileLevelIdToString(profileLevelId));
+        ::webrtc::Codec codec = ::webrtc::CreateVideoCodec(::webrtc::kH264CodecName);
+        codec.SetParam(::webrtc::kH264FmtpProfileLevelId, *H264ProfileLevelIdToString(profileLevelId));
         NvEncoderImpl encoder(codec, context_, CU_MEMORYTYPE_ARRAY, NV_ENC_BUFFER_FORMAT_ARGB, nullptr);
 
         VideoCodec codec_settings;
@@ -69,8 +69,8 @@ namespace webrtc
     {
         H264ProfileLevelId profileLevelId(H264Profile::kProfileBaseline, H264Level::kLevel5_1);
 
-        cricket::VideoCodec codec = cricket::CreateVideoCodec(cricket::kH264CodecName);
-        codec.SetParam(cricket::kH264FmtpProfileLevelId, *H264ProfileLevelIdToString(profileLevelId));
+        ::webrtc::Codec codec = ::webrtc::CreateVideoCodec(::webrtc::kH264CodecName);
+        codec.SetParam(::webrtc::kH264FmtpProfileLevelId, *H264ProfileLevelIdToString(profileLevelId));
         NvEncoderImpl encoder(codec, context_, CU_MEMORYTYPE_ARRAY, NV_ENC_BUFFER_FORMAT_ARGB, nullptr);
 
         VideoCodec codec_settings;

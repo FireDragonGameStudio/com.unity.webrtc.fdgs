@@ -44,6 +44,13 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
+if(Windows AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  # googletest builds itself with -WX; Chromium's clang warns about its char8_t printer.
+  foreach(_gtest_target gtest gtest_main gmock gmock_main)
+    target_compile_options(${_gtest_target} PRIVATE -Wno-character-conversion)
+  endforeach()
+endif()
+
 include(GoogleTest)
 
 target_compile_definitions(WebRTCLibTest PRIVATE "$<$<CONFIG:Debug>:DEBUG>")
@@ -99,6 +106,7 @@ if(Windows)
             wmcodecdspuuid
             WebRTCLib
             Strmiids
+            ${WEBRTC_SYSTEM_LIBRARIES}
             delayimp.lib)
   target_include_directories(
     WebRTCLibTest PRIVATE ${CUDA_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIR}
@@ -111,9 +119,7 @@ if(Windows)
       "-delayload:nvcuda.dll -delayload:nvEncodeAPI64.dll -delayload:nvcuvid.dll -delayload:vulkan-1.dll"
       MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif(macOS)
-  set(CMAKE_C_FLAGS "-x objective-c")
-  set(CMAKE_CXX_FLAGS "-x objective-c++")
-
+  # WebRTCLib passes -xobjective-c++ on to the tests.
   set_target_properties(
     WebRTCLibTest
     PROPERTIES LINK_FLAGS "-ObjC"
@@ -155,9 +161,7 @@ elseif(Linux)
   target_include_directories(WebRTCLibTest PRIVATE .. ${CUDA_INCLUDE_DIRS}
                                                    ${NVCODEC_INCLUDE_DIR})
 elseif(iOS)
-  set(CMAKE_C_FLAGS "-x objective-c")
-  set(CMAKE_CXX_FLAGS "-x objective-c++")
-
+  # WebRTCLib passes -xobjective-c++ on to the tests.
   set_target_properties(
     WebRTCLibTest
     PROPERTIES LINK_FLAGS "-ObjC"

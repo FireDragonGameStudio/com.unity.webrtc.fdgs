@@ -8,7 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- GitHub Actions workflows that build libwebrtc M156 (branch-heads/8078) for Linux, Windows, macOS, iOS and Android with Chromium's libc++, and publish the packages to the release `libwebrtc-M156`. The plugin does not use them yet.
+- GitHub Actions workflows that build libwebrtc M156 (branch-heads/8078) for Linux, Windows, macOS, iOS and Android with Chromium's libc++, and publish the packages to the release `libwebrtc-M156`.
+- RTC stats fields added in libwebrtc M156, for example `networkSlice` (candidate), `fecBytesReceived`, `fecSsrc` and `rtxSsrc` (inbound-rtp), `encodingIndex`, `psnrSum` and `psnrMeasurements` (outbound-rtp) and `ccfbMessagesReceived` (transport).
+
+### Changed
+
+- Upgrade libwebrtc from M116 to M156 (branch-heads/8078) on all platforms. The native plugin is built as C++20 with Chromium's clang (clang-cl on Windows) against the libc++ that ships in the libwebrtc package, so building it locally now needs that clang instead of MSVC, Xcode's clang or the system clang; the build scripts download it.
+
+### Fixed
+
+- Native plugin: video capture stalled for up to 10 s once the frame buffer pool held 20 buffers, even when they were unused. The pool now reuses or releases unused buffers when it is full.
 
 ## [3.1.0] - 2026-10-18
 

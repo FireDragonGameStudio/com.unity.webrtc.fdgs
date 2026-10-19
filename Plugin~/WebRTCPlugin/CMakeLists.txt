@@ -66,7 +66,13 @@ target_sources(
           GpuMemoryBufferPool.cpp
           GpuMemoryBufferPool.h)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+  # clang-cl: -Wall means -Weverything there.
+  target_compile_options(WebRTCLib PUBLIC /W4 -Wno-unused-parameter)
+  if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+    target_compile_options(WebRTCLib PUBLIC -Werror)
+  endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # Visual Studio Generator has not been supported supression warnings of
   # external headers yet. https://gitlab.kitware.com/cmake/cmake/-/issues/17904
   if(CMAKE_GENERATOR MATCHES "Visual Studio")
@@ -116,12 +122,15 @@ if(Windows)
     endif()
   endif()
 
-  # Replace /GR option to disable RTTI
-  foreach(flag_var
-          CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-          CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-    string(REPLACE /GR /GR- "${flag_var}" "${${flag_var}}")
-  endforeach()
+  # Replace /GR option to disable RTTI. libwebrtc M156 is built with RTTI (use_rtti=true): classes that
+  # implement its interfaces keep it as well.
+  if(NOT WEBRTC_USES_BUNDLED_LIBCXX)
+    foreach(flag_var
+            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      string(REPLACE /GR /GR- "${flag_var}" "${${flag_var}}")
+    endforeach()
+  endif()
 endif()
 
 if(Windows)
@@ -129,20 +138,20 @@ if(Windows)
 
   target_compile_definitions(WebRTCLib PUBLIC WEBRTC_WIN NOMINMAX
                                               VK_NO_PROTOTYPES)
+  # libs.txt of the package lists the libraries libwebrtc needs.
+  if(WEBRTC_SYSTEM_LIBRARIES)
+    set(_webrtc_system_libraries ${WEBRTC_SYSTEM_LIBRARIES})
+  else()
+    set(_webrtc_system_libraries d3d11 winmm Secur32 Iphlpapi Msdmo Dmoguids
+                                 wmcodecdspuuid Strmiids)
+  endif()
   target_link_libraries(
     WebRTCLib
     PRIVATE ${WEBRTC_LIBRARY}
             ${Vulkan_LIBRARY}
             ${CUDA_CUDA_LIBRARY}
             ${NVCODEC_LIBRARIES}
-            d3d11
-            winmm
-            Secur32
-            Iphlpapi
-            Msdmo
-            Dmoguids
-            wmcodecdspuuid
-            Strmiids)
+            ${_webrtc_system_libraries})
   target_include_directories(
     WebRTCLib SYSTEM PUBLIC ${CUDA_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIR}
                             ${NVCODEC_INCLUDE_DIR})
@@ -152,9 +161,9 @@ if(Windows)
     WebRTCLib PROPERTIES MSVC_RUNTIME_LIBRARY
                          "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif(macOS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -x objective-c")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-lto -fno-rtti")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -x objective-c++")
+  # Compile every C++ file as Objective-C++. Not in CMAKE_CXX_FLAGS: the Ninja generator also passes those
+  # to the link command, where -x would make clang read the object files as source.
+  target_compile_options(WebRTCLib PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-xobjective-c++ -fno-lto -fno-rtti>)
   set(PROJECT_BINARY_DIR "${CMAKE_SOURCE_DIR}/../Runtime/Plugins/macOS")
 
   target_compile_definitions(WebRTCLib PUBLIC WEBRTC_MAC WEBRTC_POSIX)
@@ -193,9 +202,7 @@ elseif(Linux)
   # enable -fPIC option
   set_target_properties(WebRTCLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 elseif(iOS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -x objective-c")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-lto -fno-rtti")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -x objective-c++")
+  target_compile_options(WebRTCLib PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-xobjective-c++ -fno-lto -fno-rtti>)
   set(PROJECT_BINARY_DIR "${CMAKE_SOURCE_DIR}/../Runtime/Plugins/iOS")
 
   target_compile_definitions(WebRTCLib PUBLIC WEBRTC_IOS WEBRTC_MAC
@@ -268,7 +275,33 @@ if(Windows)
       MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif(macOS)
   set_target_properties(WebRTCPlugin PROPERTIES LINK_FLAGS "-ObjC")
+  # Drop the parts of libwebrtc.a that the plugin does not use (Xcode does this by default).
+  target_link_options(WebRTCPlugin PRIVATE -Wl,-dead_strip)
 elseif(iOS)
+  # Same keys as the Info.plist Xcode wrote for the framework, filled in when configuring.
+  execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-version OUTPUT_VARIABLE IOS_SDK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-build-version OUTPUT_VARIABLE IOS_SDK_BUILD OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND xcodebuild -version OUTPUT_VARIABLE XCODE_VERSION_OUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND sw_vers -buildVersion OUTPUT_VARIABLE BUILD_MACHINE_OS_BUILD OUTPUT_STRIP_TRAILING_WHITESPACE)
+  string(REGEX MATCH "Xcode ([0-9]+)\\.?([0-9]*)\\.?([0-9]*)" _ "${XCODE_VERSION_OUTPUT}")
+  set(_xcode_minor "${CMAKE_MATCH_2}")
+  set(_xcode_patch "${CMAKE_MATCH_3}")
+  if(NOT _xcode_minor)
+    set(_xcode_minor 0)
+  endif()
+  if(NOT _xcode_patch)
+    set(_xcode_patch 0)
+  endif()
+  math(EXPR DT_XCODE "${CMAKE_MATCH_1} * 100 + ${_xcode_minor} * 10 + ${_xcode_patch}" OUTPUT_FORMAT DECIMAL)
+  string(REGEX MATCH "Build version ([0-9A-Za-z]+)" _ "${XCODE_VERSION_OUTPUT}")
+  set(DT_XCODE_BUILD "${CMAKE_MATCH_1}")
+  string(LENGTH "${DT_XCODE}" _len)
+  if(_len LESS 4)
+    set(DT_XCODE "0${DT_XCODE}")
+  endif()
+  configure_file(${CMAKE_SOURCE_DIR}/cmake/iOSFrameworkInfo.plist.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/Info.plist.in @ONLY)
+  target_link_options(WebRTCPlugin PRIVATE -Wl,-dead_strip)
   #
   # Build Setting Reference
   # https://developer.apple.com/library/archive/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
@@ -276,6 +309,7 @@ elseif(iOS)
   set_target_properties(
     WebRTCPlugin
     PROPERTIES LINK_FLAGS "-ObjC"
+               MACOSX_FRAMEWORK_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/Info.plist.in
                MACOSX_FRAMEWORK_IDENTIFIER "com.unity.webrtc"
                MACOSX_FRAMEWORK_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
                MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION}

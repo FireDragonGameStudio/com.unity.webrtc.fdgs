@@ -9,10 +9,10 @@ namespace webrtc
 {
     DelegateSetRemoteDesc SetRemoteDescriptionObserver::s_setRemoteDescCallback = nullptr;
 
-    rtc::scoped_refptr<SetRemoteDescriptionObserver>
+    ::webrtc::scoped_refptr<SetRemoteDescriptionObserver>
     SetRemoteDescriptionObserver::Create(PeerConnectionObject* connection)
     {
-        return rtc::make_ref_counted<SetRemoteDescriptionObserver>(connection);
+        return ::webrtc::make_ref_counted<SetRemoteDescriptionObserver>(connection);
     }
 
     SetRemoteDescriptionObserver::SetRemoteDescriptionObserver(PeerConnectionObject* connection)

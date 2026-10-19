@@ -67,7 +67,7 @@ namespace webrtc
         connection = nullptr;
     }
 
-    void PeerConnectionObject::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel)
+    void PeerConnectionObject::OnDataChannel(::webrtc::scoped_refptr<webrtc::DataChannelInterface> channel)
     {
         context.AddDataChannel(channel, *this);
         if (onDataChannel != nullptr)
@@ -98,7 +98,7 @@ namespace webrtc
         }
     }
 
-    void PeerConnectionObject::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver)
+    void PeerConnectionObject::OnTrack(::webrtc::scoped_refptr<webrtc::RtpTransceiverInterface> transceiver)
     {
         context.AddRefPtr(transceiver);
         context.AddRefPtr(transceiver->receiver());
@@ -110,7 +110,7 @@ namespace webrtc
         }
     }
 
-    void PeerConnectionObject::OnRemoveTrack(rtc::scoped_refptr<RtpReceiverInterface> receiver)
+    void PeerConnectionObject::OnRemoveTrack(::webrtc::scoped_refptr<RtpReceiverInterface> receiver)
     {
         if (onRemoveTrack != nullptr)
         {
@@ -152,12 +152,12 @@ namespace webrtc
         DebugLog("OnSignalingChange %d", new_state);
     }
 
-    void PeerConnectionObject::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
+    void PeerConnectionObject::OnAddStream(::webrtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
     {
         DebugLog("OnAddStream");
     }
 
-    void PeerConnectionObject::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
+    void PeerConnectionObject::OnRemoveStream(::webrtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
     {
         DebugLog("OnRemoveStream");
     }
@@ -183,7 +183,7 @@ namespace webrtc
 
     RTCErrorType PeerConnectionObject::SetLocalDescription(
         const RTCSessionDescription& desc,
-        rtc::scoped_refptr<SetLocalDescriptionObserverInterface> observer,
+        ::webrtc::scoped_refptr<SetLocalDescriptionObserverInterface> observer,
         std::string& error)
     {
         SdpParseError error_;
@@ -199,7 +199,7 @@ namespace webrtc
     }
 
     RTCErrorType PeerConnectionObject::SetLocalDescriptionWithoutDescription(
-        rtc::scoped_refptr<SetLocalDescriptionObserverInterface> observer, std::string& error)
+        ::webrtc::scoped_refptr<SetLocalDescriptionObserverInterface> observer, std::string& error)
     {
         connection->SetLocalDescription(observer);
         return RTCErrorType::NONE;
@@ -207,7 +207,7 @@ namespace webrtc
 
     RTCErrorType PeerConnectionObject::SetRemoteDescription(
         const RTCSessionDescription& desc,
-        rtc::scoped_refptr<SetRemoteDescriptionObserverInterface> observer,
+        ::webrtc::scoped_refptr<SetRemoteDescriptionObserverInterface> observer,
         std::string& error)
     {
         SdpParseError error_;
@@ -231,7 +231,7 @@ namespace webrtc
         const auto error = connection->SetConfiguration(_config);
         if (!error.ok())
         {
-            LogPrint(rtc::LoggingSeverity::LS_ERROR, error.message());
+            LogPrint(::webrtc::LoggingSeverity::LS_ERROR, error.message());
         }
         return error.type();
     }
@@ -289,7 +289,7 @@ namespace webrtc
         connection->CreateAnswer(observer, _options);
     }
 
-    void PeerConnectionObject::ReceiveStatsReport(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
+    void PeerConnectionObject::ReceiveStatsReport(const ::webrtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
     {
         context.AddStatsReport(report);
     }

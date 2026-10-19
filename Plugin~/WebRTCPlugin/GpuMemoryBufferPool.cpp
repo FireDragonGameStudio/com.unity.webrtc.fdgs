@@ -10,15 +10,16 @@ namespace unity
 {
 namespace webrtc
 {
-    GpuMemoryBufferPool::GpuMemoryBufferPool(IGraphicsDevice* device, Clock* clock)
+    GpuMemoryBufferPool::GpuMemoryBufferPool(IGraphicsDevice* device, Clock* clock, size_t maxBufferCount)
         : device_(device)
         , clock_(clock)
+        , maxBufferCount_(maxBufferCount)
     {
     }
 
     GpuMemoryBufferPool::~GpuMemoryBufferPool() { }
 
-    rtc::scoped_refptr<VideoFrame> GpuMemoryBufferPool::CreateFrame(
+    ::webrtc::scoped_refptr<VideoFrame> GpuMemoryBufferPool::CreateFrame(
         NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format, Timestamp timestamp)
     {
         auto buffer = GetOrCreateFrameResources(ptr, size, format);
@@ -31,7 +32,7 @@ namespace webrtc
             size, buffer, callback, webrtc::TimeDelta::Micros(timestamp.us()));
     }
 
-    rtc::scoped_refptr<GpuMemoryBufferInterface> GpuMemoryBufferPool::GetOrCreateFrameResources(
+    ::webrtc::scoped_refptr<GpuMemoryBufferInterface> GpuMemoryBufferPool::GetOrCreateFrameResources(
         NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format)
     {
         std::lock_guard<std::mutex> lock(mutex_);
@@ -56,8 +57,26 @@ namespace webrtc
                 return resources->buffer_;
             }
         }
-        rtc::scoped_refptr<GpuMemoryBufferFromUnity> buffer =
-            rtc::make_ref_counted<GpuMemoryBufferFromUnity>(device_, size, format);
+        if (resourcesPool_.size() >= maxBufferCount_)
+        {
+            // Make room by releasing the least recently used buffer that cannot hold this frame, for example one
+            // left over from a track with another resolution. Unused compatible buffers are kept: they are only
+            // waiting for their copy to finish and can be reused for the next frame.
+            auto stale = resourcesPool_.end();
+            for (auto it = resourcesPool_.begin(); it != resourcesPool_.end(); ++it)
+            {
+                FrameResources* resources = it->get();
+                if (resources->IsUsed() || AreFrameResourcesCompatible(resources, size, format))
+                    continue;
+                if (stale == resourcesPool_.end() || resources->lastUseTime() < (*stale)->lastUseTime())
+                    stale = it;
+            }
+            if (stale == resourcesPool_.end())
+                return nullptr;
+            resourcesPool_.erase(stale);
+        }
+        ::webrtc::scoped_refptr<GpuMemoryBufferFromUnity> buffer =
+            ::webrtc::make_ref_counted<GpuMemoryBufferFromUnity>(device_, size, format);
         if (!buffer->CopyBuffer(ptr))
         {
             RTC_LOG(LS_INFO) << "Copy buffer is failed.";
@@ -75,7 +94,7 @@ namespace webrtc
         return resources->buffer_->GetSize() == size && resources->buffer_->GetFormat() == format;
     }
 
-    void GpuMemoryBufferPool::OnReturnBuffer(rtc::scoped_refptr<GpuMemoryBufferInterface> buffer)
+    void GpuMemoryBufferPool::OnReturnBuffer(::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer)
     {
         std::lock_guard<std::mutex> lock(mutex_);
 

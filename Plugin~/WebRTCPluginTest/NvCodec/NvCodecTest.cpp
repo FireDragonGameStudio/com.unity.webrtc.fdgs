@@ -6,6 +6,7 @@
 #include "GraphicsDeviceContainer.h"
 #include "NvCodecUtils.h"
 #include "VideoCodecTest.h"
+#include <api/array_view.h>
 #include <common_video/h264/h264_bitstream_parser.h>
 #include <rtc_base/thread.h>
 
@@ -48,23 +49,23 @@ namespace webrtc
     protected:
         std::unique_ptr<VideoEncoder> CreateEncoder() override
         {
-            cricket::VideoCodec codec = cricket::CreateVideoCodec(cricket::kH264CodecName);
-            codec.SetParam(cricket::kH264FmtpProfileLevelId, kProfileLevelIdString());
+            ::webrtc::Codec codec = ::webrtc::CreateVideoCodec(::webrtc::kH264CodecName);
+            codec.SetParam(::webrtc::kH264FmtpProfileLevelId, kProfileLevelIdString());
             return NvEncoder::Create(codec, context_, CU_MEMORYTYPE_ARRAY, NV_ENC_BUFFER_FORMAT_ARGB, nullptr);
         }
 
         std::unique_ptr<VideoDecoder> CreateDecoder() override
         {
-            cricket::VideoCodec codec = cricket::CreateVideoCodec(cricket::kH264CodecName);
-            codec.SetParam(cricket::kH264FmtpProfileLevelId, kProfileLevelIdString());
+            ::webrtc::Codec codec = ::webrtc::CreateVideoCodec(::webrtc::kH264CodecName);
+            codec.SetParam(::webrtc::kH264FmtpProfileLevelId, kProfileLevelIdString());
             return NvDecoder::Create(codec, context_, nullptr);
         }
 
         std::unique_ptr<FrameGeneratorInterface> CreateFrameGenerator(
             int width,
             int height,
-            absl::optional<FrameGeneratorInterface::OutputType> type,
-            absl::optional<int> num_squares) override
+            std::optional<FrameGeneratorInterface::OutputType> type,
+            std::optional<int> num_squares) override
         {
             return CreateVideoFrameGenerator(device_, width, height, type, num_squares);
         }
@@ -98,7 +99,7 @@ namespace webrtc
         {
             EXPECT_GT(encoded_frame.size(), 0u);
 
-            bitstreamParser_.ParseBitstream(rtc::ArrayView<const uint8_t>(encoded_frame.data(), encoded_frame.size()));
+            bitstreamParser_.ParseBitstream(::webrtc::ArrayView<const uint8_t>(encoded_frame.data(), encoded_frame.size()));
             int qp = bitstreamParser_.GetLastSliceQp().value_or(-1);
             EXPECT_EQ(encoded_frame.qp_, qp) << "Encoder QP != parsed bitstream QP.";
         }
@@ -169,7 +170,7 @@ namespace webrtc
         EncodedImage encoded_frame;
         CodecSpecificInfo codec_specific_info;
 
-        std::unique_ptr<rtc::Thread> thread = rtc::Thread::CreateWithSocketServer();
+        std::unique_ptr<::webrtc::Thread> thread = ::webrtc::Thread::CreateWithSocketServer();
         thread->Start();
 
         // Test for executing command on several thread asyncnously.
@@ -208,7 +209,7 @@ namespace webrtc
         encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
         EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
         std::unique_ptr<VideoFrame> decoded_frame;
-        absl::optional<uint8_t> decoded_qp;
+        std::optional<uint8_t> decoded_qp;
         ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
         ASSERT_TRUE(decoded_frame);
 
@@ -240,7 +241,7 @@ namespace webrtc
         encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
         EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
         std::unique_ptr<VideoFrame> decoded_frame;
-        absl::optional<uint8_t> decoded_qp;
+        std::optional<uint8_t> decoded_qp;
         ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
         ASSERT_TRUE(decoded_frame);
         EXPECT_EQ(decoded_frame->width(), frame.width());
@@ -294,7 +295,7 @@ namespace webrtc
         encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
         EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
         std::unique_ptr<VideoFrame> decoded_frame;
-        absl::optional<uint8_t> decoded_qp;
+        std::optional<uint8_t> decoded_qp;
         ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
         ASSERT_TRUE(decoded_frame);
         ASSERT_TRUE(decoded_qp);
@@ -319,10 +320,10 @@ namespace webrtc
         encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
         EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
         std::unique_ptr<VideoFrame> decoded_frame;
-        absl::optional<uint8_t> decoded_qp;
+        std::optional<uint8_t> decoded_qp;
         ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
         ASSERT_TRUE(decoded_frame);
-        EXPECT_EQ(encoded_frame.Timestamp(), decoded_frame->timestamp());
+        EXPECT_EQ(encoded_frame.RtpTimestamp(), decoded_frame->rtp_timestamp());
     }
 
     INSTANTIATE_TEST_SUITE_P(GfxDevice, NvCodecTest, testing::ValuesIn(supportedGfxDevices));

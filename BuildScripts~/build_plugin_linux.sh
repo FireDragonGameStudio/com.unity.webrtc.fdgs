@@ -1,8 +1,8 @@
 #!/bin/bash -eu
 
-export LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M116/webrtc-linux.zip
+export LIBWEBRTC_DOWNLOAD_URL=https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases/download/libwebrtc-M156/webrtc-linux.zip
 # Keep in sync with LIBWEBRTC_SHA256 in .github/workflows/native-linux.yml.
-export LIBWEBRTC_SHA256=d7ca2f66f1ac7d70b2f859497c127e15050c19a0bc431ad8b7d892d6ca2be819
+export LIBWEBRTC_SHA256=7d6b95035fb9c978d528170e875c843dc644e70e3aca8ab0e0422067bd809b33
 export SOLUTION_DIR=$(pwd)/Plugin~
 export OUTPUT_FILEPATH=$(pwd)/Runtime/Plugins/x86_64/libwebrtc.so
 
@@ -13,7 +13,9 @@ else
   CMAKE_BUILD_TYPE="Release"
 fi
 
-# Any clang with lld works (tested with clang 18). Override with CC/CXX, e.g. CC=clang-18 CXX=clang++-18.
+# libwebrtc M156 is built with Chromium's libc++, so compile with the same clang: download
+# https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-<CLANG_REVISION>.tar.xz
+# (CLANG_REVISION is in Plugin~/webrtc/VERSIONS) and pass it with CC/CXX, as .github/workflows/native-linux.yml does.
 CC="${CC:-clang}"
 CXX="${CXX:-clang++}"
 

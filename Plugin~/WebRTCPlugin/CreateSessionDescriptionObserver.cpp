@@ -9,10 +9,10 @@ namespace webrtc
 {
     DelegateCreateSessionDesc CreateSessionDescriptionObserver::s_createSessionDescCallback = nullptr;
 
-    rtc::scoped_refptr<CreateSessionDescriptionObserver>
+    ::webrtc::scoped_refptr<CreateSessionDescriptionObserver>
     CreateSessionDescriptionObserver::Create(PeerConnectionObject* connection)
     {
-        return rtc::make_ref_counted<CreateSessionDescriptionObserver>(connection);
+        return ::webrtc::make_ref_counted<CreateSessionDescriptionObserver>(connection);
     }
 
     CreateSessionDescriptionObserver::CreateSessionDescriptionObserver(PeerConnectionObject* connection)

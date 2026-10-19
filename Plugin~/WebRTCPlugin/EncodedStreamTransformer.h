@@ -23,8 +23,8 @@ namespace webrtc
         ~EncodedStreamTransformer() override { }
 
         void RegisterTransformedFrameSinkCallback(
-            rtc::scoped_refptr<webrtc::TransformedFrameCallback> callback, uint32_t ssrc) override;
-        void RegisterTransformedFrameCallback(rtc::scoped_refptr<TransformedFrameCallback> callback) override;
+            ::webrtc::scoped_refptr<webrtc::TransformedFrameCallback> callback, uint32_t ssrc) override;
+        void RegisterTransformedFrameCallback(::webrtc::scoped_refptr<TransformedFrameCallback> callback) override;
 
         void UnregisterTransformedFrameCallback() override;
         void UnregisterTransformedFrameSinkCallback(uint32_t ssrc) override;
@@ -32,7 +32,7 @@ namespace webrtc
         void SendFrameToSink(std::unique_ptr<::webrtc::TransformableFrameInterface> frame);
 
     private:
-        std::vector<std::pair<uint32_t, rtc::scoped_refptr<webrtc::TransformedFrameCallback>>> sink_callbacks_;
+        std::vector<std::pair<uint32_t, ::webrtc::scoped_refptr<webrtc::TransformedFrameCallback>>> sink_callbacks_;
         mutable std::mutex mutex_;
         static DelegateTransformedFrame s_callback;
     };

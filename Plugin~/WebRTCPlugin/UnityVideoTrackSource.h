@@ -2,11 +2,11 @@
 
 #include <mutex>
 
-#include <absl/types/optional.h>
+#include <optional>
 #include <api/media_stream_interface.h>
 #include <api/task_queue/task_queue_factory.h>
-#include <media/base/adapted_video_track_source.h>
-#include <rtc_base/task_queue.h>
+#include <api/video/adapted_video_track_source.h>
+#include <api/task_queue/task_queue_base.h>
 
 #include "VideoFrame.h"
 
@@ -22,7 +22,7 @@ namespace webrtc
     // a webrtc::VideoFrame, taking any adaptation requested by downstream classes
     // into account.
     class VideoFrameScheduler;
-    class UnityVideoTrackSource : public rtc::AdaptedVideoTrackSource
+    class UnityVideoTrackSource : public ::webrtc::AdaptedVideoTrackSource
     {
     public:
         struct FrameAdaptationParams
@@ -37,21 +37,21 @@ namespace webrtc
         };
 
         UnityVideoTrackSource(
-            bool is_screencast, absl::optional<bool> needs_denoising, TaskQueueFactory* taskQueueFactory);
+            bool is_screencast, std::optional<bool> needs_denoising, TaskQueueFactory* taskQueueFactory);
         ~UnityVideoTrackSource() override;
         SourceState state() const override;
 
         bool remote() const override;
         bool is_screencast() const override;
-        absl::optional<bool> needs_denoising() const override;
+        std::optional<bool> needs_denoising() const override;
         bool syncApplicationFramerate() const { return syncApplicationFramerate_; };
-        void OnFrameCaptured(rtc::scoped_refptr<VideoFrame> frame);
+        void OnFrameCaptured(::webrtc::scoped_refptr<VideoFrame> frame);
         void SetSyncApplicationFramerate(bool value);
         using VideoTrackSourceInterface::AddOrUpdateSink;
         using VideoTrackSourceInterface::RemoveSink;
 
-        static rtc::scoped_refptr<UnityVideoTrackSource>
-        Create(bool is_screencast, absl::optional<bool> needs_denoising, TaskQueueFactory* taskQueueFactory);
+        static ::webrtc::scoped_refptr<UnityVideoTrackSource>
+        Create(bool is_screencast, std::optional<bool> needs_denoising, TaskQueueFactory* taskQueueFactory);
 
     private:
         void OnUpdateVideoFrame();
@@ -60,10 +60,10 @@ namespace webrtc
         FrameAdaptationParams ComputeAdaptationParams(int width, int height, int64_t time_us);
 
         // Delivers |frame| to base class method
-        // rtc::AdaptedVideoTrackSource::OnFrame(). If the cropping (given via
+        // ::webrtc::AdaptedVideoTrackSource::OnFrame(). If the cropping (given via
         // |frame->visible_rect()|) has changed since the last delivered frame, the
         // whole frame is marked as updated.
-        // void DeliverFrame(rtc::scoped_refptr<::webrtc::VideoFrame> frame,
+        // void DeliverFrame(::webrtc::scoped_refptr<::webrtc::VideoFrame> frame,
         //                  gfx::Rect* update_rect,
         //                  int64_t timestamp_us);
 
@@ -72,15 +72,15 @@ namespace webrtc
         // media::VideoFramePool scaled_frame_pool_;
 
         // State for the timestamp translation.
-        rtc::TimestampAligner timestamp_aligner_;
+        ::webrtc::TimestampAligner timestamp_aligner_;
 
         const bool is_screencast_;
-        const absl::optional<bool> needs_denoising_;
+        const std::optional<bool> needs_denoising_;
         std::mutex mutex_;
 
-        std::unique_ptr<rtc::TaskQueue> taskQueue_;
+        std::unique_ptr<::webrtc::TaskQueueBase, ::webrtc::TaskQueueDeleter> taskQueue_;
         std::unique_ptr<VideoFrameScheduler> scheduler_;
-        rtc::scoped_refptr<unity::webrtc::VideoFrame> frame_;
+        ::webrtc::scoped_refptr<unity::webrtc::VideoFrame> frame_;
         bool syncApplicationFramerate_;
     };
 

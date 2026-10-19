@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include <iterator>
+
 #include "UnityVulkanInitCallback.h"
 
 namespace unity

@@ -14,10 +14,10 @@ namespace webrtc
     class UnityAudioTrackSource : public LocalAudioSource
     {
     public:
-        static rtc::scoped_refptr<UnityAudioTrackSource> Create();
-        static rtc::scoped_refptr<UnityAudioTrackSource> Create(const cricket::AudioOptions& audio_options);
+        static ::webrtc::scoped_refptr<UnityAudioTrackSource> Create();
+        static ::webrtc::scoped_refptr<UnityAudioTrackSource> Create(const ::webrtc::AudioOptions& audio_options);
 
-        const cricket::AudioOptions options() const override { return _options; }
+        const ::webrtc::AudioOptions options() const override { return _options; }
         void AddSink(AudioTrackSinkInterface* sink) override;
         void RemoveSink(AudioTrackSinkInterface* sink) override;
 
@@ -25,7 +25,7 @@ namespace webrtc
 
     protected:
         UnityAudioTrackSource();
-        UnityAudioTrackSource(const cricket::AudioOptions& audio_options);
+        UnityAudioTrackSource(const ::webrtc::AudioOptions& audio_options);
 
         ~UnityAudioTrackSource() override;
 
@@ -33,7 +33,7 @@ namespace webrtc
         std::vector<int16_t> _convertedAudioData;
         std::vector<AudioTrackSinkInterface*> _arrSink;
         std::mutex _mutex;
-        cricket::AudioOptions _options;
+        ::webrtc::AudioOptions _options;
         int _sampleRate = 0;
         size_t _numChannels = 0;
         size_t _numFrames = 0;

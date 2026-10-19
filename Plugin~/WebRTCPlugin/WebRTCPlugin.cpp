@@ -1,5 +1,9 @@
 #include "pch.h"
 
+#include <api/array_view.h>
+#include <span>
+#include <variant>
+
 #include "Context.h"
 #include "CreateSessionDescriptionObserver.h"
 #include "EncodedStreamTransformer.h"
@@ -56,19 +60,19 @@ namespace webrtc
         return dst;
     }
 
-    std::tuple<cricket::MediaType, std::string> ConvertMimeType(const std::string& mimeType)
+    std::tuple<::webrtc::MediaType, std::string> ConvertMimeType(const std::string& mimeType)
     {
         const std::vector<std::string> vec = Split(mimeType, "/");
         const std::string kind = vec[0];
         const std::string name = vec[1];
-        cricket::MediaType mediaType;
+        ::webrtc::MediaType mediaType;
         if (kind == "video")
         {
-            mediaType = cricket::MEDIA_TYPE_VIDEO;
+            mediaType = ::webrtc::MediaType::VIDEO;
         }
         else if (kind == "audio")
         {
-            mediaType = cricket::MEDIA_TYPE_AUDIO;
+            mediaType = ::webrtc::MediaType::AUDIO;
         }
         return std::make_tuple(mediaType, name);
     }
@@ -112,14 +116,14 @@ namespace webrtc
     }
 
     template<class T>
-    T** ConvertPtrArrayFromRefPtrArray(std::vector<rtc::scoped_refptr<T>> vec, size_t* length)
+    T** ConvertPtrArrayFromRefPtrArray(std::vector<::webrtc::scoped_refptr<T>> vec, size_t* length)
     {
         *length = vec.size();
         const auto buf = CoTaskMemAlloc(sizeof(T*) * vec.size());
         const auto ret = static_cast<T**>(buf);
         for (size_t i = 0; i < vec.size(); i++)
         {
-            rtc::scoped_refptr<T> item = vec[i];
+            ::webrtc::scoped_refptr<T> item = vec[i];
             ret[i] = item.get();
         }
         return ret;
@@ -158,7 +162,7 @@ namespace webrtc
         }
 
         template<typename U>
-        MarshallArray& operator=(const rtc::ArrayView<U>& src)
+        MarshallArray& operator=(const ::webrtc::ArrayView<U>& src)
         {
             length = static_cast<uint32_t>(src.size());
             values = static_cast<T*>(CoTaskMemAlloc(sizeof(T) * src.size()));
@@ -188,7 +192,7 @@ namespace webrtc
         T value;
 
         template<typename U>
-        Optional& operator=(const absl::optional<U>& src)
+        Optional& operator=(const std::optional<U>& src)
         {
             hasValue = src.has_value();
             if (hasValue)
@@ -206,9 +210,9 @@ namespace webrtc
         __attribute__((optnone))
 #endif
         explicit
-        operator const absl::optional<T>() const
+        operator const std::optional<T>() const
         {
-            absl::optional<T> dst = absl::nullopt;
+            std::optional<T> dst = std::nullopt;
             if (hasValue)
                 dst = value;
             return dst;
@@ -218,9 +222,9 @@ namespace webrtc
     };
 
     template<typename T>
-    absl::optional<T> ConvertOptional(const Optional<T>& value)
+    std::optional<T> ConvertOptional(const Optional<T>& value)
     {
-        absl::optional<T> dst = absl::nullopt;
+        std::optional<T> dst = std::nullopt;
         if (value.hasValue)
         {
             dst = value.value;
@@ -252,7 +256,7 @@ extern "C"
 {
     UNITY_INTERFACE_EXPORT MediaStreamInterface* ContextCreateMediaStream(Context* context, const char* streamId)
     {
-        rtc::scoped_refptr<MediaStreamInterface> stream = context->CreateMediaStream(streamId);
+        ::webrtc::scoped_refptr<MediaStreamInterface> stream = context->CreateMediaStream(streamId);
         context->AddRefPtr(stream);
         return stream.get();
     }
@@ -270,7 +274,7 @@ extern "C"
     UNITY_INTERFACE_EXPORT MediaStreamTrackInterface*
     ContextCreateVideoTrack(Context* context, const char* label, webrtc::VideoTrackSourceInterface* source)
     {
-        rtc::scoped_refptr<VideoTrackInterface> track = context->CreateVideoTrack(label, source);
+        ::webrtc::scoped_refptr<VideoTrackInterface> track = context->CreateVideoTrack(label, source);
         context->AddRefPtr(track);
         return track.get();
     }
@@ -283,14 +287,14 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT webrtc::VideoTrackSourceInterface* ContextCreateVideoTrackSource(Context* context)
     {
-        rtc::scoped_refptr<VideoTrackSourceInterface> source = context->CreateVideoSource();
+        ::webrtc::scoped_refptr<VideoTrackSourceInterface> source = context->CreateVideoSource();
         context->AddRefPtr(source);
         return source.get();
     }
 
     UNITY_INTERFACE_EXPORT webrtc::AudioSourceInterface* ContextCreateAudioTrackSource(Context* context)
     {
-        rtc::scoped_refptr<AudioSourceInterface> source = context->CreateAudioSource();
+        ::webrtc::scoped_refptr<AudioSourceInterface> source = context->CreateAudioSource();
         context->AddRefPtr(source);
         return source.get();
     }
@@ -298,17 +302,17 @@ extern "C"
     UNITY_INTERFACE_EXPORT webrtc::MediaStreamTrackInterface*
     ContextCreateAudioTrack(Context* context, const char* label, webrtc::AudioSourceInterface* source)
     {
-        rtc::scoped_refptr<AudioTrackInterface> track = context->CreateAudioTrack(label, source);
+        ::webrtc::scoped_refptr<AudioTrackInterface> track = context->CreateAudioTrack(label, source);
         context->AddRefPtr(track);
         return track.get();
     }
 
-    UNITY_INTERFACE_EXPORT void ContextAddRefPtr(Context* context, rtc::RefCountInterface* ptr)
+    UNITY_INTERFACE_EXPORT void ContextAddRefPtr(Context* context, ::webrtc::RefCountInterface* ptr)
     {
         context->AddRefPtr(ptr);
     }
 
-    UNITY_INTERFACE_EXPORT void ContextDeleteRefPtr(Context* context, rtc::RefCountInterface* ptr)
+    UNITY_INTERFACE_EXPORT void ContextDeleteRefPtr(Context* context, ::webrtc::RefCountInterface* ptr)
     {
         context->RemoveRefPtr(ptr);
     }
@@ -316,7 +320,7 @@ extern "C"
     UNITY_INTERFACE_EXPORT EncodedStreamTransformer*
     ContextCreateFrameTransformer(Context* context, DelegateTransformedFrame callback)
     {
-        rtc::scoped_refptr<EncodedStreamTransformer> transformer = rtc::make_ref_counted<EncodedStreamTransformer>();
+        ::webrtc::scoped_refptr<EncodedStreamTransformer> transformer = ::webrtc::make_ref_counted<EncodedStreamTransformer>();
         context->AddRefPtr(transformer);
         return transformer.get();
     }
@@ -325,11 +329,11 @@ extern "C"
     {
         if (track->kind() == "audio")
         {
-            return stream->AddTrack(rtc::scoped_refptr<AudioTrackInterface>(static_cast<AudioTrackInterface*>(track)));
+            return stream->AddTrack(::webrtc::scoped_refptr<AudioTrackInterface>(static_cast<AudioTrackInterface*>(track)));
         }
         else
         {
-            return stream->AddTrack(rtc::scoped_refptr<VideoTrackInterface>(static_cast<VideoTrackInterface*>(track)));
+            return stream->AddTrack(::webrtc::scoped_refptr<VideoTrackInterface>(static_cast<VideoTrackInterface*>(track)));
         }
     }
     UNITY_INTERFACE_EXPORT bool MediaStreamRemoveTrack(MediaStreamInterface* stream, MediaStreamTrackInterface* track)
@@ -337,12 +341,12 @@ extern "C"
         if (track->kind() == "audio")
         {
             return stream->RemoveTrack(
-                rtc::scoped_refptr<AudioTrackInterface>(static_cast<AudioTrackInterface*>(track)));
+                ::webrtc::scoped_refptr<AudioTrackInterface>(static_cast<AudioTrackInterface*>(track)));
         }
         else
         {
             return stream->RemoveTrack(
-                rtc::scoped_refptr<VideoTrackInterface>(static_cast<VideoTrackInterface*>(track)));
+                ::webrtc::scoped_refptr<VideoTrackInterface>(static_cast<VideoTrackInterface*>(track)));
         }
     }
 
@@ -425,7 +429,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT void VideoTrackAddOrUpdateSink(VideoTrackInterface* track, UnityVideoRenderer* sink)
     {
-        track->AddOrUpdateSink(sink, rtc::VideoSinkWants());
+        track->AddOrUpdateSink(sink, ::webrtc::VideoSinkWants());
     }
 
     UNITY_INTERFACE_EXPORT void VideoTrackRemoveSink(VideoTrackInterface* track, UnityVideoRenderer* sink)
@@ -434,7 +438,7 @@ extern "C"
     }
 
     UNITY_INTERFACE_EXPORT void
-    RegisterDebugLog(DelegateDebugLog func, bool enableNativeLog, rtc::LoggingSeverity loggingSeverity)
+    RegisterDebugLog(DelegateDebugLog func, bool enableNativeLog, ::webrtc::LoggingSeverity loggingSeverity)
     {
         delegateDebugLog = func;
         if (func != nullptr && enableNativeLog)
@@ -503,7 +507,7 @@ extern "C"
         if (streamId)
             streams.push_back(streamId);
 
-        auto result = obj->connection->AddTrack(rtc::scoped_refptr<MediaStreamTrackInterface>(track), streams);
+        auto result = obj->connection->AddTrack(::webrtc::scoped_refptr<MediaStreamTrackInterface>(track), streams);
         if (result.ok())
         {
             *sender = result.value().get();
@@ -535,9 +539,9 @@ extern "C"
         {
             RtpEncodingParameters dst = {};
             dst.active = active;
-            dst.max_bitrate_bps = static_cast<absl::optional<int>>(ConvertOptional(maxBitrate));
-            dst.min_bitrate_bps = static_cast<absl::optional<int>>(ConvertOptional(minBitrate));
-            dst.max_framerate = static_cast<absl::optional<double>>(ConvertOptional(maxFramerate));
+            dst.max_bitrate_bps = static_cast<std::optional<int>>(ConvertOptional(maxBitrate));
+            dst.min_bitrate_bps = static_cast<std::optional<int>>(ConvertOptional(minBitrate));
+            dst.max_framerate = static_cast<std::optional<double>>(ConvertOptional(maxFramerate));
             dst.scale_resolution_down_by = ConvertOptional(scaleResolutionDownBy);
             if (rid != nullptr)
                 dst.rid = std::string(rid);
@@ -572,7 +576,7 @@ extern "C"
     UNITY_INTERFACE_EXPORT RtpTransceiverInterface*
     PeerConnectionAddTransceiver(PeerConnectionObject* obj, MediaStreamTrackInterface* track)
     {
-        auto result = obj->connection->AddTransceiver(rtc::scoped_refptr<MediaStreamTrackInterface>(track));
+        auto result = obj->connection->AddTransceiver(::webrtc::scoped_refptr<MediaStreamTrackInterface>(track));
         if (!result.ok())
             return nullptr;
 
@@ -582,7 +586,7 @@ extern "C"
     UNITY_INTERFACE_EXPORT RtpTransceiverInterface* PeerConnectionAddTransceiverWithInit(
         PeerConnectionObject* obj, MediaStreamTrackInterface* track, const RTCRtpTransceiverInit* init)
     {
-        auto result = obj->connection->AddTransceiver(rtc::scoped_refptr<MediaStreamTrackInterface>(track), *init);
+        auto result = obj->connection->AddTransceiver(::webrtc::scoped_refptr<MediaStreamTrackInterface>(track), *init);
         if (!result.ok())
             return nullptr;
 
@@ -590,7 +594,7 @@ extern "C"
     }
 
     UNITY_INTERFACE_EXPORT RtpTransceiverInterface*
-    PeerConnectionAddTransceiverWithType(PeerConnectionObject* obj, cricket::MediaType type)
+    PeerConnectionAddTransceiverWithType(PeerConnectionObject* obj, ::webrtc::MediaType type)
     {
         auto result = obj->connection->AddTransceiver(type);
         if (!result.ok())
@@ -600,7 +604,7 @@ extern "C"
     }
 
     UNITY_INTERFACE_EXPORT RtpTransceiverInterface* PeerConnectionAddTransceiverWithTypeAndInit(
-        PeerConnectionObject* obj, cricket::MediaType type, const RTCRtpTransceiverInit* init)
+        PeerConnectionObject* obj, ::webrtc::MediaType type, const RTCRtpTransceiverInit* init)
     {
         auto result = obj->connection->AddTransceiver(type, *init);
         if (!result.ok())
@@ -611,7 +615,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT RTCErrorType PeerConnectionRemoveTrack(PeerConnectionObject* obj, RtpSenderInterface* sender)
     {
-        webrtc::RTCError error = obj->connection->RemoveTrackOrError(rtc::scoped_refptr<RtpSenderInterface>(sender));
+        webrtc::RTCError error = obj->connection->RemoveTrackOrError(::webrtc::scoped_refptr<RtpSenderInterface>(sender));
         return error.type();
     }
 
@@ -628,7 +632,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT PeerConnectionStatsCollectorCallback* PeerConnectionGetStats(PeerConnectionObject* obj)
     {
-        rtc::scoped_refptr<PeerConnectionStatsCollectorCallback> callback =
+        ::webrtc::scoped_refptr<PeerConnectionStatsCollectorCallback> callback =
             PeerConnectionStatsCollectorCallback::Create(obj);
         obj->connection->GetStats(callback.get());
         return callback.get();
@@ -637,18 +641,18 @@ extern "C"
     UNITY_INTERFACE_EXPORT PeerConnectionStatsCollectorCallback*
     PeerConnectionSenderGetStats(PeerConnectionObject* obj, RtpSenderInterface* sender)
     {
-        rtc::scoped_refptr<PeerConnectionStatsCollectorCallback> callback =
+        ::webrtc::scoped_refptr<PeerConnectionStatsCollectorCallback> callback =
             PeerConnectionStatsCollectorCallback::Create(obj);
-        obj->connection->GetStats(rtc::scoped_refptr<RtpSenderInterface>(sender), callback);
+        obj->connection->GetStats(::webrtc::scoped_refptr<RtpSenderInterface>(sender), callback);
         return callback.get();
     }
 
     UNITY_INTERFACE_EXPORT PeerConnectionStatsCollectorCallback*
     PeerConnectionReceiverGetStats(PeerConnectionObject* obj, RtpReceiverInterface* receiver)
     {
-        rtc::scoped_refptr<PeerConnectionStatsCollectorCallback> callback =
+        ::webrtc::scoped_refptr<PeerConnectionStatsCollectorCallback> callback =
             PeerConnectionStatsCollectorCallback::Create(obj);
-        obj->connection->GetStats(rtc::scoped_refptr<RtpReceiverInterface>(receiver), callback);
+        obj->connection->GetStats(::webrtc::scoped_refptr<RtpReceiverInterface>(receiver), callback);
         return callback.get();
     }
 
@@ -671,113 +675,113 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT uint32_t StatsGetType(const RTCStats* stats) { return statsTypes.at(stats->type()); }
 
-    UNITY_INTERFACE_EXPORT const RTCStatsMemberInterface** StatsGetMembers(const RTCStats* stats, size_t* length)
+    // A stats member is a webrtc::Attribute kept by Context::GetStatsAttributes. The index of its value type in
+    // Attribute::StatVariant is the StatsMemberType of Runtime/Scripts/RTCStats.cs.
+    using StatsMember = ::webrtc::Attribute;
+    static_assert(std::variant_size_v<StatsMember::StatVariant> == 16);
+    static_assert(std::is_same_v<std::variant_alternative_t<0, StatsMember::StatVariant>, const std::optional<bool>*>);
+    static_assert(
+        std::is_same_v<std::variant_alternative_t<6, StatsMember::StatVariant>, const std::optional<std::string>*>);
+    static_assert(std::is_same_v<
+                  std::variant_alternative_t<15, StatsMember::StatVariant>,
+                  const std::optional<std::map<std::string, double>>*>);
+
+    UNITY_INTERFACE_EXPORT const StatsMember** StatsGetMembers(const RTCStats* stats, size_t* length)
     {
-        return ConvertArray(stats->Members(), length);
+        std::vector<const StatsMember*> members;
+        if (const std::vector<StatsMember>* attributes = Context::GetStatsAttributes(stats))
+        {
+            for (const StatsMember& attribute : *attributes)
+                members.push_back(&attribute);
+        }
+        return ConvertArray(members, length);
     }
 
-    UNITY_INTERFACE_EXPORT bool StatsMemberIsDefined(const RTCStatsMemberInterface* member)
-    {
-        return member->is_defined();
-    }
+    UNITY_INTERFACE_EXPORT bool StatsMemberIsDefined(const StatsMember* member) { return member->has_value(); }
 
-    UNITY_INTERFACE_EXPORT const char* StatsMemberGetName(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT const char* StatsMemberGetName(const StatsMember* member)
     {
         return ConvertString(std::string(member->name()));
     }
 
-    UNITY_INTERFACE_EXPORT bool StatsMemberGetBool(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT bool StatsMemberGetBool(const StatsMember* member) { return member->get<bool>(); }
+
+    UNITY_INTERFACE_EXPORT int32_t StatsMemberGetInt(const StatsMember* member) { return member->get<int32_t>(); }
+
+    UNITY_INTERFACE_EXPORT uint32_t StatsMemberGetUnsignedInt(const StatsMember* member)
     {
-        return *member->cast_to<RTCStatsMember<bool>>();
+        return member->get<uint32_t>();
     }
 
-    UNITY_INTERFACE_EXPORT int32_t StatsMemberGetInt(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int64_t StatsMemberGetLong(const StatsMember* member) { return member->get<int64_t>(); }
+
+    UNITY_INTERFACE_EXPORT uint64_t StatsMemberGetUnsignedLong(const StatsMember* member)
     {
-        return *member->cast_to<RTCStatsMember<int32_t>>();
+        return member->get<uint64_t>();
     }
 
-    UNITY_INTERFACE_EXPORT uint32_t StatsMemberGetUnsignedInt(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT double StatsMemberGetDouble(const StatsMember* member) { return member->get<double>(); }
+
+    UNITY_INTERFACE_EXPORT const char* StatsMemberGetString(const StatsMember* member)
     {
-        return *member->cast_to<RTCStatsMember<uint32_t>>();
+        return ConvertString(member->get<std::string>());
     }
 
-    UNITY_INTERFACE_EXPORT int64_t StatsMemberGetLong(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT bool* StatsMemberGetBoolArray(const StatsMember* member, size_t* length)
     {
-        return *member->cast_to<RTCStatsMember<int64_t>>();
+        return ConvertArray(member->get<std::vector<bool>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT uint64_t StatsMemberGetUnsignedLong(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int32_t* StatsMemberGetIntArray(const StatsMember* member, size_t* length)
     {
-        return *member->cast_to<RTCStatsMember<uint64_t>>();
+        return ConvertArray(member->get<std::vector<int32_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT double StatsMemberGetDouble(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT uint32_t* StatsMemberGetUnsignedIntArray(const StatsMember* member, size_t* length)
     {
-        return *member->cast_to<RTCStatsMember<double>>();
+        return ConvertArray(member->get<std::vector<uint32_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT const char* StatsMemberGetString(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int64_t* StatsMemberGetLongArray(const StatsMember* member, size_t* length)
     {
-        return ConvertString(member->ValueToString());
+        return ConvertArray(member->get<std::vector<int64_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT bool* StatsMemberGetBoolArray(const RTCStatsMemberInterface* member, size_t* length)
+    UNITY_INTERFACE_EXPORT uint64_t* StatsMemberGetUnsignedLongArray(const StatsMember* member, size_t* length)
     {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<bool>>>(), length);
+        return ConvertArray(member->get<std::vector<uint64_t>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT int32_t* StatsMemberGetIntArray(const RTCStatsMemberInterface* member, size_t* length)
+    UNITY_INTERFACE_EXPORT double* StatsMemberGetDoubleArray(const StatsMember* member, size_t* length)
     {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<int>>>(), length);
+        return ConvertArray(member->get<std::vector<double>>(), length);
     }
 
-    UNITY_INTERFACE_EXPORT uint32_t*
-    StatsMemberGetUnsignedIntArray(const RTCStatsMemberInterface* member, size_t* length)
+    UNITY_INTERFACE_EXPORT const char** StatsMemberGetStringArray(const StatsMember* member, size_t* length)
     {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<uint32_t>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT int64_t* StatsMemberGetLongArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<int64_t>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT uint64_t*
-    StatsMemberGetUnsignedLongArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<uint64_t>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT double* StatsMemberGetDoubleArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        return ConvertArray(*member->cast_to<RTCStatsMember<std::vector<double>>>(), length);
-    }
-
-    UNITY_INTERFACE_EXPORT const char** StatsMemberGetStringArray(const RTCStatsMemberInterface* member, size_t* length)
-    {
-        std::vector<std::string> vec = *member->cast_to<RTCStatsMember<std::vector<std::string>>>();
+        const std::vector<std::string>& vec = member->get<std::vector<std::string>>();
         std::vector<const char*> vc;
         std::transform(vec.begin(), vec.end(), std::back_inserter(vc), ConvertString);
         return ConvertArray(vc, length);
     }
 
     UNITY_INTERFACE_EXPORT const char**
-    StatsMemberGetMapStringUint64(const RTCStatsMemberInterface* member, uint64_t** values, size_t* length)
+    StatsMemberGetMapStringUint64(const StatsMember* member, uint64_t** values, size_t* length)
     {
-        std::map<std::string, uint64_t> map = *member->cast_to<RTCStatsMember<std::map<std::string, uint64_t>>>();
+        std::map<std::string, uint64_t> map = member->get<std::map<std::string, uint64_t>>();
         return StatsMemberGetMapStringValue(map, values, length);
     }
 
     UNITY_INTERFACE_EXPORT const char**
-    StatsMemberGetMapStringDouble(const RTCStatsMemberInterface* member, double** values, size_t* length)
+    StatsMemberGetMapStringDouble(const StatsMember* member, double** values, size_t* length)
     {
-        std::map<std::string, double> map = *member->cast_to<RTCStatsMember<std::map<std::string, double>>>();
+        std::map<std::string, double> map = member->get<std::map<std::string, double>>();
         return StatsMemberGetMapStringValue(map, values, length);
     }
 
-    UNITY_INTERFACE_EXPORT RTCStatsMemberInterface::Type StatsMemberGetType(const RTCStatsMemberInterface* member)
+    UNITY_INTERFACE_EXPORT int32_t StatsMemberGetType(const StatsMember* member)
     {
-        return member->type();
+        return static_cast<int32_t>(member->as_variant().index());
     }
 
     UNITY_INTERFACE_EXPORT SetLocalDescriptionObserver* PeerConnectionSetLocalDescription(
@@ -812,7 +816,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT bool PeerConnectionCanTrickleIceCandidates(PeerConnectionObject* obj, bool* value)
     {
-        absl::optional<bool> result = obj->connection->can_trickle_ice_candidates();
+        std::optional<bool> result = obj->connection->can_trickle_ice_candidates();
         *value = result.value_or(false);
         return result.has_value();
     }
@@ -905,8 +909,8 @@ extern "C"
     {
         DataChannelInit _options;
         _options.ordered = options->ordered.value_or(true);
-        _options.maxRetransmitTime = static_cast<absl::optional<int32_t>>(options->maxRetransmitTime);
-        _options.maxRetransmits = static_cast<absl::optional<int32_t>>(options->maxRetransmits);
+        _options.maxRetransmitTime = static_cast<std::optional<int32_t>>(options->maxRetransmitTime);
+        _options.maxRetransmits = static_cast<std::optional<int32_t>>(options->maxRetransmits);
         _options.protocol = options->protocol == nullptr ? "" : options->protocol;
         _options.negotiated = options->negotiated.value_or(false);
         _options.id = options->id.value_or(-1);
@@ -981,6 +985,24 @@ extern "C"
         int32_t sdpMLineIndex;
     };
 
+    // The candidate types as libwebrtc named them before M120 (cricket::LOCAL_PORT_TYPE etc.), which
+    // Runtime/Scripts/RTCIceCandidate.cs expects.
+    const char* CandidateTypeToString(::webrtc::IceCandidateType type)
+    {
+        switch (type)
+        {
+        case ::webrtc::IceCandidateType::kHost:
+            return "local";
+        case ::webrtc::IceCandidateType::kSrflx:
+            return "stun";
+        case ::webrtc::IceCandidateType::kPrflx:
+            return "prflx";
+        case ::webrtc::IceCandidateType::kRelay:
+            return "relay";
+        }
+        return "";
+    }
+
     struct Candidate
     {
         char* candidate;
@@ -997,7 +1019,7 @@ extern "C"
         char* type;
         char* usernameFragment;
 
-        Candidate& operator=(const cricket::Candidate& obj)
+        Candidate& operator=(const ::webrtc::Candidate& obj)
         {
             candidate = ConvertString(obj.ToString());
             component = obj.component();
@@ -1010,7 +1032,7 @@ extern "C"
             relatedAddress = ConvertString(obj.related_address().ToString());
             relatedPort = obj.related_address().port();
             tcpType = ConvertString(obj.tcptype());
-            type = ConvertString(obj.type());
+            type = ConvertString(CandidateTypeToString(obj.type()));
             usernameFragment = ConvertString(obj.username());
             return *this;
         }
@@ -1030,7 +1052,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT void DeleteIceCandidate(IceCandidateInterface* candidate) { delete candidate; }
 
-    UNITY_INTERFACE_EXPORT void IceCandidateGetCandidate(const IceCandidateInterface* candidate, Candidate* dst)
+    UNITY_INTERFACE_EXPORT void IceCandidateGetCandidate(const IceCandidateInterface* candidate, ::Candidate* dst)
     {
         *dst = candidate->candidate();
     }
@@ -1211,7 +1233,7 @@ extern "C"
         RTCRtpExtension& operator=(const RtpExtension& src)
         {
             uri = ConvertString(src.uri);
-            id = static_cast<uint16_t>(src.id);
+            id = static_cast<uint16_t>(src.id.value());
             encrypted = src.encrypt;
             return *this;
         }
@@ -1265,11 +1287,11 @@ extern "C"
         {
             dst.encodings[i].active = src->encodings[i].active;
             dst.encodings[i].max_bitrate_bps =
-                static_cast<absl::optional<int>>(ConvertOptional(src->encodings[i].maxBitrate));
+                static_cast<std::optional<int>>(ConvertOptional(src->encodings[i].maxBitrate));
             dst.encodings[i].min_bitrate_bps =
-                static_cast<absl::optional<int>>(ConvertOptional(src->encodings[i].minBitrate));
+                static_cast<std::optional<int>>(ConvertOptional(src->encodings[i].minBitrate));
             dst.encodings[i].max_framerate =
-                static_cast<absl::optional<double>>(ConvertOptional(src->encodings[i].maxFramerate));
+                static_cast<std::optional<double>>(ConvertOptional(src->encodings[i].maxFramerate));
             dst.encodings[i].scale_resolution_down_by = ConvertOptional(src->encodings[i].scaleResolutionDownBy);
             if (src->encodings[i].rid != nullptr)
                 dst.encodings[i].rid = std::string(src->encodings[i].rid);
@@ -1316,7 +1338,7 @@ extern "C"
     ContextGetSenderCapabilities(Context* context, TrackKind trackKind, RTCRtpCapabilities** parameters)
     {
         RtpCapabilities src;
-        cricket::MediaType type = trackKind == TrackKind::Audio ? cricket::MEDIA_TYPE_AUDIO : cricket::MEDIA_TYPE_VIDEO;
+        ::webrtc::MediaType type = trackKind == TrackKind::Audio ? ::webrtc::MediaType::AUDIO : ::webrtc::MediaType::VIDEO;
         context->GetRtpSenderCapabilities(type, &src);
 
         RTCRtpCapabilities* dst = static_cast<RTCRtpCapabilities*>(CoTaskMemAlloc(sizeof(RTCRtpCapabilities)));
@@ -1328,7 +1350,7 @@ extern "C"
     ContextGetReceiverCapabilities(Context* context, TrackKind trackKind, RTCRtpCapabilities** parameters)
     {
         RtpCapabilities src;
-        cricket::MediaType type = trackKind == TrackKind::Audio ? cricket::MEDIA_TYPE_AUDIO : cricket::MEDIA_TYPE_VIDEO;
+        ::webrtc::MediaType type = trackKind == TrackKind::Audio ? ::webrtc::MediaType::AUDIO : ::webrtc::MediaType::VIDEO;
         context->GetRtpReceiverCapabilities(type, &src);
 
         RTCRtpCapabilities* dst = static_cast<RTCRtpCapabilities*>(CoTaskMemAlloc(sizeof(RTCRtpCapabilities)));
@@ -1348,7 +1370,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT void SenderSetTransform(RtpSenderInterface* sender, FrameTransformerInterface* transformer)
     {
-        sender->SetEncoderToPacketizerFrameTransformer(rtc::scoped_refptr<FrameTransformerInterface>(transformer));
+        sender->SetFrameTransformer(::webrtc::scoped_refptr<FrameTransformerInterface>(transformer));
     }
 
     UNITY_INTERFACE_EXPORT MediaStreamTrackInterface* ReceiverGetTrack(RtpReceiverInterface* receiver)
@@ -1377,7 +1399,7 @@ extern "C"
             rtpTimestamp = src.rtp_timestamp();
             source = src.source_id();
             sourceType = static_cast<uint8_t>(src.source_type());
-            timestamp = src.timestamp_ms();
+            timestamp = src.timestamp().ms();
         }
     };
 
@@ -1397,7 +1419,7 @@ extern "C"
     UNITY_INTERFACE_EXPORT void
     ReceiverSetTransform(RtpReceiverInterface* receiver, FrameTransformerInterface* transformer)
     {
-        receiver->SetDepacketizerToDecoderFrameTransformer(rtc::scoped_refptr<FrameTransformerInterface>(transformer));
+        receiver->SetFrameTransformer(::webrtc::scoped_refptr<FrameTransformerInterface>(transformer));
     }
 
     UNITY_INTERFACE_EXPORT char* DataChannelGetLabel(DataChannelInterface* channel)
@@ -1412,12 +1434,13 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT uint16_t DataChannelGetMaxRetransmits(DataChannelInterface* channel)
     {
-        return channel->maxRetransmits();
+        // Unset is reported as 0xFFFF, as libwebrtc did before M156.
+        return static_cast<uint16_t>(channel->maxRetransmitsOpt().value_or(-1));
     }
 
     UNITY_INTERFACE_EXPORT uint16_t DataChannelGetMaxRetransmitTime(DataChannelInterface* channel)
     {
-        return channel->maxRetransmitTime();
+        return static_cast<uint16_t>(channel->maxPacketLifeTime().value_or(-1));
     }
 
     UNITY_INTERFACE_EXPORT bool DataChannelGetOrdered(DataChannelInterface* channel) { return channel->ordered(); }
@@ -1444,7 +1467,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT void DataChannelSendBinary(DataChannelInterface* channel, const byte* data, int length)
     {
-        rtc::CopyOnWriteBuffer buf(data, static_cast<size_t>(length));
+        ::webrtc::CopyOnWriteBuffer buf(data, static_cast<size_t>(length));
         channel->Send(webrtc::DataBuffer(buf, true));
     }
 
@@ -1524,7 +1547,8 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT uint32_t FrameGetTimestamp(TransformableFrameInterface* frame)
     {
-        return frame->GetTimestamp();
+        return std::visit(
+            [](const auto& timestamp) { return static_cast<uint32_t>(timestamp); }, frame->GetRtpTimestampInfo());
     }
 
     UNITY_INTERFACE_EXPORT uint32_t FrameGetSsrc(TransformableFrameInterface* frame) { return frame->GetSsrc(); }
@@ -1556,7 +1580,7 @@ extern "C"
         data->height = metadata.GetHeight();
         data->simulcastIndex = metadata.GetSimulcastIdx();
         data->temporalIndex = metadata.GetTemporalIndex();
-        data->dependencies = metadata.GetFrameDependencies();
+        data->dependencies = metadata.GetDependencies().value_or(std::span<const int64_t>());
 
         return data;
     }
@@ -1576,7 +1600,7 @@ extern "C"
 
     UNITY_INTERFACE_EXPORT void FrameSetData(TransformableFrameInterface* frame, const uint8_t* data, size_t size)
     {
-        frame->SetData(rtc::ArrayView<const uint8_t>(data, size));
+        frame->SetData(::webrtc::ArrayView<const uint8_t>(data, size));
     }
 
     UNITY_INTERFACE_EXPORT void SetGraphicsSyncTimeout(uint64_t nSecTimeout)
