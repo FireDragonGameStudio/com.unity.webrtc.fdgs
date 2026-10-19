@@ -10,9 +10,10 @@ namespace unity
 {
 namespace webrtc
 {
-    GpuMemoryBufferPool::GpuMemoryBufferPool(IGraphicsDevice* device, Clock* clock)
+    GpuMemoryBufferPool::GpuMemoryBufferPool(IGraphicsDevice* device, Clock* clock, size_t maxBufferCount)
         : device_(device)
         , clock_(clock)
+        , maxBufferCount_(maxBufferCount)
     {
     }
 
@@ -55,6 +56,24 @@ namespace webrtc
                 resources->MarkUsed(clock_->CurrentTime());
                 return resources->buffer_;
             }
+        }
+        if (resourcesPool_.size() >= maxBufferCount_)
+        {
+            // Make room by releasing the least recently used buffer that cannot hold this frame, for example one
+            // left over from a track with another resolution. Unused compatible buffers are kept: they are only
+            // waiting for their copy to finish and can be reused for the next frame.
+            auto stale = resourcesPool_.end();
+            for (auto it = resourcesPool_.begin(); it != resourcesPool_.end(); ++it)
+            {
+                FrameResources* resources = it->get();
+                if (resources->IsUsed() || AreFrameResourcesCompatible(resources, size, format))
+                    continue;
+                if (stale == resourcesPool_.end() || resources->lastUseTime() < (*stale)->lastUseTime())
+                    stale = it;
+            }
+            if (stale == resourcesPool_.end())
+                return nullptr;
+            resourcesPool_.erase(stale);
         }
         ::webrtc::scoped_refptr<GpuMemoryBufferFromUnity> buffer =
             ::webrtc::make_ref_counted<GpuMemoryBufferFromUnity>(device_, size, format);
