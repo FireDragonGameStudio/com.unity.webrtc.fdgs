@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Native plugin: Unity crashed with an access violation in `webrtc.dll` on the first video frame when the plugin had no graphics device, for example with Vulkan after the package was updated in a running Editor (the new plugin is loaded too late to hook Vulkan's device creation). Video tracks are now skipped instead; restart the Editor after updating the package.
 - Native plugin: Unity aborted (exception `0xc0000409` on Windows, no crash report) as soon as received audio was played through an `AudioSource`, because the audio sink resampled into a frame without a sample count, which libwebrtc M156 requires. Regression in 3.2.0-rc.1.
 
 ## [3.2.0] - 2026-10-19
