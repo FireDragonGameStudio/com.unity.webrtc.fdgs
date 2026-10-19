@@ -90,14 +90,16 @@ jobs:
 
   build-macos:
     needs: prepare
+    # The called workflow pushes its logs to a ci-logs branch.
     permissions:
-      contents: read
+      contents: write
     uses: ./.github/workflows/native-macos.yml
 
   build-ios:
     needs: prepare
+    # The called workflow pushes its logs to a ci-logs branch.
     permissions:
-      contents: read
+      contents: write
     uses: ./.github/workflows/native-ios.yml
 
   build-android:

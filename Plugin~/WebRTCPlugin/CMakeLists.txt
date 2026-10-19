@@ -161,9 +161,9 @@ if(Windows)
     WebRTCLib PROPERTIES MSVC_RUNTIME_LIBRARY
                          "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif(macOS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -x objective-c")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-lto -fno-rtti")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -x objective-c++")
+  # Compile every C++ file as Objective-C++. Not in CMAKE_CXX_FLAGS: the Ninja generator also passes those
+  # to the link command, where -x would make clang read the object files as source.
+  target_compile_options(WebRTCLib PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-xobjective-c++ -fno-lto -fno-rtti>)
   set(PROJECT_BINARY_DIR "${CMAKE_SOURCE_DIR}/../Runtime/Plugins/macOS")
 
   target_compile_definitions(WebRTCLib PUBLIC WEBRTC_MAC WEBRTC_POSIX)
@@ -202,9 +202,7 @@ elseif(Linux)
   # enable -fPIC option
   set_target_properties(WebRTCLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 elseif(iOS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -x objective-c")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-lto -fno-rtti")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -x objective-c++")
+  target_compile_options(WebRTCLib PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-xobjective-c++ -fno-lto -fno-rtti>)
   set(PROJECT_BINARY_DIR "${CMAKE_SOURCE_DIR}/../Runtime/Plugins/iOS")
 
   target_compile_definitions(WebRTCLib PUBLIC WEBRTC_IOS WEBRTC_MAC
@@ -277,7 +275,33 @@ if(Windows)
       MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif(macOS)
   set_target_properties(WebRTCPlugin PROPERTIES LINK_FLAGS "-ObjC")
+  # Drop the parts of libwebrtc.a that the plugin does not use (Xcode does this by default).
+  target_link_options(WebRTCPlugin PRIVATE -Wl,-dead_strip)
 elseif(iOS)
+  # Same keys as the Info.plist Xcode wrote for the framework, filled in when configuring.
+  execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-version OUTPUT_VARIABLE IOS_SDK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-build-version OUTPUT_VARIABLE IOS_SDK_BUILD OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND xcodebuild -version OUTPUT_VARIABLE XCODE_VERSION_OUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND sw_vers -buildVersion OUTPUT_VARIABLE BUILD_MACHINE_OS_BUILD OUTPUT_STRIP_TRAILING_WHITESPACE)
+  string(REGEX MATCH "Xcode ([0-9]+)\\.?([0-9]*)\\.?([0-9]*)" _ "${XCODE_VERSION_OUTPUT}")
+  set(_xcode_minor "${CMAKE_MATCH_2}")
+  set(_xcode_patch "${CMAKE_MATCH_3}")
+  if(NOT _xcode_minor)
+    set(_xcode_minor 0)
+  endif()
+  if(NOT _xcode_patch)
+    set(_xcode_patch 0)
+  endif()
+  math(EXPR DT_XCODE "${CMAKE_MATCH_1} * 100 + ${_xcode_minor} * 10 + ${_xcode_patch}" OUTPUT_FORMAT DECIMAL)
+  string(REGEX MATCH "Build version ([0-9A-Za-z]+)" _ "${XCODE_VERSION_OUTPUT}")
+  set(DT_XCODE_BUILD "${CMAKE_MATCH_1}")
+  string(LENGTH "${DT_XCODE}" _len)
+  if(_len LESS 4)
+    set(DT_XCODE "0${DT_XCODE}")
+  endif()
+  configure_file(${CMAKE_SOURCE_DIR}/cmake/iOSFrameworkInfo.plist.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/Info.plist.in @ONLY)
+  target_link_options(WebRTCPlugin PRIVATE -Wl,-dead_strip)
   #
   # Build Setting Reference
   # https://developer.apple.com/library/archive/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
@@ -285,6 +309,7 @@ elseif(iOS)
   set_target_properties(
     WebRTCPlugin
     PROPERTIES LINK_FLAGS "-ObjC"
+               MACOSX_FRAMEWORK_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/Info.plist.in
                MACOSX_FRAMEWORK_IDENTIFIER "com.unity.webrtc"
                MACOSX_FRAMEWORK_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
                MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION}
