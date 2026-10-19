@@ -1,9 +1,8 @@
 #include "pch.h"
 
-// todo::
-// CMake doesn't support building CUDA kernel with Clang compiler on Windows.
-// https://gitlab.kitware.com/cmake/cmake/-/issues/20776
-#if !(_WIN32 && __clang__)
+// NO_CUDA_KERNEL is defined when CMake cannot build the CUDA kernels (Visual Studio generator with the ClangCL
+// toolset, https://gitlab.kitware.com/cmake/cmake/-/issues/20776).
+#if !NO_CUDA_KERNEL
 #define SUPPORT_CUDA_KERNEL 1
 #endif
 

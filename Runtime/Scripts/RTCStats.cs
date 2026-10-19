@@ -795,6 +795,11 @@ namespace Unity.WebRTC
         /// </summary>
         public string networkAdapterType { get { return GetString("networkAdapterType"); } }
 
+        /// <summary>
+        /// The network slice of the candidate, if the platform reports one.
+        /// </summary>
+        public string networkSlice { get { return GetString("networkSlice"); } }
+
         internal RTCIceCandidateStats(IntPtr ptr) : base(ptr)
         {
         }
@@ -866,6 +871,26 @@ namespace Unity.WebRTC
         /// The number of packets lost in the RTP stream.
         /// </summary>
         public int packetsLost { get { return GetInt("packetsLost"); } }
+
+        /// <summary>
+        /// Total number of RTP packets received with an ECT(1) marking.
+        /// </summary>
+        public long packetsReceivedWithEct1 { get { return GetLong("packetsReceivedWithEct1"); } }
+
+        /// <summary>
+        /// Total number of RTP packets received with a CE marking.
+        /// </summary>
+        public long packetsReceivedWithCe { get { return GetLong("packetsReceivedWithCe"); } }
+
+        /// <summary>
+        /// Total number of RTP packets reported as lost in RTCP feedback.
+        /// </summary>
+        public long packetsReportedAsLost { get { return GetLong("packetsReportedAsLost"); } }
+
+        /// <summary>
+        /// Total number of RTP packets reported as lost that were received later.
+        /// </summary>
+        public long packetsReportedAsLostButRecovered { get { return GetLong("packetsReportedAsLostButRecovered"); } }
 
         internal RTCReceivedRtpStreamStats(IntPtr ptr) : base(ptr)
         {
@@ -1188,6 +1213,36 @@ namespace Unity.WebRTC
         public double minPlayoutDelay { get { return GetDouble("minPlayoutDelay"); } }
 
 
+        /// <summary>
+        /// Total number of RTP FEC bytes received.
+        /// </summary>
+        public ulong fecBytesReceived { get { return GetUnsignedLong("fecBytesReceived"); } }
+
+        /// <summary>
+        /// The SSRC of the FEC stream.
+        /// </summary>
+        public uint fecSsrc { get { return GetUnsignedInt("fecSsrc"); } }
+
+        /// <summary>
+        /// The SSRC of the RTX stream.
+        /// </summary>
+        public uint rtxSsrc { get { return GetUnsignedInt("rtxSsrc"); } }
+
+        /// <summary>
+        /// Sum of the corruption probability estimates of the decoded frames.
+        /// </summary>
+        public double totalCorruptionProbability { get { return GetDouble("totalCorruptionProbability"); } }
+
+        /// <summary>
+        /// Sum of the squared corruption probability estimates of the decoded frames.
+        /// </summary>
+        public double totalSquaredCorruptionProbability { get { return GetDouble("totalSquaredCorruptionProbability"); } }
+
+        /// <summary>
+        /// Number of corruption probability measurements.
+        /// </summary>
+        public ulong corruptionMeasurements { get { return GetUnsignedLong("corruptionMeasurements"); } }
+
         internal RTCInboundRTPStreamStats(IntPtr ptr) : base(ptr)
         {
         }
@@ -1350,6 +1405,31 @@ namespace Unity.WebRTC
         public string scalabilityMode { get { return GetString("scalabilityMode"); } }
 
 
+        /// <summary>
+        /// The index of the encoding in the sender parameters.
+        /// </summary>
+        public uint encodingIndex { get { return GetUnsignedInt("encodingIndex"); } }
+
+        /// <summary>
+        /// Sum of the PSNR values of the encoded frames per component (y, u, v).
+        /// </summary>
+        public Dictionary<string, double> psnrSum { get { return GetMapStringDouble("psnrSum"); } }
+
+        /// <summary>
+        /// Number of PSNR measurements.
+        /// </summary>
+        public uint psnrMeasurements { get { return GetUnsignedInt("psnrMeasurements"); } }
+
+        /// <summary>
+        /// The SSRC of the RTX stream.
+        /// </summary>
+        public uint rtxSsrc { get { return GetUnsignedInt("rtxSsrc"); } }
+
+        /// <summary>
+        /// Total number of RTP packets sent with an ECT(1) marking.
+        /// </summary>
+        public long packetsSentWithEct1 { get { return GetLong("packetsSentWithEct1"); } }
+
         internal RTCOutboundRTPStreamStats(IntPtr ptr) : base(ptr)
         {
         }
@@ -1384,6 +1464,11 @@ namespace Unity.WebRTC
         ///
         /// </summary>
         public int roundTripTimeMeasurements { get { return GetInt("roundTripTimeMeasurements"); } }
+
+        /// <summary>
+        /// Number of packets sent with ECT(1) that the receiver reported without that marking.
+        /// </summary>
+        public long packetsWithBleachedEct1Marking { get { return GetLong("packetsWithBleachedEct1Marking"); } }
 
         internal RTCRemoteInboundRtpStreamStats(IntPtr ptr) : base(ptr)
         {
@@ -1648,6 +1733,11 @@ namespace Unity.WebRTC
         /// 
         /// </summary>
         public string iceState { get { return GetString("iceState"); } }
+
+        /// <summary>
+        /// Number of RTCP congestion control feedback messages received.
+        /// </summary>
+        public int ccfbMessagesReceived { get { return GetInt("ccfbMessagesReceived"); } }
 
         internal RTCTransportStats(IntPtr ptr) : base(ptr)
         {

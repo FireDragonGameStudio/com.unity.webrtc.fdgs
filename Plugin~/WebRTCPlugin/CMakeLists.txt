@@ -66,7 +66,13 @@ target_sources(
           GpuMemoryBufferPool.cpp
           GpuMemoryBufferPool.h)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+  # clang-cl: -Wall means -Weverything there.
+  target_compile_options(WebRTCLib PUBLIC /W4 -Wno-unused-parameter)
+  if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+    target_compile_options(WebRTCLib PUBLIC -Werror)
+  endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   # Visual Studio Generator has not been supported supression warnings of
   # external headers yet. https://gitlab.kitware.com/cmake/cmake/-/issues/17904
   if(CMAKE_GENERATOR MATCHES "Visual Studio")
@@ -116,12 +122,15 @@ if(Windows)
     endif()
   endif()
 
-  # Replace /GR option to disable RTTI
-  foreach(flag_var
-          CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-          CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-    string(REPLACE /GR /GR- "${flag_var}" "${${flag_var}}")
-  endforeach()
+  # Replace /GR option to disable RTTI. libwebrtc M156 is built with RTTI (use_rtti=true): classes that
+  # implement its interfaces keep it as well.
+  if(NOT WEBRTC_USES_BUNDLED_LIBCXX)
+    foreach(flag_var
+            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      string(REPLACE /GR /GR- "${flag_var}" "${${flag_var}}")
+    endforeach()
+  endif()
 endif()
 
 if(Windows)
@@ -129,20 +138,20 @@ if(Windows)
 
   target_compile_definitions(WebRTCLib PUBLIC WEBRTC_WIN NOMINMAX
                                               VK_NO_PROTOTYPES)
+  # libs.txt of the package lists the libraries libwebrtc needs.
+  if(WEBRTC_SYSTEM_LIBRARIES)
+    set(_webrtc_system_libraries ${WEBRTC_SYSTEM_LIBRARIES})
+  else()
+    set(_webrtc_system_libraries d3d11 winmm Secur32 Iphlpapi Msdmo Dmoguids
+                                 wmcodecdspuuid Strmiids)
+  endif()
   target_link_libraries(
     WebRTCLib
     PRIVATE ${WEBRTC_LIBRARY}
             ${Vulkan_LIBRARY}
             ${CUDA_CUDA_LIBRARY}
             ${NVCODEC_LIBRARIES}
-            d3d11
-            winmm
-            Secur32
-            Iphlpapi
-            Msdmo
-            Dmoguids
-            wmcodecdspuuid
-            Strmiids)
+            ${_webrtc_system_libraries})
   target_include_directories(
     WebRTCLib SYSTEM PUBLIC ${CUDA_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIR}
                             ${NVCODEC_INCLUDE_DIR})

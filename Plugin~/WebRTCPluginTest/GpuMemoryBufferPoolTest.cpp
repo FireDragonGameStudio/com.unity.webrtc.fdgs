@@ -142,6 +142,49 @@ namespace webrtc
         EXPECT_EQ(0u, bufferPool_->bufferCount());
     }
 
+    TEST_P(GpuMemoryBufferPoolTest, ReuseResourceWhenPoolIsFull)
+    {
+        bufferPool_ = std::make_unique<GpuMemoryBufferPool>(device_, &clock_, 1);
+        const Size kSize(kWidth, kHeight);
+        auto tex = CreateTexture(kSize, kFormat);
+        void* ptr = tex->GetNativeTexturePtrV();
+
+        auto frame1 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime());
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame1, nullptr);
+
+        // The only buffer is in use.
+        auto frame2 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime());
+        EXPECT_EQ(frame2, nullptr);
+        EXPECT_EQ(1u, bufferPool_->bufferCount());
+
+        // The pool is full, but its buffer is unused again.
+        frame1 = nullptr;
+        auto frame3 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime());
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame3, nullptr);
+        EXPECT_EQ(1u, bufferPool_->bufferCount());
+    }
+
+    TEST_P(GpuMemoryBufferPoolTest, ReleaseIncompatibleResourceWhenPoolIsFull)
+    {
+        bufferPool_ = std::make_unique<GpuMemoryBufferPool>(device_, &clock_, 1);
+        const Size kSize1(kWidth, kHeight);
+        auto tex1 = CreateTexture(kSize1, kFormat);
+        auto frame1 = bufferPool_->CreateFrame(tex1->GetNativeTexturePtrV(), kSize1, kFormat, clock_.CurrentTime());
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame1, nullptr);
+        frame1 = nullptr;
+
+        const Size kSize2(512, 512);
+        auto tex2 = CreateTexture(kSize2, kFormat);
+        auto frame2 = bufferPool_->CreateFrame(tex2->GetNativeTexturePtrV(), kSize2, kFormat, clock_.CurrentTime());
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame2, nullptr);
+        EXPECT_EQ(kSize2, frame2->size());
+        EXPECT_EQ(1u, bufferPool_->bufferCount());
+    }
+
     INSTANTIATE_TEST_SUITE_P(GfxDevice, GpuMemoryBufferPoolTest, testing::ValuesIn(supportedGfxDevices));
 
 } // end namespace webrtc

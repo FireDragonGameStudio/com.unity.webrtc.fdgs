@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits>
 #include <list>
 #include <system_wrappers/include/clock.h>
 
@@ -14,7 +15,10 @@ namespace webrtc
     class GpuMemoryBufferPool
     {
     public:
-        GpuMemoryBufferPool(IGraphicsDevice* device, Clock* clock);
+        // The pool holds at most maxBufferCount buffers. Once it is full, an unused buffer that is not compatible
+        // with a new frame is released to make room for it; if there is none, CreateFrame returns nullptr.
+        GpuMemoryBufferPool(
+            IGraphicsDevice* device, Clock* clock, size_t maxBufferCount = std::numeric_limits<size_t>::max());
         GpuMemoryBufferPool(const GpuMemoryBufferPool&) = delete;
         GpuMemoryBufferPool& operator=(const GpuMemoryBufferPool&) = delete;
 
@@ -61,6 +65,7 @@ namespace webrtc
         std::mutex mutex_;
         std::list<std::unique_ptr<FrameResources>> resourcesPool_;
         Clock* const clock_;
+        const size_t maxBufferCount_;
     };
 }
 }
