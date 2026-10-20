@@ -1,0 +1,1 @@
+editmode-results.xml {'result': 'Passed', 'total': '2', 'passed': '1', 'failed': '0', 'skipped': '1', 'inconclusive': '0'}
