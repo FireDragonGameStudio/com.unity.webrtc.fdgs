@@ -1,0 +1,18 @@
+Xcode 16.4
+Build version 16F6
+/Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk
+cmake version 4.4.3
+/opt/homebrew/bin/ninja
+ninja 1.13.2
+WEBRTC_BRANCH=branch-heads/8078
+WEBRTC_COMMIT=3987dfb7b952b5c86cb7d93370d48416a81d6397
+LIBCXX_COMMIT=97b436da4c33663581d394f4ee0a5977fc38c2f4
+CLANG_REVISION=llvmorg-24-init-7747-g62397f8b-31
+XCODE=Xcode 26.3 Build version 17C529 
+Non-fat file: Plugin~/webrtc/lib/libwebrtc.a is architecture: arm64
+clang version 24.0.0git (https://chromium.googlesource.com/a/external/github.com/llvm/llvm-project 86922d51225db089fffb99475eefc4904f79e3c8)
+Target: arm64-apple-darwin24.6.0
+Thread model: posix
+InstalledDir: /Users/runner/work/_temp/clang/bin
+/Users/runner/work/_temp/clang/lib/clang/24/lib/darwin/libclang_rt.ios.a
+/Users/runner/work/_temp/clang/lib/clang/24/lib/darwin/libclang_rt.iossim.a
