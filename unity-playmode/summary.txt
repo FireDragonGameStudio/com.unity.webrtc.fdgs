@@ -1,0 +1,1 @@
+playmode-results.xml {'result': 'Skipped:Ignored', 'total': '206', 'passed': '135', 'failed': '0', 'skipped': '71', 'inconclusive': '0'}
