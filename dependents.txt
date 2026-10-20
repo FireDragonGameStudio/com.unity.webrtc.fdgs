@@ -1,0 +1,2 @@
+Imports: ole32.dll, KERNEL32.dll, WS2_32.dll, USER32.dll, WINMM.dll, IPHLPAPI.DLL, msdmo.dll, dbghelp.dll
+Delay-loaded: nvcuda.dll, nvEncodeAPI64.dll, nvcuvid.dll
