@@ -1,0 +1,1637 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="205" result="Skipped:Ignored" total="205" passed="134" failed="0" inconclusive="0" skipped="71" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.8005372">
+  <test-suite type="TestSuite" id="1233" name="WebRTC~" fullname="WebRTC~" runstate="Runnable" testcasecount="205" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.800537" total="205" passed="134" failed="0" inconclusive="0" skipped="71" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <reason>
+      <message><![CDATA[One or more child tests were ignored]]></message>
+    </reason>
+    <test-suite type="Assembly" id="1228" name="Unity.WebRTC.RuntimeTests.dll" fullname="/github/workspace/WebRTC~/Library/ScriptAssemblies/Unity.WebRTC.RuntimeTests.dll" runstate="Runnable" testcasecount="205" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.788840" total="205" passed="134" failed="0" inconclusive="0" skipped="71" asserts="0">
+      <properties>
+        <property name="_PID" value="76" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <reason>
+        <message><![CDATA[One or more child tests were ignored]]></message>
+      </reason>
+      <test-suite type="TestSuite" id="1229" name="Unity" fullname="Unity" runstate="Runnable" testcasecount="205" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.788122" total="205" passed="134" failed="0" inconclusive="0" skipped="71" asserts="0">
+        <properties />
+        <reason>
+          <message><![CDATA[One or more child tests were ignored]]></message>
+        </reason>
+        <test-suite type="TestSuite" id="1230" name="WebRTC" fullname="Unity.WebRTC" runstate="Runnable" testcasecount="205" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.787771" total="205" passed="134" failed="0" inconclusive="0" skipped="71" asserts="0">
+          <properties />
+          <reason>
+            <message><![CDATA[One or more child tests were ignored]]></message>
+          </reason>
+          <test-suite type="TestSuite" id="1231" name="RuntimeTest" fullname="Unity.WebRTC.RuntimeTest" runstate="Runnable" testcasecount="205" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.787139" total="205" passed="134" failed="0" inconclusive="0" skipped="71" asserts="0">
+            <properties />
+            <reason>
+              <message><![CDATA[One or more child tests were ignored]]></message>
+            </reason>
+            <test-suite type="TestFixture" id="1001" name="AudioStreamTrackTest" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.216845" total="12" passed="11" failed="0" inconclusive="0" skipped="1" asserts="0">
+              <properties />
+              <test-case id="1008" name="AddMultiAudioTrack" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.AddMultiAudioTrack" methodname="AddMultiAudioTrack" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="541991324" result="Passed" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:13Z" duration="0.088400" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1013" name="AudioStreamRenderer" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.AudioStreamRenderer" methodname="AudioStreamRenderer" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="1812327874" result="Passed" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:13Z" duration="0.004813" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1010" name="AudioStreamTrackInstantiateMultiple" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.AudioStreamTrackInstantiateMultiple" methodname="AudioStreamTrackInstantiateMultiple" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="750611439" result="Passed" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:13Z" duration="0.001946" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="AudioStreamTrackInstantiateOnce" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.AudioStreamTrackInstantiateOnce" methodname="AudioStreamTrackInstantiateOnce" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="828066041" result="Passed" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:13Z" duration="0.000627" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="AudioStreamTrackPlayAudio" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.AudioStreamTrackPlayAudio" methodname="AudioStreamTrackPlayAudio" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Skipped" seed="154575031" result="Skipped" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:13Z" duration="0.000323" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not supported on  LinuxEditor" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not supported on  LinuxEditor]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1011" name="AudioStreamTrackSetData" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.AudioStreamTrackSetData" methodname="AudioStreamTrackSetData" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="1291699718" result="Passed" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:13Z" duration="0.013669" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1002" name="Constructor" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.Constructor" methodname="Constructor" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="1147066591" result="Passed" start-time="2026-10-20 15:29:13Z" end-time="2026-10-20 15:29:14Z" duration="0.019505" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="ConstructorThrowException" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.ConstructorThrowException" methodname="ConstructorThrowException" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="680750144" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001870" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="ConstructorWithAudioListener" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.ConstructorWithAudioListener" methodname="ConstructorWithAudioListener" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="1727591638" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.017473" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="ConstructorWithAudioSource" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.ConstructorWithAudioSource" methodname="ConstructorWithAudioSource" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="1046770962" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.016499" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="GCCollect" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.GCCollect" methodname="GCCollect" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="741469293" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.027745" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1005" name="SetLoopback" fullname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest.SetLoopback" methodname="SetLoopback" classname="Unity.WebRTC.RuntimeTest.AudioStreamTrackTest" runstate="Runnable" seed="506105461" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000961" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1014" name="ContextTest" fullname="Unity.WebRTC.RuntimeTest.ContextTest" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" testcasecount="8" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.039442" total="8" passed="7" failed="0" inconclusive="0" skipped="1" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1019" name="CreateAndDeleteAudioTrack" fullname="Unity.WebRTC.RuntimeTest.ContextTest.CreateAndDeleteAudioTrack" methodname="CreateAndDeleteAudioTrack" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" seed="1549991350" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003958" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1021" name="CreateAndDeleteAudioTrackSink" fullname="Unity.WebRTC.RuntimeTest.ContextTest.CreateAndDeleteAudioTrackSink" methodname="CreateAndDeleteAudioTrackSink" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" seed="505268043" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1017" name="CreateAndDeleteDataChannel" fullname="Unity.WebRTC.RuntimeTest.ContextTest.CreateAndDeleteDataChannel" methodname="CreateAndDeleteDataChannel" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" seed="1323716910" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.006999" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[000:004](sctp_data_channel.cc:342): DataChannelObserver - adapter needed
+
+]]></output>
+              </test-case>
+              <test-case id="1016" name="CreateAndDeletePeerConnection" fullname="Unity.WebRTC.RuntimeTest.ContextTest.CreateAndDeletePeerConnection" methodname="CreateAndDeletePeerConnection" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" seed="1953144188" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.004344" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1020" name="CreateAndDeleteVideoTrack" fullname="Unity.WebRTC.RuntimeTest.ContextTest.CreateAndDeleteVideoTrack" methodname="CreateAndDeleteVideoTrack" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Ignored" seed="344002908" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000011" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Requires a graphics device to create textures" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Requires a graphics device to create textures]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1022" name="DeleteStatsReportIgnoreInvalidValue" fullname="Unity.WebRTC.RuntimeTest.ContextTest.DeleteStatsReportIgnoreInvalidValue" methodname="DeleteStatsReportIgnoreInvalidValue" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" seed="260753666" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001256" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[000:012](Context.cpp:357): Calling DeleteStatsReport is failed. The reference of RTCStatsReport is not found.
+
+]]></output>
+              </test-case>
+              <test-case id="1018" name="DisposePeerConnectionWithTransceiver" fullname="Unity.WebRTC.RuntimeTest.ContextTest.DisposePeerConnectionWithTransceiver" methodname="DisposePeerConnectionWithTransceiver" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" seed="1206677665" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.004632" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="QuitAndInitContextManager" fullname="Unity.WebRTC.RuntimeTest.ContextTest.QuitAndInitContextManager" methodname="QuitAndInitContextManager" classname="Unity.WebRTC.RuntimeTest.ContextTest" runstate="Runnable" seed="2060509756" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.006489" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1023" name="DataChannelTest" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.098741" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1029" name="CreateAndClose" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.CreateAndClose" methodname="CreateAndClose" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="1971083973" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.017804" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1024" name="CreateDataChannel" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.CreateDataChannel" methodname="CreateDataChannel" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="26647810" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002215" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1026" name="CreateDataChannelFailed" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.CreateDataChannelFailed" methodname="CreateDataChannelFailed" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="1449582947" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002152" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1028" name="CreateDataChannelMultiple" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.CreateDataChannelMultiple" methodname="CreateDataChannelMultiple" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="1364495928" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.010311" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1025" name="CreateDataChannelWithOption" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.CreateDataChannelWithOption" methodname="CreateDataChannelWithOption" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="956961841" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002467" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1030" name="SendAndReceiveMessage" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.SendAndReceiveMessage" methodname="SendAndReceiveMessage" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="1303547723" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.021002" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1031" name="SendAndReceiveMessageWithExecuteTasks" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.SendAndReceiveMessageWithExecuteTasks" methodname="SendAndReceiveMessageWithExecuteTasks" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="1149255806" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.024990" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1027" name="SendThrowsException" fullname="Unity.WebRTC.RuntimeTest.DataChannelTest.SendThrowsException" methodname="SendThrowsException" classname="Unity.WebRTC.RuntimeTest.DataChannelTest" runstate="Runnable" seed="156757622" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.013625" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1032" name="IceCandidateTest" fullname="Unity.WebRTC.RuntimeTest.IceCandidateTest" classname="Unity.WebRTC.RuntimeTest.IceCandidateTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.005611" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1033" name="Construct" fullname="Unity.WebRTC.RuntimeTest.IceCandidateTest.Construct" methodname="Construct" classname="Unity.WebRTC.RuntimeTest.IceCandidateTest" runstate="Runnable" seed="211078578" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000621" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1034" name="ConstructWithOption" fullname="Unity.WebRTC.RuntimeTest.IceCandidateTest.ConstructWithOption" methodname="ConstructWithOption" classname="Unity.WebRTC.RuntimeTest.IceCandidateTest" runstate="Runnable" seed="212220464" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003607" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1035" name="IntPtrTest" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.022628" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1039" name="AsAnsiStringWithFreeMemReturnsString" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsAnsiStringWithFreeMemReturnsString" methodname="AsAnsiStringWithFreeMemReturnsString" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="275155257" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000657" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1036" name="AsAnsiStringWithFreeMemThrowException" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsAnsiStringWithFreeMemThrowException" methodname="AsAnsiStringWithFreeMemThrowException" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="1043348792" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000420" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1038" name="AsAnsiStringWithoutFreeMemReturnsString" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsAnsiStringWithoutFreeMemReturnsString" methodname="AsAnsiStringWithoutFreeMemReturnsString" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="853746625" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000385" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1037" name="AsAnsiStringWithoutFreeMemThrowException" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsAnsiStringWithoutFreeMemThrowException" methodname="AsAnsiStringWithoutFreeMemThrowException" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="1567456649" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000380" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1047" name="AsArrayReturnsBoolArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsBoolArray" methodname="AsArrayReturnsBoolArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="729840351" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003139" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1040" name="AsArrayReturnsByteArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsByteArray" methodname="AsArrayReturnsByteArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="497472968" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001238" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1046" name="AsArrayReturnsDoubleArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsDoubleArray" methodname="AsArrayReturnsDoubleArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="582575785" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001788" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1045" name="AsArrayReturnsFloatArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsFloatArray" methodname="AsArrayReturnsFloatArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="1770982788" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001458" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1041" name="AsArrayReturnsIntArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsIntArray" methodname="AsArrayReturnsIntArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="1467317294" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000915" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1043" name="AsArrayReturnsLongArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsLongArray" methodname="AsArrayReturnsLongArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="125556183" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001247" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="AsArrayReturnsStringArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsStringArray" methodname="AsArrayReturnsStringArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="1237990279" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001675" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1042" name="AsArrayReturnsUintArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsUintArray" methodname="AsArrayReturnsUintArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="362169383" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001400" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1044" name="AsArrayReturnsUlongArray" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsArrayReturnsUlongArray" methodname="AsArrayReturnsUlongArray" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="175479024" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="AsMapReturnsDictionary" fullname="Unity.WebRTC.RuntimeTest.IntPtrTest.AsMapReturnsDictionary" methodname="AsMapReturnsDictionary" classname="Unity.WebRTC.RuntimeTest.IntPtrTest" runstate="Runnable" seed="1260206680" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002150" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1050" name="MediaStreamTest" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Runnable" testcasecount="15" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.029133" total="15" passed="6" failed="0" inconclusive="0" skipped="9" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1053" name="AccessAfterDisposed" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.AccessAfterDisposed" methodname="AccessAfterDisposed" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Runnable" seed="846156954" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001753" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1056" name="AddAndRemoveAudioTrack" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.AddAndRemoveAudioTrack" methodname="AddAndRemoveAudioTrack" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Runnable" seed="1169010025" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.004603" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1063" name="AddAndRemoveTrack" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.AddAndRemoveTrack" methodname="AddAndRemoveTrack" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="1220737868" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000015" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1057" name="CameraCaptureStream" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.CameraCaptureStream" methodname="CameraCaptureStream" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="874029292" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1058" name="CaptureStream" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.CaptureStream" methodname="CaptureStream" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="1418977016" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1051" name="Construct" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.Construct" methodname="Construct" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Runnable" seed="2131020038" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000455" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1052" name="EqualId" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.EqualId" methodname="EqualId" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Runnable" seed="1771373310" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000603" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1064" name="OnAddTrackDelegatesWithEvent" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.OnAddTrackDelegatesWithEvent" methodname="OnAddTrackDelegatesWithEvent" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="862579808" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1060" name="ReceiverGetStats" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.ReceiverGetStats" methodname="ReceiverGetStats" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="104134599" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1065" name="ReceiverGetStreams" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.ReceiverGetStreams" methodname="ReceiverGetStreams" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Runnable" seed="57608693" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.017712" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1054" name="RegisterDelegate" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.RegisterDelegate" methodname="RegisterDelegate" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Runnable" seed="1502512128" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000664" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1059" name="SenderGetStats" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.SenderGetStats" methodname="SenderGetStats" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="1267695132" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1062" name="SetParametersReturnErrorIfInvalidTextureResolution" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.SetParametersReturnErrorIfInvalidTextureResolution" methodname="SetParametersReturnErrorIfInvalidTextureResolution" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Skipped" seed="1598269710" result="Skipped" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Only supported on Android" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Only supported on Android]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1061" name="SetParametersReturnNoError" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.SetParametersReturnNoError" methodname="SetParametersReturnNoError" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="818546271" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000002" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1055" name="VideoStreamAddTrackAndRemoveTrack" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTest.VideoStreamAddTrackAndRemoveTrack" methodname="VideoStreamAddTrackAndRemoveTrack" classname="Unity.WebRTC.RuntimeTest.MediaStreamTest" runstate="Ignored" seed="777631768" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000002" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1066" name="MediaStreamTrackTest" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Runnable" testcasecount="13" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003870" total="13" passed="1" failed="0" inconclusive="0" skipped="12" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1071" name="AccessAfterDisposed" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.AccessAfterDisposed" methodname="AccessAfterDisposed" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="1222564195" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1077" name="AddAndRemoveAudioStreamTrack" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.AddAndRemoveAudioStreamTrack" methodname="AddAndRemoveAudioStreamTrack" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Runnable" seed="1926821951" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001277" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1075" name="CaptureStreamTrack" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.CaptureStreamTrack" methodname="CaptureStreamTrack" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="1780450520" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1076" name="CaptureStreamTrackThrowExeption" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.CaptureStreamTrackThrowExeption" methodname="CaptureStreamTrackThrowExeption" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="2013513184" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1067" name="Constructor" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.Constructor" methodname="Constructor" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="383997912" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1068" name="ConstructorThrowException" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.ConstructorThrowException" methodname="ConstructorThrowException" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="455311042" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Requires a graphics device to create textures" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Requires a graphics device to create textures]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1072" name="ConstructorThrowsExceptionWhenInvalidGraphicsFormat" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.ConstructorThrowsExceptionWhenInvalidGraphicsFormat" methodname="ConstructorThrowsExceptionWhenInvalidGraphicsFormat" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="560631679" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1073" name="ConstructThrowsExceptionWhenSmallTexture" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.ConstructThrowsExceptionWhenSmallTexture" methodname="ConstructThrowsExceptionWhenSmallTexture" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="850802462" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000002" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Only supported on Android" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Only supported on Android]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1069" name="EqualIdWithAudioTrack" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.EqualIdWithAudioTrack" methodname="EqualIdWithAudioTrack" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="1544819668" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1070" name="EqualIdWithVideoTrack" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.EqualIdWithVideoTrack" methodname="EqualIdWithVideoTrack" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="96312687" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000002" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1078" name="VideoStreamTrackDisposeImmediately" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.VideoStreamTrackDisposeImmediately" methodname="VideoStreamTrackDisposeImmediately" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="1431178849" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1074" name="VideoStreamTrackEnabled" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.VideoStreamTrackEnabled" methodname="VideoStreamTrackEnabled" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="2132992121" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1079" name="VideoStreamTrackInstantiateMultiple" fullname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest.VideoStreamTrackInstantiateMultiple" methodname="VideoStreamTrackInstantiateMultiple" classname="Unity.WebRTC.RuntimeTest.MediaStreamTrackTest" runstate="Ignored" seed="1870088272" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000002" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Category" value="LongRunning" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1080" name="NativeAPITest" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" testcasecount="20" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.020571" total="20" passed="13" failed="0" inconclusive="0" skipped="7" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1093" name="AddAndRemoveAudioTrack" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.AddAndRemoveAudioTrack" methodname="AddAndRemoveAudioTrack" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="427054796" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001699" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1092" name="AddAndRemoveAudioTrackToMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.AddAndRemoveAudioTrackToMediaStream" methodname="AddAndRemoveAudioTrackToMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="74633811" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001571" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1095" name="AddAndRemoveVideoRendererToVideoTrack" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.AddAndRemoveVideoRendererToVideoTrack" methodname="AddAndRemoveVideoRendererToVideoTrack" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1263458792" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1088" name="AddAndRemoveVideoTrack" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.AddAndRemoveVideoTrack" methodname="AddAndRemoveVideoTrack" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1696530334" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1091" name="AddAndRemoveVideoTrackToMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.AddAndRemoveVideoTrackToMediaStream" methodname="AddAndRemoveVideoTrackToMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1016828401" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1089" name="AddAndRemoveVideoTrackToPeerConnection" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.AddAndRemoveVideoTrackToPeerConnection" methodname="AddAndRemoveVideoTrackToPeerConnection" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="849310539" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000002" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1096" name="CallGetBatchUpdateEventFunc" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CallGetBatchUpdateEventFunc" methodname="CallGetBatchUpdateEventFunc" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="77555139" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000297" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1099" name="CallGetUpdateTextureFunc" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CallGetUpdateTextureFunc" methodname="CallGetUpdateTextureFunc" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="2036740666" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000309" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1098" name="CallVideoUpdateMethodsEncode" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CallVideoUpdateMethodsEncode" methodname="CallVideoUpdateMethodsEncode" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="32263342" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Category" value="LongRunning" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1100" name="CallVideoUpdateMethodsUpdateRenderer" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CallVideoUpdateMethodsUpdateRenderer" methodname="CallVideoUpdateMethodsUpdateRenderer" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1348041450" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Category" value="LongRunning" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1085" name="CreateAndDeleteDataChannel" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CreateAndDeleteDataChannel" methodname="CreateAndDeleteDataChannel" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="631541218" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001503" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1086" name="CreateAndDeleteMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CreateAndDeleteMediaStream" methodname="CreateAndDeleteMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1662558767" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000285" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1082" name="CreateAndDeletePeerConnection" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CreateAndDeletePeerConnection" methodname="CreateAndDeletePeerConnection" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1184517399" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001170" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1094" name="CreateAndDeleteVideoRenderer" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.CreateAndDeleteVideoRenderer" methodname="CreateAndDeleteVideoRenderer" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1876070679" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000432" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1081" name="NothingToDo" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.NothingToDo" methodname="NothingToDo" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1394005402" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000203" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1084" name="PeerConnectionGetReceivers" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.PeerConnectionGetReceivers" methodname="PeerConnectionGetReceivers" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="329422862" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001330" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1087" name="RegisterDelegateToMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.RegisterDelegateToMediaStream" methodname="RegisterDelegateToMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="326971322" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000616" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1083" name="RestartIcePeerConnection" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.RestartIcePeerConnection" methodname="RestartIcePeerConnection" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="708691089" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001204" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1097" name="RTCRtpSendParametersCreateAndDeletePtr" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.RTCRtpSendParametersCreateAndDeletePtr" methodname="RTCRtpSendParametersCreateAndDeletePtr" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="67792364" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.005679" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1090" name="SenderGetParameter" fullname="Unity.WebRTC.RuntimeTest.NativeAPITest.SenderGetParameter" methodname="SenderGetParameter" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1929572928" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1101" name="NativeAPITestAndEnterPlayModeOptionsEnabled" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled" classname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled" runstate="Runnable" testcasecount="20" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.012476" total="20" passed="13" failed="0" inconclusive="0" skipped="7" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1114" name="AddAndRemoveAudioTrack" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.AddAndRemoveAudioTrack" methodname="AddAndRemoveAudioTrack" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1982611920" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001322" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1113" name="AddAndRemoveAudioTrackToMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.AddAndRemoveAudioTrackToMediaStream" methodname="AddAndRemoveAudioTrackToMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="460308314" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000433" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1116" name="AddAndRemoveVideoRendererToVideoTrack" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.AddAndRemoveVideoRendererToVideoTrack" methodname="AddAndRemoveVideoRendererToVideoTrack" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1155445585" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1109" name="AddAndRemoveVideoTrack" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.AddAndRemoveVideoTrack" methodname="AddAndRemoveVideoTrack" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="730681099" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1112" name="AddAndRemoveVideoTrackToMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.AddAndRemoveVideoTrackToMediaStream" methodname="AddAndRemoveVideoTrackToMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1423927038" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1110" name="AddAndRemoveVideoTrackToPeerConnection" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.AddAndRemoveVideoTrackToPeerConnection" methodname="AddAndRemoveVideoTrackToPeerConnection" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1689804955" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1117" name="CallGetBatchUpdateEventFunc" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CallGetBatchUpdateEventFunc" methodname="CallGetBatchUpdateEventFunc" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="836333124" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000143" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1120" name="CallGetUpdateTextureFunc" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CallGetUpdateTextureFunc" methodname="CallGetUpdateTextureFunc" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="147346286" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000138" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1119" name="CallVideoUpdateMethodsEncode" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CallVideoUpdateMethodsEncode" methodname="CallVideoUpdateMethodsEncode" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1478962251" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Category" value="LongRunning" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1121" name="CallVideoUpdateMethodsUpdateRenderer" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CallVideoUpdateMethodsUpdateRenderer" methodname="CallVideoUpdateMethodsUpdateRenderer" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="615962499" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Category" value="LongRunning" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1106" name="CreateAndDeleteDataChannel" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CreateAndDeleteDataChannel" methodname="CreateAndDeleteDataChannel" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1240861894" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001450" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1107" name="CreateAndDeleteMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CreateAndDeleteMediaStream" methodname="CreateAndDeleteMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="31068149" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000188" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1103" name="CreateAndDeletePeerConnection" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CreateAndDeletePeerConnection" methodname="CreateAndDeletePeerConnection" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="216590309" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001038" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1115" name="CreateAndDeleteVideoRenderer" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.CreateAndDeleteVideoRenderer" methodname="CreateAndDeleteVideoRenderer" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="95546692" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000113" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1102" name="NothingToDo" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.NothingToDo" methodname="NothingToDo" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1755742917" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000106" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1105" name="PeerConnectionGetReceivers" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.PeerConnectionGetReceivers" methodname="PeerConnectionGetReceivers" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="993089174" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001090" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1108" name="RegisterDelegateToMediaStream" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.RegisterDelegateToMediaStream" methodname="RegisterDelegateToMediaStream" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1750783974" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000320" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1104" name="RestartIcePeerConnection" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.RestartIcePeerConnection" methodname="RestartIcePeerConnection" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1135252691" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001084" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1118" name="RTCRtpSendParametersCreateAndDeletePtr" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.RTCRtpSendParametersCreateAndDeletePtr" methodname="RTCRtpSendParametersCreateAndDeletePtr" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Runnable" seed="1110068696" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1111" name="SenderGetParameter" fullname="Unity.WebRTC.RuntimeTest.NativeAPITestAndEnterPlayModeOptionsEnabled.SenderGetParameter" methodname="SenderGetParameter" classname="Unity.WebRTC.RuntimeTest.NativeAPITest" runstate="Ignored" seed="1060728202" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1122" name="PeerConnectionTest" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" testcasecount="38" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.235700" total="38" passed="29" failed="0" inconclusive="0" skipped="9" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1124" name="AccessAfterDisposed" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AccessAfterDisposed" methodname="AccessAfterDisposed" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1238231525" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001439" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1155" name="AddIceCandidate" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddIceCandidate" methodname="AddIceCandidate" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="551511796" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.017418" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1128" name="AddTrack" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTrack" methodname="AddTrack" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="1648742228" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1129" name="AddTrackThrowException" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTrackThrowException" methodname="AddTrackThrowException" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="343805271" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001049" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1130" name="AddTransceiver" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTransceiver" methodname="AddTransceiver" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="119335519" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1133" name="AddTransceiverThrowException" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTransceiverThrowException" methodname="AddTransceiverThrowException" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1457354225" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001020" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1134" name="AddTransceiverTrackKindAudio" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTransceiverTrackKindAudio" methodname="AddTransceiverTrackKindAudio" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="87925289" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003267" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1135" name="AddTransceiverTrackKindVideo" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTransceiverTrackKindVideo" methodname="AddTransceiverTrackKindVideo" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="1592277174" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1136" name="AddTransceiverWithInit" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTransceiverWithInit" methodname="AddTransceiverWithInit" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="1777071122" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1137" name="AddTransceiverWithKindAndInit" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.AddTransceiverWithKindAndInit" methodname="AddTransceiverWithKindAndInit" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="1439645007" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1140" name="CanTrickleIceCandidates" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.CanTrickleIceCandidates" methodname="CanTrickleIceCandidates" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="629817584" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001516" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1123" name="Construct" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.Construct" methodname="Construct" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="887484058" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.005151" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1126" name="ConstructWithConfigThrowException" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.ConstructWithConfigThrowException" methodname="ConstructWithConfigThrowException" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="13629954" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000532" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1145" name="CreateAnswer" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.CreateAnswer" methodname="CreateAnswer" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="162783988" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.012562" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1144" name="CreateAnswerFailed" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.CreateAnswerFailed" methodname="CreateAnswerFailed" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1351719515" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.004232" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1150" name="CreateDescriptionInParallel" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.CreateDescriptionInParallel" methodname="CreateDescriptionInParallel" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1514650645" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.015280" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1143" name="CreateOffer" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.CreateOffer" methodname="CreateOffer" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="570947674" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002377" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1141" name="CurrentDirection" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.CurrentDirection" methodname="CurrentDirection" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="290322215" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.010757" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1138" name="GetAndSetDirectionTransceiver" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.GetAndSetDirectionTransceiver" methodname="GetAndSetDirectionTransceiver" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="1921622903" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000005" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1125" name="GetConfiguration" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.GetConfiguration" methodname="GetConfiguration" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="436138444" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003575" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1158" name="GetStatsReturnsReport" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.GetStatsReturnsReport" methodname="GetStatsReturnsReport" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="164349054" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1139" name="GetTransceivers" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.GetTransceivers" methodname="GetTransceivers" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="2041717108" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003118" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1132" name="GetTransceiversReturnsNotEmptyAfterCallingRemoveTrack" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.GetTransceiversReturnsNotEmptyAfterCallingRemoveTrack" methodname="GetTransceiversReturnsNotEmptyAfterCallingRemoveTrack" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="1628749465" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1131" name="GetTransceiversReturnsNotEmptyAfterDisposingTransceiver" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.GetTransceiversReturnsNotEmptyAfterDisposingTransceiver" methodname="GetTransceiversReturnsNotEmptyAfterDisposingTransceiver" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Ignored" seed="1060974017" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1154" name="IceConnectionStateChange" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.IceConnectionStateChange" methodname="IceConnectionStateChange" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="460514319" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.015563" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1156" name="MediaStreamTrackThrowExceptionAfterPeerDisposed" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.MediaStreamTrackThrowExceptionAfterPeerDisposed" methodname="MediaStreamTrackThrowExceptionAfterPeerDisposed" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1782560749" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.016029" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1157" name="PeerConnectionStateChange" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.PeerConnectionStateChange" methodname="PeerConnectionStateChange" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="647140869" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.014905" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1160" name="RemoteOnRemoveTrack" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.RemoteOnRemoveTrack" methodname="RemoteOnRemoveTrack" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="369920257" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.021760" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1159" name="RestartIceInvokeOnNegotiationNeeded" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.RestartIceInvokeOnNegotiationNeeded" methodname="RestartIceInvokeOnNegotiationNeeded" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="376655981" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.014850" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1127" name="SetConfiguration" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetConfiguration" methodname="SetConfiguration" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="2082269655" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001746" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1149" name="SetDescriptionInParallel" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetDescriptionInParallel" methodname="SetDescriptionInParallel" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1763693127" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.016424" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1146" name="SetLocalDescription" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetLocalDescription" methodname="SetLocalDescription" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="2087827409" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002987" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1152" name="SetLocalDescriptionFailed" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetLocalDescriptionFailed" methodname="SetLocalDescriptionFailed" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="348145371" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.003965" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1147" name="SetLocalDescriptionThrowException" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetLocalDescriptionThrowException" methodname="SetLocalDescriptionThrowException" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="967769013" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001568" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1148" name="SetRemoteDescription" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetRemoteDescription" methodname="SetRemoteDescription" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1069403275" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.007087" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1153" name="SetRemoteDescriptionFailed" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetRemoteDescriptionFailed" methodname="SetRemoteDescriptionFailed" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1014134772" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.006440" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1151" name="SetRemoteDescriptionThrowException" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.SetRemoteDescriptionThrowException" methodname="SetRemoteDescriptionThrowException" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="1133417018" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001668" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1142" name="TransceiverReturnsSender" fullname="Unity.WebRTC.RuntimeTest.PeerConnectionTest.TransceiverReturnsSender" methodname="TransceiverReturnsSender" classname="Unity.WebRTC.RuntimeTest.PeerConnectionTest" runstate="Runnable" seed="963760147" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.016982" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1161" name="StatsReportTest" fullname="Unity.WebRTC.RuntimeTest.StatsReportTest" classname="Unity.WebRTC.RuntimeTest.StatsReportTest" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002353" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1162" name="ConstructorThrowsException" fullname="Unity.WebRTC.RuntimeTest.StatsReportTest.ConstructorThrowsException" methodname="ConstructorThrowsException" classname="Unity.WebRTC.RuntimeTest.StatsReportTest" runstate="Runnable" seed="1727358478" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001275" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1163" name="TransceiverTest" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" testcasecount="10" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.037671" total="10" passed="7" failed="0" inconclusive="0" skipped="3" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1167" name="ReceiverGetAudioCapabilities" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.ReceiverGetAudioCapabilities" methodname="ReceiverGetAudioCapabilities" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" seed="1758880448" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.005075" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1172" name="ReceiverGetContributingSource" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.ReceiverGetContributingSource" methodname="ReceiverGetContributingSource" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" seed="377899697" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.023212" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1171" name="ReceiverGetTrackReturnsAudioTrack" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.ReceiverGetTrackReturnsAudioTrack" methodname="ReceiverGetTrackReturnsAudioTrack" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" seed="1040349366" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001924" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1170" name="ReceiverGetTrackReturnsVideoTrack" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.ReceiverGetTrackReturnsVideoTrack" methodname="ReceiverGetTrackReturnsVideoTrack" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Ignored" seed="1385065613" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1166" name="ReceiverGetVideoCapabilities" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.ReceiverGetVideoCapabilities" methodname="ReceiverGetVideoCapabilities" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" seed="1619209139" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000558" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1165" name="SenderGetAudioCapabilities" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.SenderGetAudioCapabilities" methodname="SenderGetAudioCapabilities" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" seed="1875583577" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000690" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1164" name="SenderGetVideoCapabilities" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.SenderGetVideoCapabilities" methodname="SenderGetVideoCapabilities" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" seed="1974298449" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000477" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1169" name="TransceiverSetAudioCodecPreferences" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.TransceiverSetAudioCodecPreferences" methodname="TransceiverSetAudioCodecPreferences" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Runnable" seed="488248810" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002394" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1168" name="TransceiverSetVideoCodecPreferences" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.TransceiverSetVideoCodecPreferences" methodname="TransceiverSetVideoCodecPreferences" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Ignored" seed="864413490" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1173" name="TransceiverStop" fullname="Unity.WebRTC.RuntimeTest.TransceiverTest.TransceiverStop" methodname="TransceiverStop" classname="Unity.WebRTC.RuntimeTest.TransceiverTest" runstate="Ignored" seed="476105358" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="5000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1174" name="TransformTest" fullname="Unity.WebRTC.RuntimeTest.TransformTest" classname="Unity.WebRTC.RuntimeTest.TransformTest" runstate="Runnable" testcasecount="6" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.025706" total="6" passed="4" failed="0" inconclusive="0" skipped="2" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-case id="1176" name="CreateAudioTransform" fullname="Unity.WebRTC.RuntimeTest.TransformTest.CreateAudioTransform" methodname="CreateAudioTransform" classname="Unity.WebRTC.RuntimeTest.TransformTest" runstate="Runnable" seed="1177640271" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000680" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1175" name="CreateVideoTransform" fullname="Unity.WebRTC.RuntimeTest.TransformTest.CreateVideoTransform" methodname="CreateVideoTransform" classname="Unity.WebRTC.RuntimeTest.TransformTest" runstate="Runnable" seed="1841089741" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000227" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1178" name="ReceiverSetTransform" fullname="Unity.WebRTC.RuntimeTest.TransformTest.ReceiverSetTransform" methodname="ReceiverSetTransform" classname="Unity.WebRTC.RuntimeTest.TransformTest" runstate="Ignored" seed="140841747" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000003" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="_SKIPREASON" value="Requires a graphics device to create textures" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Requires a graphics device to create textures]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1177" name="SenderSetTransform" fullname="Unity.WebRTC.RuntimeTest.TransformTest.SenderSetTransform" methodname="SenderSetTransform" classname="Unity.WebRTC.RuntimeTest.TransformTest" runstate="Runnable" seed="1609032487" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002344" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1179" name="TransformedAudioFrameCallback" fullname="Unity.WebRTC.RuntimeTest.TransformTest.TransformedAudioFrameCallback" methodname="TransformedAudioFrameCallback" classname="Unity.WebRTC.RuntimeTest.TransformTest" runstate="Runnable" seed="1921477673" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.020289" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1180" name="TransformedVideoFrameCallback" fullname="Unity.WebRTC.RuntimeTest.TransformTest.TransformedVideoFrameCallback" methodname="TransformedVideoFrameCallback" classname="Unity.WebRTC.RuntimeTest.TransformTest" runstate="Skipped" seed="941979817" result="Skipped" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Timeout" value="1000" />
+                  <property name="_SKIPREASON" value="Not supported on  OSXEditor, Android, IPhonePlayer, WindowsEditor, LinuxEditor" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not supported on  OSXEditor, Android, IPhonePlayer, WindowsEditor, LinuxEditor]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1181" name="VideoReceiveTestWithH264Codec" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec" runstate="Ignored" testcasecount="9" result="Skipped" label="Ignored" site="SetUp" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002382" total="9" passed="0" failed="0" inconclusive="0" skipped="9" asserts="0">
+              <properties>
+                <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+              </properties>
+              <reason>
+                <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+              </reason>
+              <test-suite type="ParameterizedMethod" id="1191" name="VideoReceive" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Ignored" testcasecount="9" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" total="0" passed="0" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Category" value="LongRunning" />
+                  <property name="Timeout" value="15000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-suite>
+              <test-case id="1182" name="VideoReceive(0)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(0)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1014782650" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1183" name="VideoReceive(1)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(1)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1670441800" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1184" name="VideoReceive(2)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(2)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1409687534" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1185" name="VideoReceive(3)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(3)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1421023502" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1186" name="VideoReceive(4)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(4)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1830740050" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1187" name="VideoReceive(5)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(5)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="443977305" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1188" name="VideoReceive(6)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(6)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="358689685" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1189" name="VideoReceive(7)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(7)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1597427927" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1190" name="VideoReceive(8)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithH264Codec.VideoReceive(8)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1573789579" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1192" name="VideoReceiveTestWithVP8Codec" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec" runstate="Ignored" testcasecount="9" result="Skipped" label="Ignored" site="SetUp" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001631" total="9" passed="0" failed="0" inconclusive="0" skipped="9" asserts="0">
+              <properties>
+                <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+              </properties>
+              <reason>
+                <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+              </reason>
+              <test-suite type="ParameterizedMethod" id="1202" name="VideoReceive" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Ignored" testcasecount="9" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" total="0" passed="0" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="Category" value="LongRunning" />
+                  <property name="Timeout" value="15000" />
+                  <property name="_SKIPREASON" value="Not support VideoStreamTrack for OpenGL or without a graphics device" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-suite>
+              <test-case id="1193" name="VideoReceive(0)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(0)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1389978728" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1194" name="VideoReceive(1)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(1)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="931890945" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1195" name="VideoReceive(2)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(2)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="99567477" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1196" name="VideoReceive(3)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(3)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1590914675" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1197" name="VideoReceive(4)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(4)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="410212721" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1198" name="VideoReceive(5)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(5)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1626275371" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1199" name="VideoReceive(6)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(6)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="22716941" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1200" name="VideoReceive(7)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(7)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="1199059454" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1201" name="VideoReceive(8)" fullname="Unity.WebRTC.RuntimeTest.VideoReceiveTestWithVP8Codec.VideoReceive(8)" methodname="VideoReceive" classname="Unity.WebRTC.RuntimeTest.VideoReceiveTestBase" runstate="Runnable" seed="461530972" result="Skipped" label="Ignored" site="Parent" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="0.000000" asserts="0">
+                <properties />
+                <reason>
+                  <message><![CDATA[Not support VideoStreamTrack for OpenGL or without a graphics device]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1203" name="WebRTCTest" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" testcasecount="20" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.017437" total="20" passed="18" failed="0" inconclusive="0" skipped="2" asserts="0">
+              <properties />
+              <reason>
+                <message><![CDATA[One or more child tests were ignored]]></message>
+              </reason>
+              <test-suite type="ParameterizedMethod" id="1217" name="DisableLimitTextureSize" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.DisableLimitTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002868" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1215" name="DisableLimitTextureSize(1920,1080)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.DisableLimitTextureSize(1920,1080)" methodname="DisableLimitTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="736029393" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001381" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1216" name="DisableLimitTextureSize(3841,2161)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.DisableLimitTextureSize(3841,2161)" methodname="DisableLimitTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1461134348" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000244" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1225" name="EnableLogging" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.EnableLogging" methodname="EnableLogging" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="236967340" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001045" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1220" name="ErrorOnValidateTextureSize" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ErrorOnValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001704" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1218" name="ErrorOnValidateTextureSize(2500,3500)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ErrorOnValidateTextureSize(2500,3500)" methodname="ErrorOnValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1603085366" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000491" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1219" name="ErrorOnValidateTextureSize(4000,4000)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ErrorOnValidateTextureSize(4000,4000)" methodname="ErrorOnValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1431616978" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000211" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1204" name="GraphicsFormat" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.GraphicsFormat" methodname="GraphicsFormat" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Ignored" seed="121890319" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Requires a graphics device to create textures" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Requires a graphics device to create textures]]></message>
+                </reason>
+              </test-case>
+              <test-case id="1226" name="Logger" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.Logger" methodname="Logger" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1384574966" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.001453" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1227" name="SyncTimeout" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.SyncTimeout" methodname="SyncTimeout" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="532320189" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000690" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1221" name="ValidateGraphicsFormat" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateGraphicsFormat" methodname="ValidateGraphicsFormat" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Ignored" seed="1297246685" result="Skipped" label="Ignored" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000004" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Requires a graphics device to create textures" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Requires a graphics device to create textures]]></message>
+                </reason>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1224" name="ValidateLegacyGraphicsFormat" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateLegacyGraphicsFormat" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.002042" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1222" name="ValidateLegacyGraphicsFormat(87)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateLegacyGraphicsFormat(87)" methodname="ValidateLegacyGraphicsFormat" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="680504463" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000802" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1223" name="ValidateLegacyGraphicsFormat(88)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateLegacyGraphicsFormat(88)" methodname="ValidateLegacyGraphicsFormat" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1956657807" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000240" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="1214" name="ValidateTextureSize" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.004040" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1205" name="ValidateTextureSize(256,256)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(256,256)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1585736298" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000516" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1206" name="ValidateTextureSize(640,360)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(640,360)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="350132238" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000191" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1207" name="ValidateTextureSize(1280,720)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(1280,720)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1276012175" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000150" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1208" name="ValidateTextureSize(1920,1080)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(1920,1080)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1930766362" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000206" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1209" name="ValidateTextureSize(3840,2160)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(3840,2160)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1027242216" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000179" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1210" name="ValidateTextureSize(360,640)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(360,640)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="49072039" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000150" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1211" name="ValidateTextureSize(720,1280)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(720,1280)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1874364139" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000154" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1212" name="ValidateTextureSize(1080,1920)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(1080,1920)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1308056433" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000146" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1213" name="ValidateTextureSize(2160,3840)" fullname="Unity.WebRTC.RuntimeTest.WebRTCTest.ValidateTextureSize(2160,3840)" methodname="ValidateTextureSize" classname="Unity.WebRTC.RuntimeTest.WebRTCTest" runstate="Runnable" seed="1462785717" result="Passed" start-time="2026-10-20 15:29:14Z" end-time="2026-10-20 15:29:14Z" duration="0.000157" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[[Code Coverage] Code coverage results were not saved. Visited sequence points not found. 
+Included Assemblies: Unity.WebRTC.Samples,Unity.WebRTC.Samples.Editror
+Excluded Assemblies: <Not specified>
+Included Paths: <Not specified>
+Excluded Paths: <Not specified>
+[Code Coverage] Code Coverage Report was generated in /github/workspace/CodeCoverage/Report
+Included Assemblies: Unity.WebRTC.Samples,Unity.WebRTC.Samples.Editror
+Excluded Assemblies: <Not specified>
+Included Paths: <Not specified>
+Excluded Paths: <Not specified>
+Saving results to: /github/workspace/artifacts/playmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
