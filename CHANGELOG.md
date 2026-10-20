@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-10-20
+
 ### Fixed
 
 - Android and other Vulkan platforms: the plugin could pass an extension name twice to `vkCreateInstance`/`vkCreateDevice` (the names were merged by pointer instead of by string), which made Unity fail to initialize Vulkan on some devices, e.g. Adreno GPUs (Unity-Technologies/com.unity.webrtc#1120).
