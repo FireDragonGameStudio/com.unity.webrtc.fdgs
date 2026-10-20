@@ -789,11 +789,17 @@ namespace Unity.WebRTC
             {
                 // Wait until all frame rendering is done
                 yield return instruction;
+
+                // The context is disposed before an assembly reload and when the application quits, while this
+                // coroutine may still be running.
+                var context = Context;
+                if (context == null)
+                    continue;
                 {
                     var tempTextureActive = RenderTexture.active;
                     RenderTexture.active = null;
 
-                    var batch = Context.batch;
+                    var batch = context.batch;
                     batch.ResizeCapacity(VideoStreamTrack.s_tracks.Count);
 
                     int trackIndex = 0;
