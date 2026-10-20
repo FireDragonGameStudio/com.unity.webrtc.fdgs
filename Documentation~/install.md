@@ -11,7 +11,7 @@ Check Package Manager window, Click `+` button and select `Add package from git 
 Input the git URL with a release tag to the input field, for example:
 
 ```
-https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v3.2.0
+https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v3.2.1
 ```
 
 The list of releases is [here](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases). In most cases, the latest version is recommended to use. Install a release tag rather than `main`: only release tags contain the native plugins built from this repository's source.

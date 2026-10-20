@@ -11,7 +11,7 @@ This repository is a community-maintained fork of [`com.unity.webrtc`](https://g
 In the Package Manager, choose **Add package from git URL...** and enter a released version, for example:
 
 ```
-https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v3.2.0
+https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v3.2.1
 ```
 
 See [Releases](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/releases) for all versions. Install a release tag rather than `main`: only release tags contain native plugins built from this repository's source.
