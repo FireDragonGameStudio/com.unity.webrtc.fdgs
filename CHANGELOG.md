@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Android and other Vulkan platforms: the plugin could pass an extension name twice to `vkCreateInstance`/`vkCreateDevice` (the names were merged by pointer instead of by string), which made Unity fail to initialize Vulkan on some devices, e.g. Adreno GPUs (Unity-Technologies/com.unity.webrtc#1120).
+- NVIDIA hardware encoder: frames of one video track could appear in another track with the same resolution and format. Pooled frame buffers are no longer shared between tracks, and the encoder waits until its CUDA copy has read a buffer before returning it to the pool (Unity-Technologies/com.unity.webrtc#1125).
+- `WebRTC.Update` threw a `NullReferenceException` when it resumed after the WebRTC context had been disposed, for example around an assembly reload or when quitting (Unity-Technologies/com.unity.webrtc#1123).
+- NVIDIA hardware encoder: H.264 levels were chosen from the pixel count, so resolutions that are not multiples of 16 (e.g. 1922x1080) could get a level too low for them and the encoder failed with an invalid parameter. The level is now chosen from the frame size in macroblocks, including the per-dimension limit of the H.264 spec (Unity-Technologies/com.unity.webrtc#896).
 - Native plugin: with Vulkan, every encoded video frame leaked a small `UnityVulkanImage` allocation describing the source texture. It is now freed once the copy is recorded.
 
 ## [3.2.0] - 2026-10-19
