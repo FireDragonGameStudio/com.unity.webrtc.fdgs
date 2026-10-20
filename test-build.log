@@ -1,0 +1,33 @@
+[1/33] Building CXX object _deps\googletest-build\googletest\CMakeFiles\gtest_main.dir\Release\src\gtest_main.cc.obj
+[2/33] Building CXX object _deps\googletest-build\googlemock\CMakeFiles\gmock.dir\Release\src\gmock-all.cc.obj
+[3/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\cmake_pch.cxx.obj
+[4/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\pch.cpp.obj
+[5/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\AudioTrackSinkAdapterTest.cpp.obj
+[6/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\FrameGenerator.cpp.obj
+[7/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\CreateVideoCodecFactoryTest.cpp.obj
+[8/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\GpuMemoryBufferTest.cpp.obj
+[9/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\ContextTest.cpp.obj
+[10/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\GpuMemoryBufferPoolTest.cpp.obj
+[11/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\GraphicsDeviceTestBase.cpp.obj
+[12/33] Building CXX object _deps\googletest-build\googlemock\CMakeFiles\gmock.dir\Release\__\googletest\src\gtest-all.cc.obj
+[13/33] Building CXX object _deps\googletest-build\googletest\CMakeFiles\gtest.dir\Release\src\gtest-all.cc.obj
+[14/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\GraphicsDeviceContainer.cpp.obj
+[15/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\GraphicsDeviceContainerTest.cpp.obj
+[16/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\H264ProfileLevelIdTest.cpp.obj
+[17/33] Linking CXX static library lib\Release\gtest.lib
+[18/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\GraphicsDeviceTest.cpp.obj
+[19/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\VideoFrameSchedulerTest.cpp.obj
+[20/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\InternalCodecsTest.cpp.obj
+[21/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\UnityVideoDecoderFactoryTest.cpp.obj
+[22/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\UnityVideoEncoderFactoryTest.cpp.obj
+[23/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\VideoFrameTest.cpp.obj
+[24/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\VideoCodecTest.cpp.obj
+[25/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\NvCodec\CudaDeviceTest.cpp.obj
+[26/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\VideoRendererTest.cpp.obj
+[27/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\NvCodec\NvDecoderImplTest.cpp.obj
+[28/33] Linking CXX static library lib\Release\gmock.lib
+[29/33] Linking CXX static library lib\Release\gtest_main.lib
+[30/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\VideoTrackSourceTest.cpp.obj
+[31/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\NvCodec\NvEncoderImplTest.cpp.obj
+[32/33] Building CXX object WebRTCPluginTest\CMakeFiles\WebRTCLibTest.dir\Release\NvCodec\NvCodecTest.cpp.obj
+[33/33] Linking CXX executable WebRTCPluginTest\Release\WebRTCLibTest.exe
