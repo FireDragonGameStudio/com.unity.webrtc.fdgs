@@ -1,0 +1,35 @@
+== arm64-v8a
+  0x0000000000000001 (NEEDED)          Shared library: [liblog.so]
+  0x0000000000000001 (NEEDED)          Shared library: [libOpenSLES.so]
+  0x0000000000000001 (NEEDED)          Shared library: [libGLESv3.so]
+  0x0000000000000001 (NEEDED)          Shared library: [libEGL.so]
+  0x0000000000000001 (NEEDED)          Shared library: [libm.so]
+  0x0000000000000001 (NEEDED)          Shared library: [libdl.so]
+  0x0000000000000001 (NEEDED)          Shared library: [libc.so]
+Exported Java_ symbols: 189
+-rwxr-xr-x 1 runner runner 17479728 Oct 20 15:25 Runtime/Plugins/Android/jni/arm64-v8a/libwebrtc.so
+== x86_64
+  0x0000000000000001 (NEEDED)         Shared library: [liblog.so]
+  0x0000000000000001 (NEEDED)         Shared library: [libOpenSLES.so]
+  0x0000000000000001 (NEEDED)         Shared library: [libGLESv3.so]
+  0x0000000000000001 (NEEDED)         Shared library: [libEGL.so]
+  0x0000000000000001 (NEEDED)         Shared library: [libm.so]
+  0x0000000000000001 (NEEDED)         Shared library: [libdl.so]
+  0x0000000000000001 (NEEDED)         Shared library: [libc.so]
+Exported Java_ symbols: 189
+-rwxr-xr-x 1 runner runner 21898232 Oct 20 15:25 Runtime/Plugins/Android/jni/x86_64/libwebrtc.so
+classes.jar class file version: 61
+Archive:  Runtime/Plugins/Android/libwebrtc.aar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2026-10-19 19:26   jni/
+        0  2026-10-19 19:26   jni/x86_64/
+ 17001504  2026-10-19 19:26   jni/x86_64/libjingle_peerconnection_so.so
+        0  2026-10-19 19:26   jni/arm64-v8a/
+ 13042576  2026-10-19 19:26   jni/arm64-v8a/libjingle_peerconnection_so.so
+      629  2026-10-19 19:26   AndroidManifest.xml
+  1265300  2026-10-19 19:26   classes.jar
+ 17479728  2026-10-20 15:25   jni/arm64-v8a/libwebrtc.so
+ 21898232  2026-10-20 15:25   jni/x86_64/libwebrtc.so
+---------                     -------
+ 70687969                     9 files
