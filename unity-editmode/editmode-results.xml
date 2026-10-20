@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="1" failed="0" inconclusive="0" skipped="1" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.0448864">
+  <test-suite type="TestSuite" id="1000" name="WebRTC~" fullname="WebRTC~" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.044886" total="2" passed="1" failed="0" inconclusive="0" skipped="1" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1007" name="Unity.WebRTC.EditorTests.dll" fullname="/github/workspace/WebRTC~/Library/ScriptAssemblies/Unity.WebRTC.EditorTests.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.034558" total="2" passed="1" failed="0" inconclusive="0" skipped="1" asserts="0">
+      <properties>
+        <property name="_PID" value="76" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1008" name="Unity" fullname="Unity" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.034059" total="2" passed="1" failed="0" inconclusive="0" skipped="1" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1009" name="WebRTC" fullname="Unity.WebRTC" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.033876" total="2" passed="1" failed="0" inconclusive="0" skipped="1" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1010" name="EditorTest" fullname="Unity.WebRTC.EditorTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.033644" total="2" passed="1" failed="0" inconclusive="0" skipped="1" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1004" name="PluginTest" fullname="Unity.WebRTC.EditorTest.PluginTest" classname="Unity.WebRTC.EditorTest.PluginTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.032450" total="2" passed="1" failed="0" inconclusive="0" skipped="1" asserts="0">
+              <properties />
+              <test-case id="1006" name="CheckPluginImportSettings" fullname="Unity.WebRTC.EditorTest.PluginTest.CheckPluginImportSettings" methodname="CheckPluginImportSettings" classname="Unity.WebRTC.EditorTest.PluginTest" runstate="Runnable" seed="1759222262" result="Passed" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.016954" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="IsPluginLoaded" fullname="Unity.WebRTC.EditorTest.PluginTest.IsPluginLoaded" methodname="IsPluginLoaded" classname="Unity.WebRTC.EditorTest.PluginTest" runstate="Skipped" seed="1243825730" result="Skipped" start-time="2026-10-20 21:24:36Z" end-time="2026-10-20 21:24:36Z" duration="0.000176" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Only supported on WindowsEditor" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Only supported on WindowsEditor]]></message>
+                </reason>
+                <output><![CDATA[[Code Coverage] Code coverage results were not saved. Visited sequence points not found. 
+Included Assemblies: Unity.WebRTC.Samples,Unity.WebRTC.Samples.Editror
+Excluded Assemblies: <Not specified>
+Included Paths: <Not specified>
+Excluded Paths: <Not specified>
+[Code Coverage] Code Coverage Report was generated in /github/workspace/CodeCoverage/Report
+Included Assemblies: Unity.WebRTC.Samples,Unity.WebRTC.Samples.Editror
+Excluded Assemblies: <Not specified>
+Included Paths: <Not specified>
+Excluded Paths: <Not specified>
+Saving results to: /github/workspace/artifacts/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
