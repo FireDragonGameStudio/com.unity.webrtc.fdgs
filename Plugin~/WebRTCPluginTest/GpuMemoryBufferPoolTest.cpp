@@ -185,6 +185,52 @@ namespace webrtc
         EXPECT_EQ(1u, bufferPool_->bufferCount());
     }
 
+    // Tracks with the same size and format must not share buffers: an encoder may still read a returned buffer
+    // (Unity-Technologies/com.unity.webrtc#1125).
+    TEST_P(GpuMemoryBufferPoolTest, ReuseResourceOnlyForSameOwner)
+    {
+        const Size kSize(kWidth, kHeight);
+        auto tex = CreateTexture(kSize, kFormat);
+        void* ptr = tex->GetNativeTexturePtrV();
+        int track1 = 0;
+        int track2 = 0;
+
+        auto frame1 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime(), &track1);
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame1, nullptr);
+        frame1 = nullptr;
+
+        auto frame2 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime(), &track2);
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame2, nullptr);
+        EXPECT_EQ(2u, bufferPool_->bufferCount());
+        frame2 = nullptr;
+
+        auto frame3 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime(), &track1);
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame3, nullptr);
+        EXPECT_EQ(2u, bufferPool_->bufferCount());
+    }
+
+    TEST_P(GpuMemoryBufferPoolTest, ReleaseResourceOfAnotherOwnerWhenPoolIsFull)
+    {
+        bufferPool_ = std::make_unique<GpuMemoryBufferPool>(device_, &clock_, 1);
+        const Size kSize(kWidth, kHeight);
+        auto tex = CreateTexture(kSize, kFormat);
+        void* ptr = tex->GetNativeTexturePtrV();
+        int removedTrack = 0;
+        int track = 0;
+
+        auto frame1 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime(), &removedTrack);
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        frame1 = nullptr;
+
+        auto frame2 = bufferPool_->CreateFrame(ptr, kSize, kFormat, clock_.CurrentTime(), &track);
+        EXPECT_TRUE(device_->WaitIdleForTest());
+        EXPECT_NE(frame2, nullptr);
+        EXPECT_EQ(1u, bufferPool_->bufferCount());
+    }
+
     INSTANTIATE_TEST_SUITE_P(GfxDevice, GpuMemoryBufferPoolTest, testing::ValuesIn(supportedGfxDevices));
 
 } // end namespace webrtc

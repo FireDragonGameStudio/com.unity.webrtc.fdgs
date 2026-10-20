@@ -415,6 +415,20 @@ namespace webrtc
                 encoderInputFrame->chromaOffsets,
                 encoderInputFrame->numChromaPlanes);
         }
+
+        // Device to device copies (and the resize kernel) run asynchronously to the host. Wait until they have read
+        // the buffer: the frame returns it to the pool when Encode returns, and the next frame overwrites it.
+        CUresult result = cuCtxPushCurrent(context);
+        if (result == CUDA_SUCCESS)
+        {
+            result = cuStreamSynchronize(nullptr);
+            cuCtxPopCurrent(nullptr);
+        }
+        if (result != CUDA_SUCCESS)
+        {
+            RTC_LOG(LS_ERROR) << "Waiting for the copy to the encoder input failed. result=" << result;
+            return false;
+        }
         return true;
     }
 
