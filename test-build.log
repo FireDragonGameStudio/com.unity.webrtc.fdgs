@@ -1,0 +1,42 @@
+[1/32] Building CXX object _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/Release/src/gtest_main.cc.o
+[2/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/pch.cpp.o
+[3/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/AudioTrackSinkAdapterTest.cpp.o
+[4/32] Building CXX object _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/Release/src/gmock-all.cc.o
+[5/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/FrameGenerator.cpp.o
+[6/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/CreateVideoCodecFactoryTest.cpp.o
+[7/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/GpuMemoryBufferTest.cpp.o
+[8/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/ContextTest.cpp.o
+[9/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/GpuMemoryBufferPoolTest.cpp.o
+[10/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/GraphicsDeviceContainer.cpp.o
+[11/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/GraphicsDeviceTestBase.cpp.o
+[12/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/GraphicsDeviceContainerTest.cpp.o
+[13/32] Building CXX object _deps/googletest-build/googletest/CMakeFiles/gtest.dir/Release/src/gtest-all.cc.o
+In file included from /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/_deps/googletest-src/googletest/src/gtest-all.cc:38:
+In file included from /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/_deps/googletest-src/googletest/include/gtest/gtest.h:64:
+In file included from /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/_deps/googletest-src/googletest/include/gtest/gtest-death-test.h:43:
+In file included from /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/_deps/googletest-src/googletest/include/gtest/internal/gtest-death-test-internal.h:47:
+In file included from /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/_deps/googletest-src/googletest/include/gtest/gtest-matchers.h:49:
+/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/_deps/googletest-src/googletest/include/gtest/gtest-printers.h:524:35: warning: implicit conversion from 'char8_t' to 'char32_t' may change the meaning of the represented code unit [-Wcharacter-conversion]
+  524 |   PrintTo(ImplicitCast_<char32_t>(c), os);
+      |           ~~~~~~~~~~~~~           ^
+1 warning generated.
+[14/32] Linking CXX static library lib/Release/libgtest.a
+[15/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/GraphicsDeviceTest.cpp.o
+[16/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/H264ProfileLevelIdTest.cpp.o
+[17/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/VideoFrameSchedulerTest.cpp.o
+[18/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/UnityVideoEncoderFactoryTest.cpp.o
+[19/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/UnityVideoDecoderFactoryTest.cpp.o
+[20/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/InternalCodecsTest.cpp.o
+[21/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/VideoCodecTest.cpp.o
+[22/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/VideoFrameTest.cpp.o
+[23/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/NvCodec/CudaDeviceTest.cpp.o
+[24/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/NvCodec/NvEncoderImplTest.cpp.o
+[25/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/VideoRendererTest.cpp.o
+[26/32] Linking CXX static library lib/Release/libgmock.a
+[27/32] Linking CXX static library lib/Release/libgtest_main.a
+[28/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/NvCodec/NvDecoderImplTest.cpp.o
+[29/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/VideoTrackSourceTest.cpp.o
+[30/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/OpenGLContextTest.cpp.o
+[31/32] Building CXX object WebRTCPluginTest/CMakeFiles/WebRTCLibTest.dir/Release/NvCodec/NvCodecTest.cpp.o
+[32/32] Linking CXX executable WebRTCPluginTest/Release/WebRTCLibTest
+clang++: warning: argument unused during compilation: '-static-libstdc++' [-Wunused-command-line-argument]
