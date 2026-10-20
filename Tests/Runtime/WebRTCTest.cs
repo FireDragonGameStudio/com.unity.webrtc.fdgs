@@ -135,6 +135,25 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
+        public void UpdateWithoutContext()
+        {
+            var update = WebRTC.Update();
+            // Runs to the first yield.
+            Assert.That(update.MoveNext(), Is.True);
+
+            WebRTC.DisposeInternal();
+            try
+            {
+                Assert.That(() => update.MoveNext(), Throws.Nothing);
+            }
+            finally
+            {
+                WebRTC.InitializeInternal();
+            }
+            Assert.That(() => update.MoveNext(), Throws.Nothing);
+        }
+
+        [Test]
         public void SyncTimeout()
         {
             Assert.DoesNotThrow(() => WebRTC.SetGraphicsSyncTimeout(1));

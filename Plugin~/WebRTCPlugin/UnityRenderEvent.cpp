@@ -316,7 +316,7 @@ static void UNITY_INTERFACE_API OnBatchUpdateEvent(int eventID, void* data)
                 profiler = s_ProfilerMarkerFactory->CreateScopedProfiler(*s_MarkerEncode);
 
             // The pool returns nullptr when all of its buffers are in use: skip this frame.
-            auto frame = s_bufferPool->CreateFrame(ptr, size, trackData->format, timestamp);
+            auto frame = s_bufferPool->CreateFrame(ptr, size, trackData->format, timestamp, source);
             if (frame)
                 source->OnFrameCaptured(std::move(frame));
         }

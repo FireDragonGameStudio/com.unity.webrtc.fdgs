@@ -20,9 +20,13 @@ namespace webrtc
     GpuMemoryBufferPool::~GpuMemoryBufferPool() { }
 
     ::webrtc::scoped_refptr<VideoFrame> GpuMemoryBufferPool::CreateFrame(
-        NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format, Timestamp timestamp)
+        NativeTexPtr ptr,
+        const Size& size,
+        UnityRenderingExtTextureFormat format,
+        Timestamp timestamp,
+        const void* owner)
     {
-        auto buffer = GetOrCreateFrameResources(ptr, size, format);
+        auto buffer = GetOrCreateFrameResources(ptr, size, format, owner);
         if (!buffer)
             return nullptr;
         VideoFrame::ReturnBufferToPoolCallback callback =
@@ -33,14 +37,14 @@ namespace webrtc
     }
 
     ::webrtc::scoped_refptr<GpuMemoryBufferInterface> GpuMemoryBufferPool::GetOrCreateFrameResources(
-        NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format)
+        NativeTexPtr ptr, const Size& size, UnityRenderingExtTextureFormat format, const void* owner)
     {
         std::lock_guard<std::mutex> lock(mutex_);
 
         for (auto it = resourcesPool_.begin(); it != resourcesPool_.end(); ++it)
         {
             FrameResources* resources = it->get();
-            if (!resources->IsUsed() && AreFrameResourcesCompatible(resources, size, format))
+            if (!resources->IsUsed() && AreFrameResourcesCompatible(resources, size, format, owner))
             {
                 GpuMemoryBufferFromUnity* buffer = static_cast<GpuMemoryBufferFromUnity*>(resources->buffer_.get());
                 if (!buffer->ResetSync())
@@ -60,13 +64,13 @@ namespace webrtc
         if (resourcesPool_.size() >= maxBufferCount_)
         {
             // Make room by releasing the least recently used buffer that cannot hold this frame, for example one
-            // left over from a track with another resolution. Unused compatible buffers are kept: they are only
+            // left over from a removed track or from a track with another resolution. Unused compatible buffers are kept: they are only
             // waiting for their copy to finish and can be reused for the next frame.
             auto stale = resourcesPool_.end();
             for (auto it = resourcesPool_.begin(); it != resourcesPool_.end(); ++it)
             {
                 FrameResources* resources = it->get();
-                if (resources->IsUsed() || AreFrameResourcesCompatible(resources, size, format))
+                if (resources->IsUsed() || AreFrameResourcesCompatible(resources, size, format, owner))
                     continue;
                 if (stale == resourcesPool_.end() || resources->lastUseTime() < (*stale)->lastUseTime())
                     stale = it;
@@ -82,16 +86,17 @@ namespace webrtc
             RTC_LOG(LS_INFO) << "Copy buffer is failed.";
             return nullptr;
         }
-        std::unique_ptr<FrameResources> resources = std::make_unique<FrameResources>(buffer);
+        std::unique_ptr<FrameResources> resources = std::make_unique<FrameResources>(buffer, owner);
         resources->MarkUsed(clock_->CurrentTime());
         resourcesPool_.push_back(std::move(resources));
         return std::move(buffer);
     }
 
     bool GpuMemoryBufferPool::AreFrameResourcesCompatible(
-        const FrameResources* resources, const Size& size, UnityRenderingExtTextureFormat format)
+        const FrameResources* resources, const Size& size, UnityRenderingExtTextureFormat format, const void* owner)
     {
-        return resources->buffer_->GetSize() == size && resources->buffer_->GetFormat() == format;
+        return resources->owner_ == owner && resources->buffer_->GetSize() == size &&
+            resources->buffer_->GetFormat() == format;
     }
 
     void GpuMemoryBufferPool::OnReturnBuffer(::webrtc::scoped_refptr<GpuMemoryBufferInterface> buffer)
