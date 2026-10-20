@@ -38,20 +38,36 @@ namespace webrtc
         { 2073600, 36864, 240000, H264Level::kLevel5_2 },
     };
 
-    static const int kPixelsPerMacroblock = 16 * 16;
+    static const int kMacroblockSize = 16;
     static const int kUnitMaxBRWithNAL = 1200;
 
-    std::optional<webrtc::H264Level> H264SupportedLevel(int maxFramePixelCount, int maxFramerate, int maxBitrate)
+    // The encoder codes whole 16x16 macroblocks, so a partial macroblock at the right or bottom edge counts.
+    static int MacroblockCount(int pixels) { return (pixels + kMacroblockSize - 1) / kMacroblockSize; }
+
+    // H.264 Annex A.3.1: the frame size in macroblocks is limited by MaxFS, and so are both dimensions
+    // (width and height in macroblocks <= sqrt(8 * MaxFS)).
+    static bool FitsFrameSize(const LevelConstraint& constraint, int widthInMbs, int heightInMbs)
     {
-        if (maxFramePixelCount <= 0 || maxFramerate <= 0 || maxBitrate <= 0)
+        const int64_t maxDimension = 8LL * constraint.max_macroblock_frame_size;
+        return static_cast<int64_t>(widthInMbs) * heightInMbs <= constraint.max_macroblock_frame_size &&
+            static_cast<int64_t>(widthInMbs) * widthInMbs <= maxDimension &&
+            static_cast<int64_t>(heightInMbs) * heightInMbs <= maxDimension;
+    }
+
+    std::optional<webrtc::H264Level> H264SupportedLevel(int width, int height, int maxFramerate, int maxBitrate)
+    {
+        if (width <= 0 || height <= 0 || maxFramerate <= 0 || maxBitrate <= 0)
             return std::nullopt;
+
+        const int widthInMbs = MacroblockCount(width);
+        const int heightInMbs = MacroblockCount(height);
+        const int64_t macroblocksPerSecond = static_cast<int64_t>(widthInMbs) * heightInMbs * maxFramerate;
 
         for (size_t i = 0; i < std::size(kLevelConstraints); i++)
         {
             const LevelConstraint& level_constraint = kLevelConstraints[i];
-            if (level_constraint.max_macroblock_frame_size * kPixelsPerMacroblock >= maxFramePixelCount &&
-                level_constraint.max_macroblocks_per_second >=
-                    maxFramerate * maxFramePixelCount / kPixelsPerMacroblock &&
+            if (FitsFrameSize(level_constraint, widthInMbs, heightInMbs) &&
+                level_constraint.max_macroblocks_per_second >= macroblocksPerSecond &&
                 level_constraint.max_video_bitrate * kUnitMaxBRWithNAL >= maxBitrate)
             {
                 return level_constraint.level;
@@ -62,14 +78,21 @@ namespace webrtc
         return std::nullopt;
     }
 
-    int SupportedMaxFramerate(H264Level level, int maxFramePixelCount)
+    int SupportedMaxFramerate(H264Level level, int width, int height)
     {
+        if (width <= 0 || height <= 0)
+            return 0;
+
+        const int widthInMbs = MacroblockCount(width);
+        const int heightInMbs = MacroblockCount(height);
         for (size_t i = 0; i < std::size(kLevelConstraints); i++)
         {
             const LevelConstraint& level_constraint = kLevelConstraints[i];
             if (level_constraint.level == level)
             {
-                return level_constraint.max_macroblocks_per_second * kPixelsPerMacroblock / maxFramePixelCount;
+                if (!FitsFrameSize(level_constraint, widthInMbs, heightInMbs))
+                    return 0;
+                return level_constraint.max_macroblocks_per_second / (widthInMbs * heightInMbs);
             }
         }
 
