@@ -1,0 +1,45 @@
+
+         173 number of names
+Exported std::__Cr symbols: 0
+
+Dump of file Runtime\Plugins\x86_64\webrtc.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    ole32.dll
+    KERNEL32.dll
+    WS2_32.dll
+    USER32.dll
+    WINMM.dll
+    IPHLPAPI.DLL
+    msdmo.dll
+    dbghelp.dll
+
+  Image has the following delay load dependencies:
+
+    nvcuda.dll
+    nvEncodeAPI64.dll
+    nvcuvid.dll
+
+  Summary
+
+       69000 .data
+        1000 .fptable
+        1000 .nvFatBi
+        3000 .nv_fatb
+       3F000 .pdata
+      1F6000 .rdata
+        C000 .reloc
+        1000 .rsrc
+      F5F000 .text
+        3000 .tls
+        1000 _RDATA
+        1000 malloc_h
+
+
+Name          : webrtc.dll
+Length        : 18633728
+LastWriteTime : 10/20/2026 3:20:02 PM
+
