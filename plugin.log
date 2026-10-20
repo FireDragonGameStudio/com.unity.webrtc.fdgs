@@ -1,0 +1,196 @@
+[1/67] Building CUDA object NvCodec\CMakeFiles\NvCodec.dir\Release\Utils\BitDepth.cu.obj
+BitDepth.cu
+tmpxft_000011b8_00000000-7_BitDepth.cudafe1.cpp
+[2/67] Building CXX object NvCodec\CMakeFiles\NvCodec.dir\Release\NvCodec\NvDecoder\NvDecoder.cpp.obj
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvDecoder\NvDecoder.cpp:18:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvDecoder/NvDecoder.h:23:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\include\../Utils/NvCodecUtils.h:26:
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\include\../Utils\Logger.h(62,30): warning: 'localtime' is deprecated: This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [-Wdeprecated-declarations]
+   62 |             struct tm *ptm = localtime(&t);
+      |                              ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\time.h(524,9): note: 'localtime' has been explicitly marked deprecated here
+  524 |         _CRT_INSECURE_DEPRECATE(localtime_s)
+      |         ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(368,55): note: expanded from macro '_CRT_INSECURE_DEPRECATE'
+  368 |         #define _CRT_INSECURE_DEPRECATE(_Replacement) _CRT_DEPRECATE_TEXT(    \
+      |                                                       ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(358,47): note: expanded from macro '_CRT_DEPRECATE_TEXT'
+  358 | #define _CRT_DEPRECATE_TEXT(_Text) __declspec(deprecated(_Text))
+      |                                               ^
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvDecoder\NvDecoder.cpp:18:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvDecoder/NvDecoder.h:23:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\include\../Utils/NvCodecUtils.h:26:
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\include\../Utils\Logger.h(148,17): warning: 'sscanf' is deprecated: This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [-Wdeprecated-declarations]
+  148 |                 sscanf(szHost, "%u.%u.%u.%u", &b1, &b2, &b3, &b4);
+      |                 ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdio.h(2239,20): note: 'sscanf' has been explicitly marked deprecated here
+ 2239 |     _Check_return_ _CRT_INSECURE_DEPRECATE(sscanf_s)
+      |                    ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(368,55): note: expanded from macro '_CRT_INSECURE_DEPRECATE'
+  368 |         #define _CRT_INSECURE_DEPRECATE(_Replacement) _CRT_DEPRECATE_TEXT(    \
+      |                                                       ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(358,47): note: expanded from macro '_CRT_DEPRECATE_TEXT'
+  358 | #define _CRT_DEPRECATE_TEXT(_Text) __declspec(deprecated(_Text))
+      |                                               ^
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvDecoder\NvDecoder.cpp(724,19): warning: 'fopen' is deprecated: This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [-Wdeprecated-declarations]
+  724 |         m_fpSEI = fopen("sei_message.txt", "wb");
+      |                   ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdio.h(212,20): note: 'fopen' has been explicitly marked deprecated here
+  212 |     _Check_return_ _CRT_INSECURE_DEPRECATE(fopen_s)
+      |                    ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(368,55): note: expanded from macro '_CRT_INSECURE_DEPRECATE'
+  368 |         #define _CRT_INSECURE_DEPRECATE(_Replacement) _CRT_DEPRECATE_TEXT(    \
+      |                                                       ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(358,47): note: expanded from macro '_CRT_DEPRECATE_TEXT'
+  358 | #define _CRT_DEPRECATE_TEXT(_Text) __declspec(deprecated(_Text))
+      |                                               ^
+3 warnings generated.
+[3/67] Building CXX object NvCodec\CMakeFiles\NvCodec.dir\Release\NvCodec\NvEncoder\NvEncoderCuda.cpp.obj
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder\NvEncoderCuda.cpp:12:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder/NvEncoderCuda.h:18:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder\NvEncoder.h:22:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\NvCodecUtils.h:26:
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\Logger.h(62,30): warning: 'localtime' is deprecated: This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [-Wdeprecated-declarations]
+   62 |             struct tm *ptm = localtime(&t);
+      |                              ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\time.h(524,9): note: 'localtime' has been explicitly marked deprecated here
+  524 |         _CRT_INSECURE_DEPRECATE(localtime_s)
+      |         ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(368,55): note: expanded from macro '_CRT_INSECURE_DEPRECATE'
+  368 |         #define _CRT_INSECURE_DEPRECATE(_Replacement) _CRT_DEPRECATE_TEXT(    \
+      |                                                       ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(358,47): note: expanded from macro '_CRT_DEPRECATE_TEXT'
+  358 | #define _CRT_DEPRECATE_TEXT(_Text) __declspec(deprecated(_Text))
+      |                                               ^
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder\NvEncoderCuda.cpp:12:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder/NvEncoderCuda.h:18:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder\NvEncoder.h:22:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\NvCodecUtils.h:26:
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\Logger.h(148,17): warning: 'sscanf' is deprecated: This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [-Wdeprecated-declarations]
+  148 |                 sscanf(szHost, "%u.%u.%u.%u", &b1, &b2, &b3, &b4);
+      |                 ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdio.h(2239,20): note: 'sscanf' has been explicitly marked deprecated here
+ 2239 |     _Check_return_ _CRT_INSECURE_DEPRECATE(sscanf_s)
+      |                    ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(368,55): note: expanded from macro '_CRT_INSECURE_DEPRECATE'
+  368 |         #define _CRT_INSECURE_DEPRECATE(_Replacement) _CRT_DEPRECATE_TEXT(    \
+      |                                                       ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(358,47): note: expanded from macro '_CRT_DEPRECATE_TEXT'
+  358 | #define _CRT_DEPRECATE_TEXT(_Text) __declspec(deprecated(_Text))
+      |                                               ^
+2 warnings generated.
+[4/67] Building CXX object NvCodec\CMakeFiles\NvCodec.dir\Release\NvCodec\NvEncoder\NvEncoder.cpp.obj
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder\NvEncoder.cpp:12:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder/NvEncoder.h:22:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\NvCodecUtils.h:26:
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\Logger.h(62,30): warning: 'localtime' is deprecated: This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [-Wdeprecated-declarations]
+   62 |             struct tm *ptm = localtime(&t);
+      |                              ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\time.h(524,9): note: 'localtime' has been explicitly marked deprecated here
+  524 |         _CRT_INSECURE_DEPRECATE(localtime_s)
+      |         ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(368,55): note: expanded from macro '_CRT_INSECURE_DEPRECATE'
+  368 |         #define _CRT_INSECURE_DEPRECATE(_Replacement) _CRT_DEPRECATE_TEXT(    \
+      |                                                       ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(358,47): note: expanded from macro '_CRT_DEPRECATE_TEXT'
+  358 | #define _CRT_DEPRECATE_TEXT(_Text) __declspec(deprecated(_Text))
+      |                                               ^
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder\NvEncoder.cpp:12:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\NvCodec\NvEncoder/NvEncoder.h:22:
+In file included from D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\NvCodecUtils.h:26:
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\Logger.h(148,17): warning: 'sscanf' is deprecated: This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [-Wdeprecated-declarations]
+  148 |                 sscanf(szHost, "%u.%u.%u.%u", &b1, &b2, &b3, &b4);
+      |                 ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt\stdio.h(2239,20): note: 'sscanf' has been explicitly marked deprecated here
+ 2239 |     _Check_return_ _CRT_INSECURE_DEPRECATE(sscanf_s)
+      |                    ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(368,55): note: expanded from macro '_CRT_INSECURE_DEPRECATE'
+  368 |         #define _CRT_INSECURE_DEPRECATE(_Replacement) _CRT_DEPRECATE_TEXT(    \
+      |                                                       ^
+C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\vcruntime.h(358,47): note: expanded from macro '_CRT_DEPRECATE_TEXT'
+  358 | #define _CRT_DEPRECATE_TEXT(_Text) __declspec(deprecated(_Text))
+      |                                               ^
+2 warnings generated.
+[5/67] Building CUDA object NvCodec\CMakeFiles\NvCodec.dir\Release\Utils\ColorSpace.cu.obj
+ColorSpace.cu
+tmpxft_00001c88_00000000-7_ColorSpace.cudafe1.cpp
+[6/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCPlugin.dir\Release\pch.cpp.obj
+[7/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\cmake_pch.cxx.obj
+[8/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCPlugin.dir\Release\WebRTCPlugin.cpp.obj
+[9/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCPlugin.dir\Release\UnityRenderEvent.cpp.obj
+[10/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Context.cpp.obj
+[11/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\DataChannelObject.cpp.obj
+[12/67] Building CUDA object NvCodec\CMakeFiles\NvCodec.dir\Release\Utils\ResizeSurf.cu.obj
+ResizeSurf.cu
+tmpxft_00000954_00000000-7_ResizeSurf.cudafe1.cpp
+[13/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\AudioTrackSinkAdapter.cpp.obj
+[14/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\DummyAudioDevice.cpp.obj
+[15/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\EncodedStreamTransformer.cpp.obj
+[16/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\pch.cpp.obj
+[17/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\CreateSessionDescriptionObserver.cpp.obj
+[18/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Logger.cpp.obj
+[19/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\ProfilerMarkerFactory.cpp.obj
+[20/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\MediaStreamObserver.cpp.obj
+[21/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\PeerConnectionStatsCollectorCallback.cpp.obj
+[22/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\ScopedProfiler.cpp.obj
+[23/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\SetLocalDescriptionObserver.cpp.obj
+[24/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\PeerConnectionObject.cpp.obj
+[25/67] Building CUDA object NvCodec\CMakeFiles\NvCodec.dir\Release\Utils\Resize.cu.obj
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\NvCodecUtils.h(262): warning #177-D: variable "nSizePlaneV" was declared but never referenced
+          int nSizePlaneV = nSizePlaneU;
+              ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+Resize.cu
+tmpxft_00000d18_00000000-7_Resize.cudafe1.cpp
+[26/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityAudioDecoderFactory.cpp.obj
+[27/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityProfilerInterfaceFunctions.cpp.obj
+[28/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityAudioTrackSource.cpp.obj
+[29/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\SetRemoteDescriptionObserver.cpp.obj
+[30/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityAudioEncoderFactory.cpp.obj
+[31/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityVideoRenderer.cpp.obj
+[32/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityVideoTrackSource.cpp.obj
+[33/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityLogStream.cpp.obj
+[34/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\VideoFrame.cpp.obj
+[35/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityVideoDecoderFactory.cpp.obj
+[36/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\VideoFrameScheduler.cpp.obj
+[37/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityVideoEncoderFactory.cpp.obj
+[38/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\VideoFrameUtil.cpp.obj
+[39/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\VideoFrameAdapter.cpp.obj
+[40/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\UnityVulkanInterfaceFunctions.cpp.obj
+[41/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GpuMemoryBufferPool.cpp.obj
+[42/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GpuMemoryBuffer.cpp.obj
+[43/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Codec\H264ProfileLevelId.cpp.obj
+[44/67] Building CUDA object NvCodec\CMakeFiles\NvCodec.dir\Release\Utils\crc.cu.obj
+D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Plugin~\NvCodec\Utils\NvCodecUtils.h(262): warning #177-D: variable "nSizePlaneV" was declared but never referenced
+          int nSizePlaneV = nSizePlaneU;
+              ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+crc.cu
+tmpxft_000016a8_00000000-7_crc.cudafe1.cpp
+[45/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Codec\CreateVideoCodecFactory.cpp.obj
+[46/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Codec\SimulcastEncoderFactory.cpp.obj
+[47/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\GraphicsDevice.cpp.obj
+[48/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Codec\NvCodec\NvEncoderCudaWithCUarray.cpp.obj
+[49/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\GraphicsUtility.cpp.obj
+[50/67] Linking CXX static library NvCodec\Release\NvCodec.lib
+[51/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Codec\NvCodec\NvDecoderImpl.cpp.obj
+[52/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Codec\NvCodec\NvCodec.cpp.obj
+[53/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\Vulkan\LoadVulkanFunctions.cpp.obj
+[54/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\Vulkan\UnityVulkanInitCallback.cpp.obj
+[55/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\Vulkan\VulkanTexture2D.cpp.obj
+[56/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\Vulkan\VulkanUtility.cpp.obj
+[57/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\ScopedGraphicsDeviceLock.cpp.obj
+[58/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\Vulkan\VulkanGraphicsDevice.cpp.obj
+[59/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\D3D12\D3D12Texture2D.cpp.obj
+[60/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\Cuda\CudaContext.cpp.obj
+[61/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\D3D11\D3D11Texture2D.cpp.obj
+[62/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\Codec\NvCodec\NvEncoderImpl.cpp.obj
+[63/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\D3D11\D3D11GraphicsDevice.cpp.obj
+[64/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\Cuda\GpuMemoryBufferCudaHandle.cpp.obj
+[65/67] Building CXX object WebRTCPlugin\CMakeFiles\WebRTCLib.dir\Release\GraphicsDevice\D3D12\D3D12GraphicsDevice.cpp.obj
+[66/67] Linking CXX static library WebRTCPlugin\Release\WebRTCLib.lib
+[67/67] Linking CXX shared library D:\a\com.unity.webrtc.fdgs\com.unity.webrtc.fdgs\Runtime\Plugins\x86_64\webrtc.dll
