@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Native plugin: with Vulkan, every encoded video frame leaked a small `UnityVulkanImage` allocation describing the source texture. It is now freed once the copy is recorded.
+
 ## [3.2.0] - 2026-10-19
 
 ### Added
