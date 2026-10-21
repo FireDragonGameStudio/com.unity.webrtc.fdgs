@@ -5,6 +5,7 @@
 * [Samples](sample.md)
 * Reference
     * [Video streaming](videostreaming.md)
+    * [High resolutions](highresolution.md)
     * [Audio streaming](audiostreaming.md)
     * [DataChannel](datachannel.md)
     * [Get statistics](statistics.md)
