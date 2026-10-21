@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-10-21
+
 ### Added
 
 - `RTCRtpSendParameters.degradationPreference` (`RTCDegradationPreference`): choose whether a video encoder keeps its resolution or its frame rate under load (Unity-Technologies/com.unity.webrtc#1007). WebRTC's default lowers the resolution, which suits camera video but not cubemap or 360° content.
+- Documentation page "High resolutions": size limits per codec, the default bitrate, `degradationPreference`, and layouts for 360° and cubemap video.
 
 ### Changed
 

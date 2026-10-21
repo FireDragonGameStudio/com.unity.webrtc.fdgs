@@ -37,6 +37,7 @@ The native plugin (C++, built on Google's libwebrtc) lives in [`Plugin~`](Plugin
 | `3.1.0` | [M116](https://groups.google.com/g/discuss-webrtc/c/bEsO8Lz7psE) | First release of the fork: native plugins built in CI for all platforms, Unity 6.3 support, crash and batch mode fixes. |
 | `3.2.0` | [M156](https://webrtc.googlesource.com/src/+/refs/branch-heads/8078) | libwebrtc M156 (branch-heads/8078), built in this repository's CI for all platforms with Chromium's libc++; new RTC stats fields. |
 | `3.2.1` | [M156](https://webrtc.googlesource.com/src/+/refs/branch-heads/8078) | Fixes: Vulkan startup on some Android devices, NVENC frames mixed between tracks, H.264 level for odd resolutions, a Vulkan memory leak. |
+| `3.3.0` | [M156](https://webrtc.googlesource.com/src/+/refs/branch-heads/8078) | High resolutions: no fixed 4K limit, resolution-based default bitrate, `degradationPreference`. |
 
 Planned work is tracked in [GitHub Issues](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs/issues). See [CHANGELOG.md](CHANGELOG.md) for the history of this package, including the releases made by Unity Technologies.
 
