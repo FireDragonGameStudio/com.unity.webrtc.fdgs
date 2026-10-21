@@ -1,4 +1,3 @@
-using System;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -97,8 +96,8 @@ namespace Unity.WebRTC.RuntimeTest
             if (!WebRTC.enableLimitTextureSize)
                 WebRTC.enableLimitTextureSize = true;
 
-            int width = Math.Min(SystemInfo.maxTextureSize, 1920) + widthOver * SystemInfo.maxTextureSize;
-            int height = Math.Min(SystemInfo.maxTextureSize, 1080) + heightOver * SystemInfo.maxTextureSize;
+            int width = Mathf.Min(SystemInfo.maxTextureSize, 1920) + widthOver * SystemInfo.maxTextureSize;
+            int height = Mathf.Min(SystemInfo.maxTextureSize, 1080) + heightOver * SystemInfo.maxTextureSize;
             var error = WebRTC.ValidateTextureSize(width, height, Application.platform);
             Assert.That(error.errorType, Is.EqualTo(RTCErrorType.InvalidRange));
         }
