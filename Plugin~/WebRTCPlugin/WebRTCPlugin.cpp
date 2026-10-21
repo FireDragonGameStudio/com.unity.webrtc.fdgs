@@ -1259,6 +1259,8 @@ extern "C"
         MarshallArray<RTCRtpCodecParameters> codecs;
         MarshallArray<RTCRtpExtension> headerExtensions;
         RTCRtcpParameters rtcp;
+        // webrtc::DegradationPreference
+        Optional<int32_t> degradationPreference;
 
         RTCRtpSendParameters& operator=(const RtpParameters& src)
         {
@@ -1267,6 +1269,7 @@ extern "C"
             codecs = src.codecs;
             headerExtensions = src.header_extensions;
             rtcp = src.rtcp;
+            degradationPreference = src.degradation_preference;
             return *this;
         }
     };
@@ -1296,6 +1299,9 @@ extern "C"
             if (src->encodings[i].rid != nullptr)
                 dst.encodings[i].rid = std::string(src->encodings[i].rid);
         }
+        dst.degradation_preference = std::nullopt;
+        if (src->degradationPreference.hasValue)
+            dst.degradation_preference = static_cast<DegradationPreference>(src->degradationPreference.value);
         const ::webrtc::RTCError error = sender->SetParameters(dst);
         return error.type();
     }

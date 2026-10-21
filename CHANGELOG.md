@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `RTCRtpSendParameters.degradationPreference` (`RTCDegradationPreference`): choose whether a video encoder keeps its resolution or its frame rate under load (Unity-Technologies/com.unity.webrtc#1007). WebRTC's default lowers the resolution, which suits camera video but not cubemap or 360° content.
+
 ### Changed
 
 - Video tracks are no longer limited to 3840x2160 pixels (or 4096 per side on Windows and Linux) (Unity-Technologies/com.unity.webrtc#1087). `WebRTC.enableLimitTextureSize` now only rejects textures larger than `SystemInfo.maxTextureSize` and the minimum sizes some encoders need. An encoder that cannot encode a size (e.g. NVENC H.264 above 4096 per side or above H.264 level 5.2) fails to initialize with a log message, and WebRTC switches to the next negotiated codec.
