@@ -1,0 +1,23 @@
+The no-dev option is deprecated.  Use -Wno-author instead.
+-- The C compiler identification is Clang 24.0.0
+-- The CXX compiler identification is Clang 24.0.0
+-- The ASM compiler identification is Clang with GNU-like command-line
+-- Found assembler: /Users/runner/work/_temp/clang/bin/clang
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /Users/runner/work/_temp/clang/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /Users/runner/work/_temp/clang/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- libwebrtc uses its bundled libc++: -nostdinc++;-isystem/Users/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/buildtools/third_party/libc++;-isystem/Users/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/third_party/libc++/src/include;-isystem/Users/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/third_party/libc++abi/src/include;-DCR_XCODE_BUILD=17C529;-DCR_CLANG_REVISION=llvmorg-24-init-7747-g62397f8b-31;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE;-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS;-D_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS;-D_LIBCPP_INSTRUMENTED_WITH_ASAN=0;-DCR_LIBCXX_REVISION=97b436da4c33663581d394f4ee0a5977fc38c2f4;-DWEBRTC_ENABLE_PROTOBUF=1;-DWEBRTC_STRICT_FIELD_TRIALS=0;-DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;-DRTC_ENABLE_VP9;-DRTC_DAV1D_IN_INTERNAL_DECODER_FACTORY;-DWEBRTC_HAVE_SCTP;-DWEBRTC_ENCODER_PSNR_STATS;-DWEBRTC_LIBRARY_IMPL;-DWEBRTC_ENABLE_AVX2;-DWEBRTC_DEPRECATE_PLAN_B;-DWEBRTC_WITHOUT_RUST;-DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0;-DWEBRTC_POSIX;-DWEBRTC_MAC;-DABSL_ALLOCATOR_NOTHROW=1
+-- Found WebRTC: debug;/Users/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/lib/libwebrtc.a;optimized;/Users/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/lib/libwebrtc.a
+-- Configuring done (5.5s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/macos
