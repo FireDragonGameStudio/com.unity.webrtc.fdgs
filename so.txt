@@ -1,0 +1,7 @@
+Required glibc: GLIBC_2.34
+  NEEDED               libm.so.6
+  NEEDED               libgcc_s.so.1
+  NEEDED               libc.so.6
+  NEEDED               ld-linux-x86-64.so.2
+Exported std:: symbols: 8
+-rwxr-xr-x 1 runner runner 23701264 Oct 21 16:55 Runtime/Plugins/x86_64/libwebrtc.so
