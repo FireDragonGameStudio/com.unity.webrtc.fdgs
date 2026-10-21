@@ -22,6 +22,16 @@ namespace Unity.WebRTC
         private RTCPeerConnection peer;
         private RTCRtpTransform transform;
 
+        // The maxBitrate this sender filled in for each encoding (by index) that had none, see DefaultMaxBitrate.
+        private ulong?[] defaultMaxBitrates = Array.Empty<ulong?>();
+
+        // libwebrtc limits encodings without maxBitrate to 2.5 Mbps above 960x540, far too little for 1080p and up.
+        // A video encoding without maxBitrate gets this many bits per pixel and frame instead.
+        internal const double DefaultBitsPerPixel = 0.07;
+        // Frame rate for the default when the encoding has no maxFramerate (libwebrtc's default maximum).
+        internal const uint DefaultFramerate = 60;
+        internal const ulong MaxDefaultBitrate = 100_000_000;
+
         internal RTCRtpSender(IntPtr ptr, RTCPeerConnection peer) : base(ptr)
         {
             WebRTC.Table.Add(self, this);
@@ -269,6 +279,8 @@ namespace Unity.WebRTC
                 }
             }
 
+            FillDefaultMaxBitrates(parameters);
+
             parameters.CreateInstance(out RTCRtpSendParametersInternal instance);
             IntPtr ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(instance));
             Marshal.StructureToPtr(instance, ptr, false);
@@ -298,7 +310,73 @@ namespace Unity.WebRTC
         public bool ReplaceTrack(MediaStreamTrack track)
         {
             IntPtr trackPtr = track?.GetSelfOrThrow() ?? IntPtr.Zero;
-            return NativeMethods.SenderReplaceTrack(GetSelfOrThrow(), trackPtr);
+            if (!NativeMethods.SenderReplaceTrack(GetSelfOrThrow(), trackPtr))
+                return false;
+            // The new track may have another size: update the default bitrates.
+            ApplyDefaultMaxBitrates();
+            return true;
+        }
+
+        /// <summary>
+        ///     The maximum bitrate a video encoding of the given size gets when its `maxBitrate` is not set, or null if
+        ///     libwebrtc's own default is higher.
+        /// </summary>
+        internal static ulong? DefaultMaxBitrate(int width, int height, uint? maxFramerate)
+        {
+            if (width <= 0 || height <= 0)
+                return null;
+
+            // libwebrtc's default (GetMaxDefaultVideoBitrateKbps in video/config/encoder_stream_factory.cc).
+            long pixels = (long)width * height;
+            ulong libwebrtcDefault =
+                pixels <= 320 * 240 ? 600_000UL :
+                pixels <= 640 * 480 ? 1_700_000UL :
+                pixels <= 960 * 540 ? 2_000_000UL : 2_500_000UL;
+
+            double framerate = maxFramerate.GetValueOrDefault(DefaultFramerate);
+            ulong bitrate = (ulong)Math.Min(pixels * framerate * DefaultBitsPerPixel, MaxDefaultBitrate);
+            return bitrate > libwebrtcDefault ? bitrate : (ulong?)null;
+        }
+
+        // Sets maxBitrate of the video encodings that have none, and updates the ones that still hold the default this
+        // sender set (the size or frame rate may have changed). Returns whether any encoding changed.
+        bool FillDefaultMaxBitrates(RTCRtpSendParameters parameters)
+        {
+            if (!(Track is VideoStreamTrack videoTrack) || videoTrack.Texture == null || parameters.encodings == null)
+                return false;
+
+            var texture = videoTrack.Texture;
+            var applied = new ulong?[parameters.encodings.Length];
+            bool changed = false;
+            for (int i = 0; i < parameters.encodings.Length; i++)
+            {
+                var encoding = parameters.encodings[i];
+                ulong? previous = i < defaultMaxBitrates.Length ? defaultMaxBitrates[i] : null;
+                if (encoding.maxBitrate.HasValue && encoding.maxBitrate != previous)
+                    continue;
+
+                double scale = Math.Max(encoding.scaleResolutionDownBy.GetValueOrDefault(1.0), 1.0);
+                ulong? bitrate = DefaultMaxBitrate(
+                    (int)(texture.width / scale), (int)(texture.height / scale), encoding.maxFramerate);
+                if (encoding.maxBitrate != bitrate)
+                {
+                    encoding.maxBitrate = bitrate;
+                    changed = true;
+                }
+                applied[i] = bitrate;
+            }
+            defaultMaxBitrates = applied;
+            return changed;
+        }
+
+        internal void ApplyDefaultMaxBitrates()
+        {
+            var parameters = GetParameters();
+            if (!FillDefaultMaxBitrates(parameters))
+                return;
+            var error = SetParameters(parameters);
+            if (error.errorType != RTCErrorType.None)
+                WebRTC.Logger.Log(LogType.Warning, $"Setting the default maxBitrate failed: {error.errorType} {error.message}");
         }
     }
 }

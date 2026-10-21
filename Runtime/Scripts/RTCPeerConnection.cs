@@ -722,7 +722,10 @@ namespace Unity.WebRTC
             if (error != RTCErrorType.None)
                 throw new InvalidOperationException($"error occurred :{error}");
             cacheTracks.Add(track);
-            return CreateSender(ptr);
+            var sender = CreateSender(ptr);
+            if (track is VideoStreamTrack)
+                sender.ApplyDefaultMaxBitrates();
+            return sender;
         }
 
         /// <summary>
@@ -769,7 +772,10 @@ namespace Unity.WebRTC
                 throw new ArgumentNullException("track is null.");
             IntPtr ptr = PeerConnectionAddTransceiver(
                 GetSelfOrThrow(), track.GetSelfOrThrow(), init);
-            return CreateTransceiver(ptr);
+            var transceiver = CreateTransceiver(ptr);
+            if (track is VideoStreamTrack)
+                transceiver.Sender.ApplyDefaultMaxBitrates();
+            return transceiver;
         }
 
         /// <summary>
