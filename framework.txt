@@ -1,0 +1,334 @@
++ bin=Runtime/Plugins/iOS/webrtc.framework/webrtc
++ ls -lR Runtime/Plugins/iOS/webrtc.framework
+total 32528
+-rw-r--r--  1 runner  staff      1708 Oct 21 17:11 Info.plist
+-rwxr-xr-x  1 runner  staff  16647016 Oct 21 17:11 webrtc
++ test -f Runtime/Plugins/iOS/webrtc.framework/webrtc
++ strip -x Runtime/Plugins/iOS/webrtc.framework/webrtc
++ lipo Runtime/Plugins/iOS/webrtc.framework/webrtc -verify_arch arm64
+++ nm -gU Runtime/Plugins/iOS/webrtc.framework/webrtc
++ exports='00000000000114b8 T _AudioSourceProcessLocalAudio
+00000000000114d4 T _AudioTrackAddSink
+00000000000114e0 T _AudioTrackRemoveSink
+00000000000114ec T _AudioTrackSinkProcessAudio
+00000000000096d0 T _ContextAddRefPtr
+000000000000a29c T _ContextCreate
+00000000000094d8 T _ContextCreateAudioTrack
+00000000000114cc T _ContextCreateAudioTrackSink
+00000000000093fc T _ContextCreateAudioTrackSource
+000000000000e89c T _ContextCreateDataChannel
+0000000000009758 T _ContextCreateFrameTransformer
+0000000000008f30 T _ContextCreateMediaStream
+000000000000a340 T _ContextCreatePeerConnection
+000000000000a3ac T _ContextCreatePeerConnectionWithConfig
+0000000000009128 T _ContextCreateVideoTrack
+0000000000009324 T _ContextCreateVideoTrackSource
+00000000000114d0 T _ContextDeleteAudioTrackSink
+000000000000ea54 T _ContextDeleteDataChannel
+000000000000a54c T _ContextDeletePeerConnection
+0000000000009700 T _ContextDeleteRefPtr
+000000000000b468 T _ContextDeleteStatsReport
+000000000000a31c T _ContextDestroy
+00000000000107d0 T _ContextGetReceiverCapabilities
+00000000000106c4 T _ContextGetSenderCapabilities
+000000000000b464 T _ContextGetStatsList
+000000000000a050 T _ContextGetVideoSource
+0000000000009120 T _ContextRegisterMediaStreamObserver
+0000000000009320 T _ContextStopMediaStreamTrack
+0000000000009124 T _ContextUnRegisterMediaStreamObserver
+000000000000ead8 T _CreateIceCandidate
+000000000000ea88 T _CreateSessionDescriptionObserverRegisterCallback
+000000000000a1f0 T _CreateVideoRenderer
+00000000000113f8 T _DataChannelClose
+0000000000011118 T _DataChannelGetBufferedAmount
+0000000000010bec T _DataChannelGetID
+0000000000010f44 T _DataChannelGetLabel
+00000000000110e4 T _DataChannelGetMaxRetransmitTime
+00000000000110bc T _DataChannelGetMaxRetransmits
+0000000000011124 T _DataChannelGetNegotiated
+000000000001110c T _DataChannelGetOrdered
+0000000000011000 T _DataChannelGetProtocol
+0000000000011130 T _DataChannelGetReadyState
+000000000001144c T _DataChannelRegisterOnClose
+0000000000011470 T _DataChannelRegisterOnError
+0000000000011404 T _DataChannelRegisterOnMessage
+0000000000011428 T _DataChannelRegisterOnOpen
+000000000001113c T _DataChannelSend
+0000000000011304 T _DataChannelSendBinary
+000000000000ed4c T _DeleteIceCandidate
+000000000000a1f8 T _DeleteVideoRenderer
+00000000000117ec T _FrameGetData
+0000000000011528 T _FrameGetSsrc
+00000000000114f4 T _FrameGetTimestamp
+0000000000011820 T _FrameSetData
+00000000000117e8 T _FrameTransformerSendFrameToSink
+0000000000017174 T _GetBatchUpdateEventFunc
+0000000000017504 T _GetBatchUpdateEventID
+0000000000017510 T _GetUpdateTextureFunc
+000000000000a1f4 T _GetVideoRendererId
+000000000000edac T _IceCandidateGetCandidate
+000000000000f3c4 T _IceCandidateGetSdp
+000000000000f3bc T _IceCandidateGetSdpLineIndex
+000000000000f4f4 T _IceCandidateGetSdpMid
+0000000000009854 T _MediaStreamAddTrack
+0000000000009e78 T _MediaStreamGetAudioTracks
+0000000000009b9c T _MediaStreamGetID
+0000000000009ca0 T _MediaStreamGetVideoTracks
+0000000000009c58 T _MediaStreamRegisterOnAddTrack
+0000000000009c7c T _MediaStreamRegisterOnRemoveTrack
+00000000000099f8 T _MediaStreamRemoveTrack
+000000000000a1d8 T _MediaStreamTrackGetEnabled
+000000000000a11c T _MediaStreamTrackGetID
+000000000000a060 T _MediaStreamTrackGetKind
+000000000000a110 T _MediaStreamTrackGetReadyState
+000000000000a1e4 T _MediaStreamTrackSetEnabled
+000000000000eac8 T _PeerConnectionAddIceCandidate
+000000000000a590 T _PeerConnectionAddTrack
+000000000000a858 T _PeerConnectionAddTransceiver
+000000000000a970 T _PeerConnectionAddTransceiverWithInit
+000000000000ac8c T _PeerConnectionAddTransceiverWithType
+000000000000ad48 T _PeerConnectionAddTransceiverWithTypeAndInit
+000000000000de70 T _PeerConnectionCanTrickleIceCandidates
+000000000000a57c T _PeerConnectionClose
+000000000000e814 T _PeerConnectionCreateAnswer
+000000000000e78c T _PeerConnectionCreateOffer
+000000000000b050 T _PeerConnectionGetConfiguration
+000000000000dfa0 T _PeerConnectionGetCurrentLocalDescription
+000000000000dfdc T _PeerConnectionGetCurrentRemoteDescription
+000000000000deb0 T _PeerConnectionGetLocalDescription
+000000000000df28 T _PeerConnectionGetPendingLocalDescription
+000000000000df64 T _PeerConnectionGetPendingRemoteDescription
+000000000000e018 T _PeerConnectionGetReceivers
+000000000000deec T _PeerConnectionGetRemoteDescription
+000000000000e294 T _PeerConnectionGetSenders
+000000000000b180 T _PeerConnectionGetStats
+000000000000e510 T _PeerConnectionGetTransceivers
+000000000000f5e8 T _PeerConnectionIceConditionState
+000000000000f608 T _PeerConnectionIceGatheringState
+000000000000b334 T _PeerConnectionReceiverGetStats
+000000000000ea68 T _PeerConnectionRegisterConnectionStateChange
+000000000000ea58 T _PeerConnectionRegisterIceConnectionChange
+000000000000ea60 T _PeerConnectionRegisterIceGatheringChange
+000000000000f618 T _PeerConnectionRegisterOnDataChannel
+000000000000ea70 T _PeerConnectionRegisterOnIceCandidate
+000000000000f630 T _PeerConnectionRegisterOnRemoveTrack
+000000000000f620 T _PeerConnectionRegisterOnRenegotiationNeeded
+000000000000f628 T _PeerConnectionRegisterOnTrack
+000000000000ae3c T _PeerConnectionRemoveTrack
+000000000000a580 T _PeerConnectionRestartIce
+000000000000b204 T _PeerConnectionSenderGetStats
+000000000000af00 T _PeerConnectionSetConfiguration
+000000000000d8cc T _PeerConnectionSetLocalDescription
+000000000000dab0 T _PeerConnectionSetLocalDescriptionWithoutDescription
+000000000000dc8c T _PeerConnectionSetRemoteDescription
+000000000000f5f8 T _PeerConnectionSignalingState
+000000000000f5d8 T _PeerConnectionState
+0000000000010bf8 T _ReceiverGetSources
+0000000000010a14 T _ReceiverGetStreams
+00000000000109c4 T _ReceiverGetTrack
+0000000000010eb8 T _ReceiverSetTransform
+000000000000a26c T _RegisterDebugLog
+0000000000010134 T _SenderGetParameters
+00000000000108e8 T _SenderGetTrack
+00000000000108dc T _SenderReplaceTrack
+00000000000103a4 T _SenderSetParameters
+0000000000010938 T _SenderSetTransform
+0000000000011494 T _SetCurrentContext
+0000000000011858 T _SetGraphicsSyncTimeout
+000000000000ea98 T _SetLocalDescriptionObserverRegisterCallback
+000000000000eaa8 T _SetRemoteDescriptionObserverRegisterCallback
+000000000000eab8 T _SetTransformedFrameRegisterCallback
+000000000000ea78 T _StatsCollectorRegisterCallback
+000000000000b528 T _StatsGetId
+000000000000b46c T _StatsGetJson
+000000000000b734 T _StatsGetMembers
+000000000000b520 T _StatsGetTimestamp
+000000000000b60c T _StatsGetType
+000000000000ba58 T _StatsMemberGetBool
+000000000000c07c T _StatsMemberGetBoolArray
+000000000000be24 T _StatsMemberGetDouble
+000000000000c8f8 T _StatsMemberGetDoubleArray
+000000000000bb14 T _StatsMemberGetInt
+000000000000c3c8 T _StatsMemberGetIntArray
+000000000000bc9c T _StatsMemberGetLong
+000000000000c660 T _StatsMemberGetLongArray
+000000000000d30c T _StatsMemberGetMapStringDouble
+000000000000cd6c T _StatsMemberGetMapStringUint64
+000000000000b904 T _StatsMemberGetName
+000000000000bee8 T _StatsMemberGetString
+000000000000ca44 T _StatsMemberGetStringArray
+000000000000d8ac T _StatsMemberGetType
+000000000000bbd8 T _StatsMemberGetUnsignedInt
+000000000000c514 T _StatsMemberGetUnsignedIntArray
+000000000000bd60 T _StatsMemberGetUnsignedLong
+000000000000c7ac T _StatsMemberGetUnsignedLongArray
+000000000000b900 T _StatsMemberIsDefined
+000000000000f638 T _TransceiverGetCurrentDirection
+000000000000f6f8 T _TransceiverGetDirection
+000000000000ff5c T _TransceiverGetMid
+0000000000010094 T _TransceiverGetReceiver
+00000000000100e4 T _TransceiverGetSender
+000000000000f768 T _TransceiverSetCodecPreferences
+000000000000f704 T _TransceiverSetDirection
+000000000000f694 T _TransceiverStop
+0000000000016e60 T _UnityWebRTCPluginLoad
+0000000000016f84 T _UnityWebRTCPluginUnload
+0000000000011540 T _VideoFrameGetMetadata
+0000000000011534 T _VideoFrameIsKeyFrame
+00000000000106b8 T _VideoSourceGetSyncApplicationFramerate
+00000000000106c0 T _VideoSourceSetSyncApplicationFramerate
+000000000000a1fc T _VideoTrackAddOrUpdateSink
+000000000000a260 T _VideoTrackRemoveSink'
++ for name in ContextCreate GetBatchUpdateEventFunc UnityWebRTCPluginLoad UnityWebRTCPluginUnload
++ grep -qw _ContextCreate
++ for name in ContextCreate GetBatchUpdateEventFunc UnityWebRTCPluginLoad UnityWebRTCPluginUnload
++ grep -qw _GetBatchUpdateEventFunc
++ for name in ContextCreate GetBatchUpdateEventFunc UnityWebRTCPluginLoad UnityWebRTCPluginUnload
++ grep -qw _UnityWebRTCPluginLoad
++ for name in ContextCreate GetBatchUpdateEventFunc UnityWebRTCPluginLoad UnityWebRTCPluginUnload
++ grep -qw _UnityWebRTCPluginUnload
++ otool -L Runtime/Plugins/iOS/webrtc.framework/webrtc
++ grep -E 'libc\+\+|libstdc\+\+'
++ cat Runtime/Plugins/iOS/webrtc.framework/Info.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Info.plist of webrtc.framework (iOS) with the keys Xcode wrote when the framework was built with the
+     Xcode generator. Configured twice: by configure_file in Plugin~/WebRTCPlugin/CMakeLists.txt (at-sign
+     variables), then by CMake for the framework (MACOSX_FRAMEWORK_* target properties). -->
+<plist version="1.0">
+<dict>
+	<key>BuildMachineOSBuild</key>
+	<string>24G830</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>webrtc</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.unity.webrtc</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.4.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>2.4.0</string>
+	<key>CSResourcesFileMapped</key>
+	<true/>
+	<key>DTPlatformBuild</key>
+	<string>22F76</string>
+	<key>DTPlatformName</key>
+	<string>iphoneos</string>
+	<key>DTPlatformVersion</key>
+	<string>18.5</string>
+	<key>DTSDKBuild</key>
+	<string>22F76</string>
+	<key>DTSDKName</key>
+	<string>iphoneos18.5</string>
+	<key>DTXcode</key>
+	<string>1640</string>
+	<key>DTXcodeBuild</key>
+	<string>16F6</string>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+	</array>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+</dict>
+</plist>
++ plutil -lint Runtime/Plugins/iOS/webrtc.framework/Info.plist
+Runtime/Plugins/iOS/webrtc.framework/Info.plist: OK
++ plutil -p Runtime/Plugins/iOS/webrtc.framework/Info.plist
+{
+  "BuildMachineOSBuild" => "24G830"
+  "CFBundleDevelopmentRegion" => "English"
+  "CFBundleExecutable" => "webrtc"
+  "CFBundleIdentifier" => "com.unity.webrtc"
+  "CFBundleInfoDictionaryVersion" => "6.0"
+  "CFBundlePackageType" => "FMWK"
+  "CFBundleShortVersionString" => "2.4.0"
+  "CFBundleSignature" => "????"
+  "CFBundleSupportedPlatforms" => [
+    0 => "iPhoneOS"
+  ]
+  "CFBundleVersion" => "2.4.0"
+  "CSResourcesFileMapped" => 1
+  "DTPlatformBuild" => "22F76"
+  "DTPlatformName" => "iphoneos"
+  "DTPlatformVersion" => "18.5"
+  "DTSDKBuild" => "22F76"
+  "DTSDKName" => "iphoneos18.5"
+  "DTXcode" => "1640"
+  "DTXcodeBuild" => "16F6"
+  "MinimumOSVersion" => "13.0"
+  "UIDeviceFamily" => [
+    0 => 1
+  ]
+  "UIRequiredDeviceCapabilities" => [
+    0 => "arm64"
+  ]
+}
++ lipo -info Runtime/Plugins/iOS/webrtc.framework/webrtc
+Non-fat file: Runtime/Plugins/iOS/webrtc.framework/webrtc is architecture: arm64
++ vtool -show-build Runtime/Plugins/iOS/webrtc.framework/webrtc
++ grep -E 'platform|minos|sdk'
+ platform IOS
+    minos 13.0
+      sdk 18.5
++ otool -L Runtime/Plugins/iOS/webrtc.framework/webrtc
+Runtime/Plugins/iOS/webrtc.framework/webrtc:
+	@rpath/webrtc.framework/webrtc (compatibility version 0.0.0, current version 0.0.0)
+	/System/Library/Frameworks/AudioToolbox.framework/AudioToolbox (compatibility version 1.0.0, current version 1000.0.0)
+	/System/Library/Frameworks/AVFoundation.framework/AVFoundation (compatibility version 1.0.0, current version 2.0.0)
+	/System/Library/Frameworks/CoreAudio.framework/CoreAudio (compatibility version 1.0.0, current version 1.0.0)
+	/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation (compatibility version 150.0.0, current version 3502.0.0)
+	/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics (compatibility version 64.0.0, current version 1889.5.3)
+	/System/Library/Frameworks/CoreMedia.framework/CoreMedia (compatibility version 1.0.0, current version 3225.7.1)
+	/System/Library/Frameworks/CoreServices.framework/CoreServices (compatibility version 1.0.0, current version 1226.0.0)
+	/System/Library/Frameworks/CoreTelephony.framework/CoreTelephony (compatibility version 1.0.0, current version 0.0.0)
+	/System/Library/Frameworks/CoreVideo.framework/CoreVideo (compatibility version 1.2.0, current version 1.5.0)
+	/System/Library/Frameworks/Foundation.framework/Foundation (compatibility version 300.0.0, current version 3502.0.0)
+	/System/Library/Frameworks/GLKit.framework/GLKit (compatibility version 1.0.0, current version 129.0.0)
+	/System/Library/Frameworks/IOSurface.framework/IOSurface (compatibility version 1.0.0, current version 1.0.0)
+	/System/Library/Frameworks/Metal.framework/Metal (compatibility version 1.0.0, current version 368.12.0)
+	/System/Library/Frameworks/MetalKit.framework/MetalKit (compatibility version 1.0.0, current version 168.6.0)
+	/System/Library/Frameworks/Network.framework/Network (compatibility version 1.0.0, current version 4277.122.6)
+	/System/Library/Frameworks/OpenGLES.framework/OpenGLES (compatibility version 1.0.0, current version 1.0.0)
+	/System/Library/Frameworks/QuartzCore.framework/QuartzCore (compatibility version 1.2.0, current version 1.11.0)
+	/System/Library/Frameworks/Security.framework/Security (compatibility version 1.0.0, current version 61439.122.1)
+	/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration (compatibility version 1.0.0, current version 1351.120.3)
+	/System/Library/Frameworks/UIKit.framework/UIKit (compatibility version 1.0.0, current version 8506.1.101)
+	/System/Library/Frameworks/VideoToolbox.framework/VideoToolbox (compatibility version 1.0.0, current version 3225.7.1)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1351.0.0)
++ otool -D Runtime/Plugins/iOS/webrtc.framework/webrtc
+Runtime/Plugins/iOS/webrtc.framework/webrtc:
+@rpath/webrtc.framework/webrtc
+++ nm -gU Runtime/Plugins/iOS/webrtc.framework/webrtc
+++ wc -l
++ echo 'Exported symbols:      172'
+Exported symbols:      172
++ for key in CFBundleExecutable CFBundleIdentifier CFBundlePackageType CFBundleVersion MinimumOSVersion
++ /usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' Runtime/Plugins/iOS/webrtc.framework/Info.plist
++ for key in CFBundleExecutable CFBundleIdentifier CFBundlePackageType CFBundleVersion MinimumOSVersion
++ /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' Runtime/Plugins/iOS/webrtc.framework/Info.plist
++ for key in CFBundleExecutable CFBundleIdentifier CFBundlePackageType CFBundleVersion MinimumOSVersion
++ /usr/libexec/PlistBuddy -c 'Print :CFBundlePackageType' Runtime/Plugins/iOS/webrtc.framework/Info.plist
++ for key in CFBundleExecutable CFBundleIdentifier CFBundlePackageType CFBundleVersion MinimumOSVersion
++ /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' Runtime/Plugins/iOS/webrtc.framework/Info.plist
++ for key in CFBundleExecutable CFBundleIdentifier CFBundlePackageType CFBundleVersion MinimumOSVersion
++ /usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' Runtime/Plugins/iOS/webrtc.framework/Info.plist
+++ /usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' Runtime/Plugins/iOS/webrtc.framework/Info.plist
++ test 13.0 = 13.0
+     434 undefined symbols from AudioToolbox AVFoundation CoreFoundation CoreMedia CoreVideo Foundation libobjc libSystem Metal Network UIKit VideoToolbox 
