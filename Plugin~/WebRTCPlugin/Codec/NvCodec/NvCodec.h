@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cuda.h>
+#include <utility>
 #include <vector>
 
 #include <api/environment/environment.h>
@@ -22,6 +23,8 @@ namespace webrtc
 
     int SupportedEncoderCount(CUcontext context);
     H264Level SupportedMaxH264Level(CUcontext context);
+    // The largest frame width and height NVENC can encode as H.264 on this device.
+    std::pair<int, int> SupportedMaxH264Size(CUcontext context);
     std::vector<SdpVideoFormat> SupportedNvEncoderCodecs(CUcontext context);
     std::vector<SdpVideoFormat> SupportedNvDecoderCodecs(CUcontext context);
 

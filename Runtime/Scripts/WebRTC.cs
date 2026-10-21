@@ -855,6 +855,12 @@ namespace Unity.WebRTC
         /// <summary>
         ///     Controls whether texture size constraints are applied during WebRTC streaming.
         /// </summary>
+        /// <remarks>
+        ///     When enabled (the default), video track textures and `scaleResolutionDownBy` results must not be larger
+        ///     than `SystemInfo.maxTextureSize` and not smaller than the minimum sizes some encoders and devices need.
+        ///     There is no fixed maximum resolution: an encoder that cannot encode the size fails to initialize, and
+        ///     WebRTC switches to the next negotiated codec. See the "High resolutions" documentation page.
+        /// </remarks>
         public static bool enableLimitTextureSize
         {
             get { return s_context.limitTextureSize; }
@@ -939,42 +945,33 @@ namespace Unity.WebRTC
                 return new RTCError { errorType = RTCErrorType.None };
             }
 
-            const int maxPixelCount = 3840 * 2160;
-
-            // Using codec is determined when the Encoder initialization process.
-            // Therefore, it is not possible to limit the resolution before that. (supported resolutions depend on the codec and its profile.)
-            // For workaround, all 4k resolutions and above are considered as errors.
-            // (Because under 4k resolution is almost supported by the supported codecs.)
-            // todo: Resize the texture size when encoder initialization process, or fall back to another encoder.
-            if (width * height > maxPixelCount)
+            // There is no fixed maximum: each encoder checks the frame size when it is initialized, and when one
+            // cannot encode it (e.g. NVENC H.264 above 4096 pixels or H.264 level 5.2), WebRTC switches to the next
+            // negotiated codec. Only sizes the graphics device cannot create as a texture are rejected here.
+            int maxTextureSize = SystemInfo.maxTextureSize;
+            if (maxTextureSize > 0 && (width > maxTextureSize || height > maxTextureSize))
             {
                 return new RTCError
                 {
                     errorType = RTCErrorType.InvalidRange,
-                    message = $"Texture pixel count is invalid. " +
-                              $"width:{width} x height:{height} is over 4k pixel count ({maxPixelCount})."
+                    message = $"Texture size is invalid. width:{width} x height:{height} is larger than " +
+                              $"the maximum texture size of the graphics device ({maxTextureSize})."
                 };
             }
 
-            // Check NVCodec capabilities
-            // todo(kazuki):: The constant values should be replaced by values that are got from NvCodec API.
-            // Use "nvEncGetEncodeCaps" function which is provided by the NvCodec API.
+            // NVENC fails to initialize below these sizes.
             if (NvEncSupportedPlatdorm(platform))
             {
                 const int minWidth = 145;
-                const int maxWidth = 4096;
                 const int minHeight = 49;
-                const int maxHeight = 4096;
 
-                if (width < minWidth || maxWidth < width ||
-                    height < minHeight || maxHeight < height)
+                if (width < minWidth || height < minHeight)
                 {
                     return new RTCError
                     {
                         errorType = RTCErrorType.InvalidRange,
                         message = $"Texture size is invalid. " +
-                                  $"minWidth:{minWidth}, maxWidth:{maxWidth} " +
-                                  $"minHeight:{minHeight}, maxHeight:{maxHeight} " +
+                                  $"minWidth:{minWidth}, minHeight:{minHeight} " +
                                   $"current size width:{width} height:{height}"
                     };
                 }
