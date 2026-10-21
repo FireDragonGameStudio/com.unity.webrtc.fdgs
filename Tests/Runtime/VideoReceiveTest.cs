@@ -111,6 +111,49 @@ namespace Unity.WebRTC.RuntimeTest
 
             Object.DestroyImmediate(test.gameObject);
         }
+
+        internal static Vector2Int[] highResolutions =
+        {
+            new Vector2Int(3840, 2160),
+            new Vector2Int(4096, 2048), // 2:1 equirectangular 360° video
+        };
+
+        // Above 4K the track must arrive in full size: no fixed texture size limit, enough default bitrate, and
+        // MaintainResolution keeps WebRTC from sending a downscaled stream while the bandwidth ramps up.
+        [UnityTest, LongRunning]
+        [Timeout(60000)]
+        [ConditionalIgnoreMultiple(ConditionalIgnore.UnsupportedPlatformVideoDecoder,
+            "VideoStreamTrack.UpdateTexture is not supported on Direct3D12 for decoder")]
+        [ConditionalIgnoreMultiple(ConditionalIgnore.UnsupportedPlatformOpenGL,
+            "Not support VideoStreamTrack for OpenGL or without a graphics device")]
+        public IEnumerator VideoReceiveHighResolution([ValueSource(nameof(highResolutions))] Vector2Int size)
+        {
+            if (SystemInfo.maxTextureSize < Mathf.Max(size.x, size.y))
+                Assert.Ignore($"The graphics device does not support {size.x}x{size.y} textures.");
+
+            var test = new MonoBehaviourTest<VideoReceivePeers>();
+            test.component.SetResolution(size.x, size.y);
+            test.component.SetCodec(videoCodec);
+            yield return test;
+
+            test.component.CreatePeers();
+            test.component.CreateVideoStreamTrack();
+            test.component.AddTrack();
+            test.component.SetDegradationPreference(RTCDegradationPreference.MaintainResolution);
+
+            yield return test.component.Signaling();
+
+            var receiveFullSize = new WaitUntilWithTimeout(() =>
+                test.component.RecvTexture != null &&
+                test.component.RecvTexture.width == size.x &&
+                test.component.RecvTexture.height == size.y, 45000);
+            yield return receiveFullSize;
+            Assert.That(receiveFullSize.IsCompleted, Is.True,
+                () => $"Received {test.component.RecvTexture?.width}x{test.component.RecvTexture?.height}, expected {size.x}x{size.y}");
+
+            test.component.Clear();
+            Object.DestroyImmediate(test.gameObject);
+        }
     }
 
     class VideoReceivePeers : MonoBehaviour, IMonoBehaviourTest
@@ -187,6 +230,14 @@ namespace Unity.WebRTC.RuntimeTest
                 var transceiver = offerPc.GetTransceivers().First(t => t.Sender == sender);
                 transceiver.SetCodecPreferences(new[] { videoCodec });
             }
+        }
+
+        public void SetDegradationPreference(RTCDegradationPreference preference)
+        {
+            var parameters = sender.GetParameters();
+            parameters.degradationPreference = preference;
+            var error = sender.SetParameters(parameters);
+            Assert.That(error.errorType, Is.EqualTo(RTCErrorType.None), () => error.message);
         }
 
         public void RemoveTrack()
