@@ -1,0 +1,128 @@
+[0/82] glad_gl_core_46-generate
+Cleaning /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_gl_core_46
+Generating with args --out-path /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_gl_core_46 --api gl:core=4.6 --reproducible c --loader
+[21.10.2026 17:11:35][DEBUG	][glad.plugin	]: loaded language c: <class 'glad.generator.c.__init__.CGenerator'>
+[21.10.2026 17:11:35][DEBUG	][glad.plugin	]: loaded language rust: <class 'glad.generator.rust.__init__.RustGenerator'>
+[21.10.2026 17:11:35][DEBUG	][glad.plugin	]: loaded specification egl: <class 'glad.specification.EGL'>
+[21.10.2026 17:11:35][DEBUG	][glad.plugin	]: loaded specification gl: <class 'glad.specification.GL'>
+[21.10.2026 17:11:35][DEBUG	][glad.plugin	]: loaded specification glx: <class 'glad.specification.GLX'>
+[21.10.2026 17:11:35][DEBUG	][glad.plugin	]: loaded specification vk: <class 'glad.specification.VK'>
+[21.10.2026 17:11:35][DEBUG	][glad.plugin	]: loaded specification wgl: <class 'glad.specification.WGL'>
+[21.10.2026 17:11:35][INFO	][glad   	]: getting 'gl' specification from remote location
+[21.10.2026 17:11:35][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/main/xml/gl.xml'
+[21.10.2026 17:11:35][INFO	][glad   	]: generating gl:core/gl=Version(major=4, minor=6)
+[21.10.2026 17:11:35][INFO	][glad   	]: adding all extensions for api gl to result
+[21.10.2026 17:11:36][INFO	][glad   	]: generating feature set FeatureSet(name=gl, info=[gl:core=4.6], extensions=619)
+[21.10.2026 17:11:40][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h'
+Writing /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_gl_core_46/args.txt
+[12/82] Building CUDA object NvCodec/CMakeFiles/NvCodec.dir/Release/Utils/ResizeSurf.cu.o
+[13/82] glad_vulkan_11-generate
+Cleaning /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_vulkan_11
+Generating with args --out-path /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_vulkan_11 --api vulkan=1.1 --reproducible c --loader
+[21.10.2026 17:11:40][DEBUG	][glad.plugin	]: loaded language c: <class 'glad.generator.c.__init__.CGenerator'>
+[21.10.2026 17:11:40][DEBUG	][glad.plugin	]: loaded language rust: <class 'glad.generator.rust.__init__.RustGenerator'>
+[21.10.2026 17:11:40][DEBUG	][glad.plugin	]: loaded specification egl: <class 'glad.specification.EGL'>
+[21.10.2026 17:11:40][DEBUG	][glad.plugin	]: loaded specification gl: <class 'glad.specification.GL'>
+[21.10.2026 17:11:40][DEBUG	][glad.plugin	]: loaded specification glx: <class 'glad.specification.GLX'>
+[21.10.2026 17:11:40][DEBUG	][glad.plugin	]: loaded specification vk: <class 'glad.specification.VK'>
+[21.10.2026 17:11:40][DEBUG	][glad.plugin	]: loaded specification wgl: <class 'glad.specification.WGL'>
+[21.10.2026 17:11:40][INFO	][glad   	]: getting 'vk' specification from remote location
+[21.10.2026 17:11:40][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/main/xml/vk.xml'
+[21.10.2026 17:11:40][INFO	][glad   	]: generating vulkan:None/vk=Version(major=1, minor=1)
+[21.10.2026 17:11:40][INFO	][glad   	]: adding all extensions for api vulkan to result
+[21.10.2026 17:11:40][DEBUG	][glad.parse	]: type VkQueryPoolCreateFlagBits with category enum but without <enums>
+[21.10.2026 17:11:40][DEBUG	][glad.parse	]: type VkDeviceCreateFlagBits with category enum but without <enums>
+[21.10.2026 17:11:44][INFO	][glad   	]: generating feature set FeatureSet(name=vulkan, info=[vulkan=1.1], extensions=381)
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vulkan/vk_platform.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codecs_common.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_h264std.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_h264std_decode.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_h264std_encode.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_h265std.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_h265std_decode.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_h265std_encode.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_av1std.h'
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/Vulkan-Headers/main/include/vk_video/vulkan_video_codec_av1std_decode.h'
+Writing /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_vulkan_11/args.txt
+[18/82] Linking C static library WebRTCPlugin/Release/libglad_gl_core_46.a
+[19/82] glad_glx_14-generate
+Cleaning /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_glx_14
+Generating with args --out-path /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_glx_14 --api glx=1.4 --reproducible c --loader
+[21.10.2026 17:11:51][DEBUG	][glad.plugin	]: loaded language c: <class 'glad.generator.c.__init__.CGenerator'>
+[21.10.2026 17:11:51][DEBUG	][glad.plugin	]: loaded language rust: <class 'glad.generator.rust.__init__.RustGenerator'>
+[21.10.2026 17:11:51][DEBUG	][glad.plugin	]: loaded specification egl: <class 'glad.specification.EGL'>
+[21.10.2026 17:11:51][DEBUG	][glad.plugin	]: loaded specification gl: <class 'glad.specification.GL'>
+[21.10.2026 17:11:51][DEBUG	][glad.plugin	]: loaded specification glx: <class 'glad.specification.GLX'>
+[21.10.2026 17:11:51][DEBUG	][glad.plugin	]: loaded specification vk: <class 'glad.specification.VK'>
+[21.10.2026 17:11:51][DEBUG	][glad.plugin	]: loaded specification wgl: <class 'glad.specification.WGL'>
+[21.10.2026 17:11:51][INFO	][glad   	]: getting 'glx' specification from remote location
+[21.10.2026 17:11:51][DEBUG	][glad.files	]: intercepted attempt to retrieve resource: 'https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/main/xml/glx.xml'
+[21.10.2026 17:11:51][INFO	][glad   	]: generating glx:None/glx=Version(major=1, minor=4)
+[21.10.2026 17:11:51][INFO	][glad   	]: adding all extensions for api glx to result
+[21.10.2026 17:11:51][WARNING	][glad   	]: removed extension GLX_SGIX_video_source, it uses unsupported types
+[21.10.2026 17:11:51][WARNING	][glad   	]: removed extension GLX_SGIX_dmbuffer, it uses unsupported types
+[21.10.2026 17:11:51][INFO	][glad   	]: generating feature set FeatureSet(name=glx, info=[glx=1.4], extensions=66)
+Writing /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-linux/WebRTCPlugin/gladsources/glad_glx_14/args.txt
+[21/82] Building C object WebRTCPlugin/CMakeFiles/glad_glx_14.dir/Release/gladsources/glad_glx_14/src/glx.c.o
+[22/82] Building C object WebRTCPlugin/CMakeFiles/glad_vulkan_11.dir/Release/gladsources/glad_vulkan_11/src/vulkan.c.o
+[23/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/DataChannelObject.cpp.o
+[24/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/AudioTrackSinkAdapter.cpp.o
+[25/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/EncodedStreamTransformer.cpp.o
+[26/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/DummyAudioDevice.cpp.o
+[27/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/pch.cpp.o
+[28/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Logger.cpp.o
+[29/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/CreateSessionDescriptionObserver.cpp.o
+[30/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/ProfilerMarkerFactory.cpp.o
+[31/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Context.cpp.o
+[32/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/MediaStreamObserver.cpp.o
+[33/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/PeerConnectionStatsCollectorCallback.cpp.o
+[34/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/SetLocalDescriptionObserver.cpp.o
+[35/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/ScopedProfiler.cpp.o
+[36/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/PeerConnectionObject.cpp.o
+[37/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityAudioEncoderFactory.cpp.o
+[38/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityAudioTrackSource.cpp.o
+[39/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityProfilerInterfaceFunctions.cpp.o
+[40/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityAudioDecoderFactory.cpp.o
+[41/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/SetRemoteDescriptionObserver.cpp.o
+[42/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityVideoRenderer.cpp.o
+[43/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityVideoDecoderFactory.cpp.o
+[44/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityVideoEncoderFactory.cpp.o
+[45/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/VideoFrame.cpp.o
+[46/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/VideoFrameAdapter.cpp.o
+[47/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityLogStream.cpp.o
+[48/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityVideoTrackSource.cpp.o
+[49/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/VideoFrameScheduler.cpp.o
+[50/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/VideoFrameUtil.cpp.o
+[51/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GpuMemoryBufferPool.cpp.o
+[52/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/UnityVulkanInterfaceFunctions.cpp.o
+[53/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GpuMemoryBuffer.cpp.o
+[54/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Codec/SimulcastEncoderFactory.cpp.o
+[55/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Codec/H264ProfileLevelId.cpp.o
+[56/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Codec/CreateVideoCodecFactory.cpp.o
+[57/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/GraphicsUtility.cpp.o
+[58/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Codec/NvCodec/NvCodec.cpp.o
+[59/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/GraphicsDevice.cpp.o
+[60/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Codec/NvCodec/NvDecoderImpl.cpp.o
+[61/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Codec/NvCodec/NvEncoderCudaWithCUarray.cpp.o
+[62/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/Vulkan/LoadVulkanFunctions.cpp.o
+[63/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/Codec/NvCodec/NvEncoderImpl.cpp.o
+[64/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/Vulkan/UnityVulkanInitCallback.cpp.o
+[65/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/Vulkan/VulkanGraphicsDevice.cpp.o
+[66/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/Vulkan/VulkanTexture2D.cpp.o
+[67/82] Building C object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/OpenGL/implib/libX11.so.init.c.o
+[68/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/ScopedGraphicsDeviceLock.cpp.o
+[69/82] Building ASM object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/OpenGL/implib/libX11.so.tramp.S.o
+[70/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/Vulkan/VulkanUtility.cpp.o
+[71/82] Linking C static library WebRTCPlugin/Release/libglad_vulkan_11.a
+[72/82] Linking C static library WebRTCPlugin/Release/libglad_glx_14.a
+[73/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/OpenGL/OpenGLGraphicsDevice.cpp.o
+[74/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/OpenGL/OpenGLTexture2D.cpp.o
+[75/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/OpenGL/OpenGLContext.cpp.o
+[76/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCPlugin.dir/Release/pch.cpp.o
+[77/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/Cuda/CudaContext.cpp.o
+[78/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCLib.dir/Release/GraphicsDevice/Cuda/GpuMemoryBufferCudaHandle.cpp.o
+[79/82] Linking CXX static library WebRTCPlugin/Release/libWebRTCLib.a
+[80/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCPlugin.dir/Release/UnityRenderEvent.cpp.o
+[81/82] Building CXX object WebRTCPlugin/CMakeFiles/WebRTCPlugin.dir/Release/WebRTCPlugin.cpp.o
+[82/82] Linking CXX shared library /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Runtime/Plugins/x86_64/libwebrtc.so
+clang++: warning: argument unused during compilation: '-static-libstdc++' [-Wunused-command-line-argument]
