@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-10-21
+
+### Added
+
+- `RTCRtpSendParameters.degradationPreference` (`RTCDegradationPreference`): choose whether a video encoder keeps its resolution or its frame rate under load (Unity-Technologies/com.unity.webrtc#1007). WebRTC's default lowers the resolution, which suits camera video but not cubemap or 360° content.
+- Documentation page "High resolutions": size limits per codec, the default bitrate, `degradationPreference`, and layouts for 360° and cubemap video.
+
+### Changed
+
+- Video tracks are no longer limited to 3840x2160 pixels (or 4096 per side on Windows and Linux) (Unity-Technologies/com.unity.webrtc#1087). `WebRTC.enableLimitTextureSize` now only rejects textures larger than `SystemInfo.maxTextureSize` and the minimum sizes some encoders need. An encoder that cannot encode a size (e.g. NVENC H.264 above 4096 per side or above H.264 level 5.2) fails to initialize with a log message, and WebRTC switches to the next negotiated codec.
+- Video encodings without `maxBitrate` get a default based on the track size: 0.07 bits per pixel and frame at the encoding's `maxFramerate` (60 if unset), at most 100 Mbps, e.g. about 8.7 Mbps for 1080p60 and 35 Mbps for 4K60. libwebrtc's own default is 2.5 Mbps for everything above 960x540, which made high resolutions look blurry. The default applies only where it is higher than libwebrtc's, is set by `AddTrack`, `AddTransceiver`, `ReplaceTrack` and `SetParameters` with a null `maxBitrate`, and never replaces a bitrate set by the application.
+
 ## [3.2.1] - 2026-10-20
 
 ### Fixed

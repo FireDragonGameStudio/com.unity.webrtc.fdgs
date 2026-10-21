@@ -61,6 +61,12 @@ namespace webrtc
         return static_cast<H264Level>(maxLevel);
     }
 
+    std::pair<int, int> SupportedMaxH264Size(CUcontext context)
+    {
+        auto encoder = std::make_unique<NvEncoderCudaCapability>(context);
+        return { encoder->GetMaxWidth(NV_ENC_CODEC_H264_GUID), encoder->GetMaxHeight(NV_ENC_CODEC_H264_GUID) };
+    }
+
     std::vector<SdpVideoFormat> SupportedNvEncoderCodecs(CUcontext context)
     {
         auto encoder = std::make_unique<NvEncoderCudaCapability>(context);

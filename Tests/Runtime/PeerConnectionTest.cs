@@ -133,6 +133,34 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
+        [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
+        public void SetDegradationPreference()
+        {
+            var peer = new RTCPeerConnection();
+            var format = WebRTC.GetSupportedRenderTextureFormat(SystemInfo.graphicsDeviceType);
+            var rt = new UnityEngine.RenderTexture(256, 256, 0, format);
+            rt.Create();
+            var track = new VideoStreamTrack(rt);
+            var sender = peer.AddTrack(track);
+
+            RTCRtpSendParameters parameters = sender.GetParameters();
+            Assert.That(parameters.degradationPreference, Is.Null);
+
+            parameters.degradationPreference = RTCDegradationPreference.MaintainResolution;
+            Assert.That(sender.SetParameters(parameters).errorType, Is.EqualTo(RTCErrorType.None));
+            Assert.That(sender.GetParameters().degradationPreference, Is.EqualTo(RTCDegradationPreference.MaintainResolution));
+
+            parameters = sender.GetParameters();
+            parameters.degradationPreference = null;
+            Assert.That(sender.SetParameters(parameters).errorType, Is.EqualTo(RTCErrorType.None));
+            Assert.That(sender.GetParameters().degradationPreference, Is.Null);
+
+            track.Dispose();
+            peer.Dispose();
+            Object.DestroyImmediate(rt);
+        }
+
+        [Test]
         public void AddTrackThrowException()
         {
             var peer = new RTCPeerConnection();

@@ -61,6 +61,9 @@ namespace Unity.WebRTC.RuntimeTest
         [TestCase(720, 1280)]
         [TestCase(1080, 1920)]
         [TestCase(2160, 3840)]
+        [TestCase(4096, 2048)]
+        [TestCase(4096, 4096)]
+        [TestCase(7680, 4320)]
         public void ValidateTextureSize(int width, int height)
         {
             if (!WebRTC.enableLimitTextureSize)
@@ -84,15 +87,18 @@ namespace Unity.WebRTC.RuntimeTest
         }
 
         [Test]
-        [TestCase(2500, 3500)]
-        [TestCase(4000, 4000)]
-        public void ErrorOnValidateTextureSize(int width, int height)
+        [TestCase(1, 0)]
+        [TestCase(0, 1)]
+        public void ErrorOnValidateTextureSizeOverMaxTextureSize(int widthOver, int heightOver)
         {
+            if (SystemInfo.maxTextureSize <= 0)
+                Assert.Ignore("The graphics device reports no maximum texture size.");
             if (!WebRTC.enableLimitTextureSize)
                 WebRTC.enableLimitTextureSize = true;
 
-            var platform = Application.platform;
-            var error = WebRTC.ValidateTextureSize(width, height, platform);
+            int width = Mathf.Min(SystemInfo.maxTextureSize, 1920) + widthOver * SystemInfo.maxTextureSize;
+            int height = Mathf.Min(SystemInfo.maxTextureSize, 1080) + heightOver * SystemInfo.maxTextureSize;
+            var error = WebRTC.ValidateTextureSize(width, height, Application.platform);
             Assert.That(error.errorType, Is.EqualTo(RTCErrorType.InvalidRange));
         }
 

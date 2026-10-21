@@ -84,6 +84,7 @@ namespace webrtc
     }
 
     std::optional<H264Level> NvEncoderImpl::s_maxSupportedH264Level;
+    std::optional<std::pair<int, int>> NvEncoderImpl::s_maxSupportedSize;
     std::vector<SdpVideoFormat> NvEncoderImpl::s_formats;
 
 #if SUPPORT_CUDA_KERNEL
@@ -177,6 +178,8 @@ namespace webrtc
             s_formats = SupportedNvEncoderCodecs(m_context);
         if (!s_maxSupportedH264Level.has_value())
             s_maxSupportedH264Level = SupportedMaxH264Level(m_context);
+        if (!s_maxSupportedSize.has_value())
+            s_maxSupportedSize = SupportedMaxH264Size(m_context);
     }
 
     NvEncoderImpl::~NvEncoderImpl() { Release(); }
@@ -213,6 +216,16 @@ namespace webrtc
             return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
         }
 
+        // Frames NVENC cannot encode as H.264 fail here, and WebRTC switches to the next negotiated codec (e.g. VP9).
+        const auto [maxWidth, maxHeight] = s_maxSupportedSize.value();
+        if (codec->width > maxWidth || codec->height > maxHeight)
+        {
+            RTC_LOG(LS_WARNING) << "NVENC cannot encode " << codec->width << "x" << codec->height
+                                << " as H.264 (maximum " << maxWidth << "x" << maxHeight
+                                << "). WebRTC switches to the next negotiated codec if there is one.";
+            return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
+        }
+
         m_codec = *codec;
 
         // Check required level.
@@ -226,6 +239,9 @@ namespace webrtc
             requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
             if (!requiredLevel)
             {
+                RTC_LOG(LS_WARNING) << m_codec.width << "x" << m_codec.height
+                                    << " needs a higher H.264 level than NVENC and WebRTC support (5.2). WebRTC "
+                                       "switches to the next negotiated codec if there is one.";
                 return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
             }
         }

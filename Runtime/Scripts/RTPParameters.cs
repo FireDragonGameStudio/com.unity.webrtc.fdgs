@@ -267,12 +267,23 @@ namespace Unity.WebRTC
         /// </summary>
         public readonly string transactionId;
 
+        /// <summary>
+        ///     How the encoder reduces quality when the CPU or the network cannot keep up.
+        /// </summary>
+        /// <remarks>
+        ///     When null, WebRTC uses its default, `MaintainFramerate` for video tracks: the resolution is scaled down
+        ///     under load. Use `MaintainResolution` for content whose resolution matters more than its frame rate,
+        ///     such as high-resolution cubemap or 360° video.
+        /// </remarks>
+        public RTCDegradationPreference? degradationPreference;
+
         internal RTCRtpSendParameters(ref RTCRtpSendParametersInternal src)
             : base(ref src)
         {
             this.encodings = Array.ConvertAll(src.encodings.ToArray(),
                 v => new RTCRtpEncodingParameters(ref v));
             transactionId = src.transactionId.AsAnsiStringWithFreeMem();
+            degradationPreference = src.degradationPreference.AsEnum<RTCDegradationPreference>();
         }
 
         internal void CreateInstance(out RTCRtpSendParametersInternal instance)
@@ -286,7 +297,35 @@ namespace Unity.WebRTC
             }
             instance.encodings = encodings;
             instance.transactionId = Marshal.StringToCoTaskMemAnsi(transactionId);
+            instance.degradationPreference = OptionalInt.FromEnum(degradationPreference);
         }
+    }
+
+    /// <summary>
+    ///     How a video encoder reduces quality when the CPU or the network cannot keep up.
+    /// </summary>
+    /// <seealso cref="RTCRtpSendParameters.degradationPreference" />
+    public enum RTCDegradationPreference
+    {
+        /// <summary>
+        ///     Keep frame rate and resolution; frames are dropped before encoding when necessary.
+        /// </summary>
+        MaintainFramerateAndResolution = 0,
+
+        /// <summary>
+        ///     Keep the frame rate and lower the resolution under load.
+        /// </summary>
+        MaintainFramerate = 1,
+
+        /// <summary>
+        ///     Keep the resolution and lower the frame rate under load.
+        /// </summary>
+        MaintainResolution = 2,
+
+        /// <summary>
+        ///     Lower frame rate and resolution in balance.
+        /// </summary>
+        Balanced = 3,
     }
 
     /// <summary>
@@ -504,6 +543,7 @@ namespace Unity.WebRTC
         public MarshallingArray<RTCRtpCodecParametersInternal> codecs;
         public MarshallingArray<RTCRtpHeaderExtensionParametersInternal> headerExtensions;
         public RTCRtcpParametersInternal rtcp;
+        public OptionalInt degradationPreference;
 
         public void Dispose()
         {
