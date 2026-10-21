@@ -1,0 +1,76 @@
+WEBRTC_BRANCH=branch-heads/8078
+WEBRTC_COMMIT=ce13eaa8e5750b09c46b088a35d74bdadbac25dc
+LIBCXX_COMMIT=97b436da4c33663581d394f4ee0a5977fc38c2f4
+CLANG_REVISION=llvmorg-24-init-7747-g62397f8b-31
+ANDROID_NDK_VERSION=30.0.16248370
+ANDROID_MIN_SDK=23
+ANDROID_SYSTEM_LIBS=-lGLESv2 -lOpenSLES -llog 
+Pkg.Revision = 30.0.16248370
+Preset CMake variables:
+
+  ANDROID_PLATFORM="24"
+  CMAKE_ANDROID_ARCH_ABI="arm64-v8a"
+  CMAKE_TOOLCHAIN_FILE:FILEPATH="/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/cmake/android-chromium-clang.cmake"
+
+-- The C compiler identification is Clang 24.0.0
+-- The CXX compiler identification is Clang 24.0.0
+-- The ASM compiler identification is Clang with GNU-like command-line
+-- Found assembler: /home/runner/work/_temp/clang/bin/clang
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /home/runner/work/_temp/clang/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /home/runner/work/_temp/clang/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Check if compiler accepts -pthread
+-- Check if compiler accepts -pthread - yes
+-- Found Threads: TRUE
+-- libwebrtc uses its bundled libc++: -nostdinc++;-isystem/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/buildtools/third_party/libc++;-isystem/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/third_party/libc++/src/include;-isystem/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/third_party/libc++abi/src/include;-DCR_CLANG_REVISION=llvmorg-24-init-7747-g62397f8b-31;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE;-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS;-D_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS;-D_LIBCPP_INSTRUMENTED_WITH_ASAN=0;-DCR_LIBCXX_REVISION=97b436da4c33663581d394f4ee0a5977fc38c2f4;-DWEBRTC_ENABLE_PROTOBUF=1;-DWEBRTC_STRICT_FIELD_TRIALS=0;-DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;-DRTC_ENABLE_VP9;-DRTC_DAV1D_IN_INTERNAL_DECODER_FACTORY;-DWEBRTC_HAVE_SCTP;-DWEBRTC_ENCODER_PSNR_STATS;-DWEBRTC_ARCH_ARM64;-DWEBRTC_HAS_NEON;-DWEBRTC_LIBRARY_IMPL;-DWEBRTC_ENABLE_AVX2;-DWEBRTC_DEPRECATE_PLAN_B;-DWEBRTC_WITHOUT_RUST;-DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0;-DWEBRTC_POSIX;-DWEBRTC_LINUX;-DWEBRTC_ANDROID;-DABSL_ALLOCATOR_NOTHROW=1
+-- Found WebRTC: debug;/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/lib/arm64/libwebrtc.a;optimized;/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/lib/arm64/libwebrtc.a
+-- Configuring done (4.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/arm64-android
+Preset CMake variables:
+
+  ANDROID_PLATFORM="24"
+  CMAKE_ANDROID_ARCH_ABI="x86_64"
+  CMAKE_TOOLCHAIN_FILE:FILEPATH="/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/cmake/android-chromium-clang.cmake"
+
+-- The C compiler identification is Clang 24.0.0
+-- The CXX compiler identification is Clang 24.0.0
+-- The ASM compiler identification is Clang with GNU-like command-line
+-- Found assembler: /home/runner/work/_temp/clang/bin/clang
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /home/runner/work/_temp/clang/bin/clang - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /home/runner/work/_temp/clang/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Check if compiler accepts -pthread
+-- Check if compiler accepts -pthread - yes
+-- Found Threads: TRUE
+-- libwebrtc uses its bundled libc++: -nostdinc++;-isystem/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/buildtools/third_party/libc++;-isystem/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/third_party/libc++/src/include;-isystem/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/include/third_party/libc++abi/src/include;-DCR_CLANG_REVISION=llvmorg-24-init-7747-g62397f8b-31;-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE;-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS;-D_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS;-D_LIBCPP_INSTRUMENTED_WITH_ASAN=0;-DCR_LIBCXX_REVISION=97b436da4c33663581d394f4ee0a5977fc38c2f4;-DWEBRTC_ENABLE_PROTOBUF=1;-DWEBRTC_STRICT_FIELD_TRIALS=0;-DWEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;-DRTC_ENABLE_VP9;-DRTC_DAV1D_IN_INTERNAL_DECODER_FACTORY;-DWEBRTC_HAVE_SCTP;-DWEBRTC_ENCODER_PSNR_STATS;-DWEBRTC_LIBRARY_IMPL;-DWEBRTC_ENABLE_AVX2;-DWEBRTC_DEPRECATE_PLAN_B;-DWEBRTC_WITHOUT_RUST;-DWEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0;-DWEBRTC_POSIX;-DWEBRTC_LINUX;-DWEBRTC_ANDROID;-DABSL_ALLOCATOR_NOTHROW=1
+-- Found WebRTC: debug;/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/lib/x64/libwebrtc.a;optimized;/home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/webrtc/lib/x64/libwebrtc.a
+-- Configuring done (3.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/runner/work/com.unity.webrtc.fdgs/com.unity.webrtc.fdgs/Plugin~/out/build/x86_64-android
