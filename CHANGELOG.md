@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- AV1 encoding with the NVIDIA hardware encoder (Windows, Linux; GeForce RTX 40 series and newer), up to 8192x8192, for video above H.264's 4096 pixels per side, such as 7680x3840 360° video (Unity-Technologies/com.unity.webrtc#1087). Receivers decode it with dav1d; Chrome, Edge and Firefox decode AV1 too.
+
+### Changed
+
+- When a codec has a hardware and a software implementation, the hardware one is used and listed first in `RTCRtpSender.GetCapabilities`. AV1 is now ordered after H.264 instead of last.
+
 ## [3.3.0] - 2026-10-21
 
 ### Added

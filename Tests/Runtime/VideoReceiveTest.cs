@@ -34,9 +34,32 @@ namespace Unity.WebRTC.RuntimeTest
         }
     }
 
+    [TestFixture]
+    [UnityPlatform(exclude = new[] { RuntimePlatform.Android, RuntimePlatform.IPhonePlayer, RuntimePlatform.OSXPlayer, RuntimePlatform.OSXEditor, RuntimePlatform.LinuxPlayer })]
+    [ConditionalIgnore(ConditionalIgnore.UnsupportedPlatformOpenGL, "Not support VideoStreamTrack for OpenGL or without a graphics device")]
+    class VideoReceiveTestWithAV1Codec : VideoReceiveTestBase
+    {
+        protected override void SetUpCodecCapability()
+        {
+            // Hardware AV1 (NVENC, Ada Lovelace and newer). The software encoder (libaom) is far too slow for 8K.
+            videoCodec = RTCRtpSender.GetCapabilities(TrackKind.Video).codecs.FirstOrDefault(c =>
+                c.mimeType.Contains("AV1") && c.sdpFmtpLine != null && c.sdpFmtpLine.Contains("implementation_name=NvCodec"));
+            if (videoCodec == null)
+                Assert.Ignore("AV1 hardware encoding is not supported on this device.");
+        }
+
+        protected override int MaxTestedSide => 8192;
+        protected override string ExpectedEncoderImplementation => "NvCodec";
+    }
+
     abstract class VideoReceiveTestBase
     {
         protected RTCRtpCodecCapability videoCodec;
+
+        // Larger sizes are skipped: H.264 is limited to 4096 pixels per side, and VP8 is encoded in software.
+        protected virtual int MaxTestedSide => 4096;
+        // When set, VideoReceiveHighResolution checks the encoder the sender reports in its stats.
+        protected virtual string ExpectedEncoderImplementation => null;
 
         protected abstract void SetUpCodecCapability();
 
@@ -116,6 +139,8 @@ namespace Unity.WebRTC.RuntimeTest
         {
             new Vector2Int(3840, 2160),
             new Vector2Int(4096, 2048), // 2:1 equirectangular 360° video
+            new Vector2Int(5760, 2880),
+            new Vector2Int(7680, 3840),
         };
 
         // Above 4K the track must arrive in full size: no fixed texture size limit, enough default bitrate, and
@@ -128,6 +153,8 @@ namespace Unity.WebRTC.RuntimeTest
             "Not support VideoStreamTrack for OpenGL or without a graphics device")]
         public IEnumerator VideoReceiveHighResolution([ValueSource(nameof(highResolutions))] Vector2Int size)
         {
+            if (Mathf.Max(size.x, size.y) > MaxTestedSide)
+                Assert.Ignore($"{size.x}x{size.y} is not tested with {videoCodec.mimeType}.");
             if (SystemInfo.maxTextureSize < Mathf.Max(size.x, size.y))
                 Assert.Ignore($"The graphics device does not support {size.x}x{size.y} textures.");
 
@@ -151,6 +178,19 @@ namespace Unity.WebRTC.RuntimeTest
             Assert.That(receiveFullSize.IsCompleted, Is.True,
                 () => $"Received {test.component.RecvTexture?.width}x{test.component.RecvTexture?.height}, expected {size.x}x{size.y}");
 
+            if (ExpectedEncoderImplementation != null)
+            {
+                var op = test.component.Sender.GetStats();
+                yield return op;
+                Assert.That(op.IsError, Is.False);
+                var outbound = op.Value.Stats.Values.OfType<RTCOutboundRTPStreamStats>().FirstOrDefault();
+                Assert.That(outbound, Is.Not.Null);
+                Assert.That(outbound.encoderImplementation, Does.Contain(ExpectedEncoderImplementation));
+                var codec = op.Value.Stats.Values.OfType<RTCCodecStats>().FirstOrDefault(c => c.Id == outbound.codecId);
+                Assert.That(codec?.mimeType, Is.EqualTo(videoCodec.mimeType));
+                op.Value.Dispose();
+            }
+
             test.component.Clear();
             Object.DestroyImmediate(test.gameObject);
         }
@@ -168,6 +208,7 @@ namespace Unity.WebRTC.RuntimeTest
         RTCPeerConnection offerPc;
         RTCPeerConnection answerPc;
         RTCRtpSender sender;
+        public RTCRtpSender Sender => sender;
         GameObject camObj;
         Camera cam;
         int width;
@@ -228,7 +269,8 @@ namespace Unity.WebRTC.RuntimeTest
             if (videoCodec != null)
             {
                 var transceiver = offerPc.GetTransceivers().First(t => t.Sender == sender);
-                transceiver.SetCodecPreferences(new[] { videoCodec });
+                var error = transceiver.SetCodecPreferences(new[] { videoCodec });
+                Assert.That(error, Is.EqualTo(RTCErrorType.None), $"SetCodecPreferences({videoCodec.mimeType} {videoCodec.sdpFmtpLine}) failed");
             }
         }
 

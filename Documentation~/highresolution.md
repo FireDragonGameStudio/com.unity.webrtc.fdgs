@@ -12,11 +12,28 @@ Video tracks are not limited to a fixed resolution. Whether a size can be stream
 | H.264 | VideoToolbox (macOS, iOS), MediaCodec (Android) | H.264 level 5.2 as above; the hardware of the device may support less. |
 | VP8 | Software (libvpx) | 16383 pixels per side. Encoding above 1080p needs a fast CPU. |
 | VP9 | Software (libvpx) | 65535 pixels per side. Encoding above 1080p needs a fast CPU. |
+| AV1 | NVIDIA hardware encoder (Windows, Linux), GeForce RTX 40 series (Ada Lovelace) and newer | 8192x8192. |
 | AV1 | Software (libaom) | 65535 pixels per side. The most CPU intensive of the codecs. |
 
-The receiver needs a decoder for the size, too. The NVIDIA hardware decoder handles H.264 up to 4096x4096; the software decoders for VP8, VP9 and AV1 have no practical limit. Browsers decode H.264 up to level 5.2.
+The receiver needs a decoder for the size, too. The NVIDIA hardware decoder handles H.264 up to 4096x4096; the software decoders for VP8, VP9 and AV1 (dav1d) have no practical limit, but decoding 8K in software needs a fast CPU. Browsers decode H.264 up to level 5.2. Chrome, Edge and Firefox decode AV1; Safari only on devices with an AV1 hardware decoder (Apple M3, A17 Pro and newer).
 
-To stream above 4096 pixels per side or above 36,864 macroblocks, use VP9 or AV1 with [`RTCRtpTransceiver.SetCodecPreferences`](../api/Unity.WebRTC.RTCRtpTransceiver.html#Unity_WebRTC_RTCRtpTransceiver_SetCodecPreferences_Unity_WebRTC_RTCRtpCodecCapability___) and make sure the sending machine can encode it in real time.
+## Above 4096 pixels per side
+
+For 360° or cubemap video above H.264's limits, use AV1. When the GPU can encode AV1 in hardware, the package encodes AV1 with NVENC automatically, and [`RTCRtpSender.GetCapabilities`](../api/Unity.WebRTC.RTCRtpSender.html#Unity_WebRTC_RTCRtpSender_GetCapabilities_Unity_WebRTC_TrackKind_) lists an AV1 codec whose `sdpFmtpLine` contains `implementation_name=NvCodec`. Put AV1 first with [`RTCRtpTransceiver.SetCodecPreferences`](../api/Unity.WebRTC.RTCRtpTransceiver.html#Unity_WebRTC_RTCRtpTransceiver_SetCodecPreferences_Unity_WebRTC_RTCRtpCodecCapability___):
+
+```CSharp
+var codecs = RTCRtpSender.GetCapabilities(TrackKind.Video).codecs;
+bool hardwareAV1 = codecs.Any(c => c.mimeType == "video/AV1" &&
+    c.sdpFmtpLine != null && c.sdpFmtpLine.Contains("implementation_name=NvCodec"));
+if (hardwareAV1)
+{
+    // AV1 first; the other codecs stay available for receivers without AV1.
+    var av1 = codecs.Where(c => c.mimeType == "video/AV1");
+    transceiver.SetCodecPreferences(av1.Concat(codecs.Except(av1)).ToArray());
+}
+```
+
+Without a hardware AV1 encoder, VP9 or AV1 in software can encode these sizes, but rarely in real time.
 
 ## Bitrate
 
@@ -60,6 +77,7 @@ Pick a layout that fits the limits of the codec you need. For H.264, which every
 | ------ | ------------ | -------------------- |
 | Equirectangular, 2:1 | 4096x2048 | Yes |
 | Equirectangular stereo, top-bottom 1:1 | 2880x2880 | Yes |
-| Equirectangular stereo, top-bottom 1:1 | 4096x4096 | No, use VP9 or AV1 |
+| Equirectangular stereo, top-bottom 1:1 | 4096x4096 | No, use AV1 |
 | Cubemap, 3x2 faces of 1216x1216 | 3648x2432 | Yes |
 | Cubemap, 3x2 faces of 1280x1280 | 3840x2560 | No (38,400 macroblocks) |
+| Equirectangular, 2:1 | 5760x2880 or 7680x3840 | No, use AV1 |
