@@ -13,6 +13,7 @@
 #include <media/base/media_constants.h>
 #include <modules/video_coding/include/video_codec_interface.h>
 #include <modules/video_coding/include/video_error_codes.h>
+#include <modules/video_coding/svc/create_scalability_structure.h>
 #include <modules/video_coding/utility/simulcast_utility.h>
 
 #include "Codec/H264ProfileLevelId.h"
@@ -85,6 +86,7 @@ namespace webrtc
 
     std::optional<H264Level> NvEncoderImpl::s_maxSupportedH264Level;
     std::optional<std::pair<int, int>> NvEncoderImpl::s_maxSupportedSize;
+    std::optional<std::pair<int, int>> NvEncoderImpl::s_maxSupportedAv1Size;
     std::vector<SdpVideoFormat> NvEncoderImpl::s_formats;
 
 #if SUPPORT_CUDA_KERNEL
@@ -157,15 +159,25 @@ namespace webrtc
         , m_encodedCompleteCallback(nullptr)
         , m_profiler(profiler)
     {
-        RTC_CHECK(absl::EqualsIgnoreCase(codec.name, ::webrtc::kH264CodecName));
         // not implemented for host memory
         RTC_CHECK_NE(memoryType, CU_MEMORYTYPE_HOST);
-        std::string profileLevelIdString;
-        RTC_CHECK(codec.GetParam(::webrtc::kH264FmtpProfileLevelId, &profileLevelIdString));
+        if (absl::EqualsIgnoreCase(codec.name, ::webrtc::kAv1CodecName))
+        {
+            m_codecType = kVideoCodecAV1;
+            m_profileGuid = NV_ENC_AV1_PROFILE_MAIN_GUID;
+            m_level = NV_ENC_LEVEL_AV1_AUTOSELECT;
+        }
+        else
+        {
+            RTC_CHECK(absl::EqualsIgnoreCase(codec.name, ::webrtc::kH264CodecName));
+            m_codecType = kVideoCodecH264;
+            std::string profileLevelIdString;
+            RTC_CHECK(codec.GetParam(::webrtc::kH264FmtpProfileLevelId, &profileLevelIdString));
 
-        auto profileLevelId = ParseH264ProfileLevelId(profileLevelIdString.c_str());
-        m_profileGuid = ProfileToGuid(profileLevelId.value().profile).value();
-        m_level = static_cast<NV_ENC_LEVEL>(profileLevelId.value().level);
+            auto profileLevelId = ParseH264ProfileLevelId(profileLevelIdString.c_str());
+            m_profileGuid = ProfileToGuid(profileLevelId.value().profile).value();
+            m_level = static_cast<NV_ENC_LEVEL>(profileLevelId.value().level);
+        }
         m_configurations.reserve(kMaxSimulcastStreams);
 
         if (profiler)
@@ -180,6 +192,8 @@ namespace webrtc
             s_maxSupportedH264Level = SupportedMaxH264Level(m_context);
         if (!s_maxSupportedSize.has_value())
             s_maxSupportedSize = SupportedMaxH264Size(m_context);
+        if (m_codecType == kVideoCodecAV1 && !s_maxSupportedAv1Size.has_value())
+            s_maxSupportedAv1Size = SupportedMaxAv1Size(m_context);
     }
 
     NvEncoderImpl::~NvEncoderImpl() { Release(); }
@@ -195,7 +209,7 @@ namespace webrtc
 
     int NvEncoderImpl::InitEncode(const VideoCodec* codec, const VideoEncoder::Settings& settings)
     {
-        if (!codec || codec->codecType != kVideoCodecH264)
+        if (!codec || codec->codecType != m_codecType)
         {
             return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
         }
@@ -216,41 +230,45 @@ namespace webrtc
             return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
         }
 
-        // Frames NVENC cannot encode as H.264 fail here, and WebRTC switches to the next negotiated codec (e.g. VP9).
-        const auto [maxWidth, maxHeight] = s_maxSupportedSize.value();
+        // Frames NVENC cannot encode with this codec fail here, and WebRTC switches to the next negotiated codec.
+        const auto [maxWidth, maxHeight] =
+            m_codecType == kVideoCodecAV1 ? s_maxSupportedAv1Size.value() : s_maxSupportedSize.value();
         if (codec->width > maxWidth || codec->height > maxHeight)
         {
-            RTC_LOG(LS_WARNING) << "NVENC cannot encode " << codec->width << "x" << codec->height
-                                << " as H.264 (maximum " << maxWidth << "x" << maxHeight
-                                << "). WebRTC switches to the next negotiated codec if there is one.";
+            RTC_LOG(LS_WARNING) << "NVENC cannot encode " << codec->width << "x" << codec->height << " as "
+                                << CodecTypeToPayloadString(m_codecType) << " (maximum " << maxWidth << "x"
+                                << maxHeight << "). WebRTC switches to the next negotiated codec if there is one.";
             return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
         }
 
         m_codec = *codec;
 
-        // Check required level.
-        auto requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
-        if (!requiredLevel)
+        if (m_codecType == kVideoCodecH264)
         {
-            // workaround
-            // Use supported max framerate that calculated by h264 level define.
-            m_codec.maxFramerate = static_cast<uint32_t>(
-                SupportedMaxFramerate(s_maxSupportedH264Level.value(), m_codec.width, m_codec.height));
-            requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
+            // Check required level.
+            auto requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
             if (!requiredLevel)
             {
-                RTC_LOG(LS_WARNING) << m_codec.width << "x" << m_codec.height
-                                    << " needs a higher H.264 level than NVENC and WebRTC support (5.2). WebRTC "
-                                       "switches to the next negotiated codec if there is one.";
-                return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
+                // workaround
+                // Use supported max framerate that calculated by h264 level define.
+                m_codec.maxFramerate = static_cast<uint32_t>(
+                    SupportedMaxFramerate(s_maxSupportedH264Level.value(), m_codec.width, m_codec.height));
+                requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
+                if (!requiredLevel)
+                {
+                    RTC_LOG(LS_WARNING) << m_codec.width << "x" << m_codec.height
+                                        << " needs a higher H.264 level than NVENC and WebRTC support (5.2). WebRTC "
+                                           "switches to the next negotiated codec if there is one.";
+                    return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
+                }
             }
-        }
 
-        // workaround
-        // Use required level if the profile level is lower than required level.
-        if (requiredLevel.value() > m_level)
-        {
-            m_level = requiredLevel.value();
+            // workaround
+            // Use required level if the profile level is lower than required level.
+            if (requiredLevel.value() > m_level)
+            {
+                m_level = requiredLevel.value();
+            }
         }
 
         int32_t ret = Release();
@@ -274,7 +292,8 @@ namespace webrtc
         {
             if (m_memoryType == CU_MEMORYTYPE_DEVICE)
             {
-                m_encoder = std::make_unique<NvEncoderCuda>(m_context, m_codec.width, m_codec.height, m_format, 0);
+                m_encoder = std::make_unique<NvEncoderCuda>(
+                    m_context, m_codec.width, m_codec.height, m_format, 0, false, false, /*bUseIVFContainer=*/false);
             }
             else if (m_memoryType == CU_MEMORYTYPE_ARRAY)
             {
@@ -298,7 +317,8 @@ namespace webrtc
         m_configurations[0].height = m_codec.height;
         m_configurations[0].sending = false;
         m_configurations[0].max_frame_rate = static_cast<float>(m_codec.maxFramerate);
-        m_configurations[0].key_frame_interval = m_codec.H264()->keyFrameInterval;
+        m_configurations[0].key_frame_interval =
+            m_codecType == kVideoCodecH264 ? m_codec.H264()->keyFrameInterval : 0;
         m_configurations[0].max_bps = m_codec.maxBitrate * 1000;
         m_configurations[0].target_bps = m_codec.startBitrate * 1000;
 
@@ -306,7 +326,7 @@ namespace webrtc
         m_encodeConfig.version = NV_ENC_CONFIG_VER;
         m_initializeParams.encodeConfig = &m_encodeConfig;
 
-        GUID encodeGuid = NV_ENC_CODEC_H264_GUID;
+        GUID encodeGuid = m_codecType == kVideoCodecAV1 ? NV_ENC_CODEC_AV1_GUID : NV_ENC_CODEC_H264_GUID;
         GUID presetGuid = NV_ENC_PRESET_P4_GUID;
 
         m_encoder->CreateDefaultEncoderParams(
@@ -318,8 +338,25 @@ namespace webrtc
         m_encodeConfig.profileGUID = m_profileGuid;
         m_encodeConfig.gopLength = NVENC_INFINITE_GOPLENGTH;
         m_encodeConfig.frameIntervalP = 1;
-        m_encodeConfig.encodeCodecConfig.h264Config.level = m_level;
-        m_encodeConfig.encodeCodecConfig.h264Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+        if (m_codecType == kVideoCodecAV1)
+        {
+            NV_ENC_CONFIG_AV1& av1Config = m_encodeConfig.encodeCodecConfig.av1Config;
+            av1Config.level = NV_ENC_LEVEL_AV1_AUTOSELECT;
+            av1Config.tier = NV_ENC_TIER_AV1_0;
+            av1Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+            // Key frames carry the sequence header, so a receiver can start decoding at any key frame; this also
+            // tells IsAv1KeyFrame which frames are key frames.
+            av1Config.repeatSeqHdr = 1;
+            // Low overhead OBU format with obu_size fields, as the AV1 RTP packetizer expects.
+            av1Config.outputAnnexBFormat = 0;
+
+            m_svcController = CreateScalabilityStructure(ScalabilityMode::kL1T1);
+        }
+        else
+        {
+            m_encodeConfig.encodeCodecConfig.h264Config.level = m_level;
+            m_encodeConfig.encodeCodecConfig.h264Config.idrPeriod = NVENC_INFINITE_GOPLENGTH;
+        }
         m_encodeConfig.rcParams.version = NV_ENC_RC_PARAMS_VER;
         m_encodeConfig.rcParams.rateControlMode = NV_ENC_PARAMS_RC_CBR;
         m_encodeConfig.rcParams.averageBitRate = m_configurations[0].target_bps;
@@ -535,6 +572,26 @@ namespace webrtc
         m_encodedImage.timing_.flags = VideoSendTiming::kInvalid;
         m_encodedImage._frameType = VideoFrameType::kVideoFrameDelta;
         m_encodedImage.SetColorSpace(inputFrame.color_space());
+
+        if (m_codecType == kVideoCodecAV1)
+        {
+            const bool keyFrame = IsAv1KeyFrame(packet);
+            m_encodedImage._frameType = keyFrame ? VideoFrameType::kVideoFrameKey : VideoFrameType::kVideoFrameDelta;
+            m_encodedImage.SetEncodedData(EncodedImageBuffer::Create(packet.data(), packet.size()));
+            m_encodedImage.set_size(packet.size());
+            m_encodedImage.qp_ = -1;
+
+            CodecSpecificInfo av1Info;
+            SetCodecSpecificInfoAv1(keyFrame, av1Info);
+            const auto av1Result = m_encodedCompleteCallback->OnEncodedImage(m_encodedImage, &av1Info);
+            if (av1Result.error != EncodedImageCallback::Result::OK)
+            {
+                RTC_LOG(LS_ERROR) << "Encode m_encodedCompleteCallback failed " << av1Result.error;
+                return WEBRTC_VIDEO_CODEC_ERROR;
+            }
+            return WEBRTC_VIDEO_CODEC_OK;
+        }
+
         std::vector<H264::NaluIndex> naluIndices = H264::FindNaluIndices(packet);
         for (uint32_t i = 0; i < naluIndices.size(); i++)
         {
@@ -589,31 +646,34 @@ namespace webrtc
         m_codec.maxFramerate = static_cast<uint32_t>(parameters.framerate_fps);
         m_codec.maxBitrate = parameters.bitrate.GetSpatialLayerSum(0);
 
-        // Check required level.
-        auto requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
-        if (!requiredLevel)
+        if (m_codecType == kVideoCodecH264)
         {
-            // workaround
-            // Use supported max framerate that calculated by h264 level define.
-            m_codec.maxFramerate = static_cast<uint32_t>(
-                SupportedMaxFramerate(s_maxSupportedH264Level.value(), m_codec.width, m_codec.height));
-            requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
+            // Check required level.
+            auto requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
             if (!requiredLevel)
             {
-                RTC_LOG(LS_WARNING) << "Not supported codec parameter "
-                                    << "width:" << m_codec.width << " "
-                                    << "height:" << m_codec.height << " "
-                                    << "maxFramerate:" << m_codec.maxFramerate;
-                m_configurations[0].SetStreamState(false);
-                return;
+                // workaround
+                // Use supported max framerate that calculated by h264 level define.
+                m_codec.maxFramerate = static_cast<uint32_t>(
+                    SupportedMaxFramerate(s_maxSupportedH264Level.value(), m_codec.width, m_codec.height));
+                requiredLevel = NvEncRequiredLevel(m_codec, s_formats, m_profileGuid);
+                if (!requiredLevel)
+                {
+                    RTC_LOG(LS_WARNING) << "Not supported codec parameter "
+                                        << "width:" << m_codec.width << " "
+                                        << "height:" << m_codec.height << " "
+                                        << "maxFramerate:" << m_codec.maxFramerate;
+                    m_configurations[0].SetStreamState(false);
+                    return;
+                }
             }
-        }
 
-        // workaround:
-        // Use required level if the profile level is lower than required level.
-        if (requiredLevel.value() > m_level)
-        {
-            m_level = requiredLevel.value();
+            // workaround:
+            // Use required level if the profile level is lower than required level.
+            if (requiredLevel.value() > m_level)
+            {
+                m_level = requiredLevel.value();
+            }
         }
 
         m_configurations[0].target_bps = m_codec.maxBitrate;
@@ -629,7 +689,8 @@ namespace webrtc
 
         // Change framerate and bitrate
         reconfigureParams.reInitEncodeParams.frameRateNum = static_cast<uint32_t>(m_configurations[0].max_frame_rate);
-        reInitCodecConfig.encodeCodecConfig.h264Config.level = m_level;
+        if (m_codecType == kVideoCodecH264)
+            reInitCodecConfig.encodeCodecConfig.h264Config.level = m_level;
         reInitCodecConfig.rcParams.averageBitRate = m_configurations[0].target_bps;
         reInitCodecConfig.rcParams.vbvBufferSize =
             (reInitCodecConfig.rcParams.averageBitRate * reconfigureParams.reInitEncodeParams.frameRateDen /
@@ -649,6 +710,49 @@ namespace webrtc
 
         // Force send Keyframe
         m_configurations[0].SetStreamState(true);
+    }
+
+    bool NvEncoderImpl::IsAv1KeyFrame(const std::vector<uint8_t>& packet)
+    {
+        constexpr uint8_t kObuTypeSequenceHeader = 1;
+        size_t offset = 0;
+        while (offset < packet.size())
+        {
+            // obu_header: forbidden bit, obu_type (4 bits), extension flag, has_size_field, reserved bit.
+            const uint8_t header = packet[offset++];
+            const uint8_t obuType = (header >> 3) & 0xF;
+            if (obuType == kObuTypeSequenceHeader)
+                return true;
+            if (header & 0x4)
+                offset++; // obu_extension_header
+            if (!(header & 0x2))
+                return false; // without obu_size the OBU extends to the end of the packet
+            // obu_size, leb128
+            uint64_t size = 0;
+            for (int i = 0; i < 8 && offset < packet.size(); i++)
+            {
+                const uint8_t byte = packet[offset++];
+                size |= static_cast<uint64_t>(byte & 0x7F) << (7 * i);
+                if (!(byte & 0x80))
+                    break;
+            }
+            offset += static_cast<size_t>(size);
+        }
+        return false;
+    }
+
+    void NvEncoderImpl::SetCodecSpecificInfoAv1(bool keyFrame, CodecSpecificInfo& codecInfo)
+    {
+        codecInfo.codecType = kVideoCodecAV1;
+        codecInfo.scalability_mode = ScalabilityMode::kL1T1;
+        std::vector<ScalableVideoController::LayerFrameConfig> layerFrames = m_svcController->NextFrameConfig(keyFrame);
+        RTC_DCHECK_EQ(layerFrames.size(), 1u);
+        codecInfo.generic_frame_info = m_svcController->OnEncodeDone(layerFrames[0]);
+        if (keyFrame && codecInfo.generic_frame_info)
+        {
+            codecInfo.template_structure = m_svcController->DependencyStructure();
+            codecInfo.template_structure->resolutions = { RenderResolution(m_codec.width, m_codec.height) };
+        }
     }
 
     void NvEncoderImpl::LayerConfig::SetStreamState(bool sendStream)

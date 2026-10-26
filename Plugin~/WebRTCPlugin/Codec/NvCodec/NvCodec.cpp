@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include <cstring>
+
 #include <absl/strings/match.h>
 #include <api/video_codecs/video_encoder_factory.h>
 #include <modules/video_coding/codecs/h264/include/h264.h>
@@ -43,6 +45,23 @@ namespace webrtc
         int GetMaxWidth(GUID encodeGUID) { return GetCapabilityValue(encodeGUID, NV_ENC_CAPS_WIDTH_MAX); }
         int GetMaxHeight(GUID encodeGUID) { return GetCapabilityValue(encodeGUID, NV_ENC_CAPS_HEIGHT_MAX); }
         int GetEncoderCount(GUID encodeGUID) { return GetCapabilityValue(encodeGUID, NV_ENC_CAPS_NUM_ENCODER_ENGINES); }
+
+        bool SupportsCodec(GUID encodeGUID)
+        {
+            uint32_t count = 0;
+            if (m_nvenc.nvEncGetEncodeGUIDCount(m_hEncoder, &count) != NV_ENC_SUCCESS)
+                return false;
+            std::vector<GUID> guids(count);
+            uint32_t validCount = 0;
+            if (m_nvenc.nvEncGetEncodeGUIDs(m_hEncoder, guids.data(), count, &validCount) != NV_ENC_SUCCESS)
+                return false;
+            for (uint32_t i = 0; i < validCount; i++)
+            {
+                if (std::memcmp(&guids[i], &encodeGUID, sizeof(GUID)) == 0)
+                    return true;
+            }
+            return false;
+        }
     };
 
     int SupportedEncoderCount(CUcontext context)
@@ -65,6 +84,25 @@ namespace webrtc
     {
         auto encoder = std::make_unique<NvEncoderCudaCapability>(context);
         return { encoder->GetMaxWidth(NV_ENC_CODEC_H264_GUID), encoder->GetMaxHeight(NV_ENC_CODEC_H264_GUID) };
+    }
+
+    std::pair<int, int> SupportedMaxAv1Size(CUcontext context)
+    {
+        auto encoder = std::make_unique<NvEncoderCudaCapability>(context);
+        return { encoder->GetMaxWidth(NV_ENC_CODEC_AV1_GUID), encoder->GetMaxHeight(NV_ENC_CODEC_AV1_GUID) };
+    }
+
+    bool IsNvEncAv1Supported(CUcontext context)
+    {
+        try
+        {
+            auto encoder = std::make_unique<NvEncoderCudaCapability>(context);
+            return encoder->SupportsCodec(NV_ENC_CODEC_AV1_GUID);
+        }
+        catch (const NVENCException&)
+        {
+            return false;
+        }
     }
 
     std::vector<SdpVideoFormat> SupportedNvEncoderCodecs(CUcontext context)
@@ -205,6 +243,8 @@ namespace webrtc
         // It consumes a session to check the encoder capability.
         // Therefore, we check encoder capability only once in the constructor and cache it.
         m_cachedSupportedFormats = SupportedNvEncoderCodecs(context_);
+        if (!m_cachedSupportedFormats.empty())
+            m_av1Supported = IsNvEncAv1Supported(context_);
     }
     NvEncoderFactory::~NvEncoderFactory() = default;
 
@@ -219,7 +259,13 @@ namespace webrtc
         // About H264, Profile and its Level must also match in this implementation.
         // NvEncoder supports a higher level of H264 Profile than NvDecoder.
         // Therefore, return the support codec of NvDecoder as Workaround.
-        return SupportedNvDecoderCodecs(context_);
+        std::vector<SdpVideoFormat> formats = SupportedNvDecoderCodecs(context_);
+
+        // AV1 (Ada Lovelace and newer, up to 8192x8192). Receivers decode it with dav1d, which the internal decoder
+        // factory provides, so it can be negotiated with SetCodecPreferences as well.
+        if (m_av1Supported)
+            formats.push_back(SdpVideoFormat::AV1Profile0());
+        return formats;
     }
 
     std::unique_ptr<VideoEncoder> NvEncoderFactory::Create(const Environment& env, const SdpVideoFormat& format)

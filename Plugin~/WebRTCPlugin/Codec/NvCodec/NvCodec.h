@@ -25,6 +25,10 @@ namespace webrtc
     H264Level SupportedMaxH264Level(CUcontext context);
     // The largest frame width and height NVENC can encode as H.264 on this device.
     std::pair<int, int> SupportedMaxH264Size(CUcontext context);
+    // The largest frame width and height NVENC can encode as AV1 on this device.
+    std::pair<int, int> SupportedMaxAv1Size(CUcontext context);
+    // Whether NVENC can encode AV1 on this device (Ada Lovelace and newer).
+    bool IsNvEncAv1Supported(CUcontext context);
     std::vector<SdpVideoFormat> SupportedNvEncoderCodecs(CUcontext context);
     std::vector<SdpVideoFormat> SupportedNvDecoderCodecs(CUcontext context);
 
@@ -69,6 +73,7 @@ namespace webrtc
 
         // Cache of capability to reduce calling SessionOpenAPI of NvEncoder
         std::vector<SdpVideoFormat> m_cachedSupportedFormats;
+        bool m_av1Supported = false;
     };
 
     class NvDecoderFactory : public VideoDecoderFactory

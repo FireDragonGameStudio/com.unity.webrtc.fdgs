@@ -6,6 +6,7 @@
 #include <api/video_codecs/video_encoder.h>
 #include <common_video/h264/h264_bitstream_parser.h>
 #include <media/base/codec.h>
+#include <modules/video_coding/svc/scalable_video_controller.h>
 
 #include "NvCodec.h"
 #include "NvEncoder/NvEncoderCuda.h"
@@ -68,8 +69,13 @@ namespace webrtc
         // Returns meta-data about the encoder, such as implementation name.
         EncoderInfo GetEncoderInfo() const override;
 
+        // Whether an AV1 temporal unit from NVENC is a key frame: NVENC writes the sequence header OBU only on key
+        // frames (repeatSeqHdr).
+        static bool IsAv1KeyFrame(const std::vector<uint8_t>& packet);
+
     protected:
         int32_t ProcessEncodedFrame(std::vector<uint8_t>& packet, const ::webrtc::VideoFrame& inputFrame);
+        void SetCodecSpecificInfoAv1(bool keyFrame, CodecSpecificInfo& codecInfo);
 
     private:
         bool CopyResource(
@@ -103,6 +109,12 @@ namespace webrtc
 
         static std::optional<webrtc::H264Level> s_maxSupportedH264Level;
         static std::optional<std::pair<int, int>> s_maxSupportedSize;
+        static std::optional<std::pair<int, int>> s_maxSupportedAv1Size;
+
+        // kVideoCodecH264 or kVideoCodecAV1.
+        VideoCodecType m_codecType;
+        // AV1: produces the dependency descriptor (generic frame info) of the single-layer stream (L1T1).
+        std::unique_ptr<ScalableVideoController> m_svcController;
         static std::vector<SdpVideoFormat> s_formats;
     };
 } // end namespace webrtc

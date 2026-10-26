@@ -39,7 +39,10 @@ namespace webrtc
               eBufferFormat,
               nExtraOutputDelay,
               bMotionEstimationOnly,
-              bOutputInVideoMemory)
+              bOutputInVideoMemory,
+              /*bDX12Encode=*/false,
+              // WebRTC needs the raw AV1 OBUs, not the IVF file format of the SDK sample.
+              /*bUseIVFContainer=*/false)
         , m_cuContext(cuContext)
     {
         if (!m_hEncoder)
