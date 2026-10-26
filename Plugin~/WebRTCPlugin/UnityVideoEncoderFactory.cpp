@@ -139,17 +139,29 @@ namespace webrtc
         std::vector<SdpVideoFormat> supported_codecs = GetSupportedFormatsInFactories(factories_);
 
         // Set video codec order: default video codec is VP8
-        auto findIndex = [&](webrtc::SdpVideoFormat& format) -> long {
-            const std::string sortOrder[4] = { "VP8", "VP9", "H264", "AV1X" };
+        auto findIndex = [&](const webrtc::SdpVideoFormat& format) -> long {
+            const std::string sortOrder[4] = { "VP8", "VP9", "H264", "AV1" };
             auto it = std::find(std::begin(sortOrder), std::end(sortOrder), format.name);
             if (it == std::end(sortOrder))
                 return LONG_MAX;
             return static_cast<long>(std::distance(std::begin(sortOrder), it));
         };
-        std::sort(
+        // Within a codec, hardware implementations come before the internal (software) one: the first matching
+        // format of the negotiated list is used, e.g. "AV1 (NvCodec)" before "AV1 (Internal)".
+        auto isInternal = [&](const webrtc::SdpVideoFormat& format) -> bool {
+            auto impl = format.parameters.find(kSdpKeyNameCodecImpl);
+            return impl == format.parameters.end() || impl->second == kInternalImpl;
+        };
+        std::stable_sort(
             supported_codecs.begin(),
             supported_codecs.end(),
-            [&](webrtc::SdpVideoFormat& x, webrtc::SdpVideoFormat& y) -> int { return (findIndex(x) < findIndex(y)); });
+            [&](const webrtc::SdpVideoFormat& x, const webrtc::SdpVideoFormat& y) -> bool {
+                const long ix = findIndex(x);
+                const long iy = findIndex(y);
+                if (ix != iy)
+                    return ix < iy;
+                return !isInternal(x) && isInternal(y);
+            });
         return supported_codecs;
     }
 
