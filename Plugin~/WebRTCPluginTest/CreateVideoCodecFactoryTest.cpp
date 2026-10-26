@@ -86,6 +86,49 @@ namespace webrtc
         std::vector<webrtc::SdpVideoFormat> formats = GetSupportedFormatsInFactories(factories);
         EXPECT_GT(formats.size(), 0);
     }
+    class FakeEncoderFactory : public VideoEncoderFactory
+    {
+    public:
+        explicit FakeEncoderFactory(std::vector<SdpVideoFormat> formats)
+            : formats_(std::move(formats))
+        {
+        }
+        std::vector<SdpVideoFormat> GetSupportedFormats() const override { return formats_; }
+        std::unique_ptr<VideoEncoder> Create(const Environment&, const SdpVideoFormat&) override { return nullptr; }
+
+    private:
+        std::vector<SdpVideoFormat> formats_;
+    };
+
+    // Two implementations of the same codec: the format's implementation_name decides.
+    TEST(FindCodecFactoryTest, PrefersTheNamedImplementation)
+    {
+        std::map<std::string, std::unique_ptr<VideoEncoderFactory>> factories;
+        factories.emplace(
+            kInternalImpl,
+            std::make_unique<FakeEncoderFactory>(std::vector<SdpVideoFormat> { SdpVideoFormat::VP8(), SdpVideoFormat::AV1Profile0() }));
+        factories.emplace(
+            kNvCodecImpl, std::make_unique<FakeEncoderFactory>(std::vector<SdpVideoFormat> { SdpVideoFormat::AV1Profile0() }));
+        VideoEncoderFactory* internal = factories[kInternalImpl].get();
+        VideoEncoderFactory* nvcodec = factories[kNvCodecImpl].get();
+
+        SdpVideoFormat av1 = SdpVideoFormat::AV1Profile0();
+        EXPECT_EQ(FindCodecFactory(factories, av1), internal);
+
+        av1.parameters[kSdpKeyNameCodecImpl] = kNvCodecImpl;
+        EXPECT_EQ(FindCodecFactory(factories, av1), nvcodec);
+
+        av1.parameters[kSdpKeyNameCodecImpl] = kInternalImpl;
+        EXPECT_EQ(FindCodecFactory(factories, av1), internal);
+
+        // A named implementation without the codec, or one this device does not have, falls back to any factory.
+        SdpVideoFormat vp8 = SdpVideoFormat::VP8();
+        vp8.parameters[kSdpKeyNameCodecImpl] = kNvCodecImpl;
+        EXPECT_EQ(FindCodecFactory(factories, vp8), internal);
+        av1.parameters[kSdpKeyNameCodecImpl] = kVideoToolboxImpl;
+        EXPECT_EQ(FindCodecFactory(factories, av1), internal);
+    }
+
     INSTANTIATE_TEST_SUITE_P(GfxDevice, CreateVideoCodecFactoryTest, testing::ValuesIn(supportedGfxDevices));
 } // namespace webrtc
 } // namespace unity
