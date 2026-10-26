@@ -24,37 +24,28 @@ namespace webrtc
     VideoDecoderFactory*
     CreateVideoDecoderFactory(const std::string& impl, IGraphicsDevice* gfxDevice, ProfilerMarkerFactory* profiler);
 
-    // Returns the factory that supports the codec of `format`. When the format names an implementation
-    // (implementation_name, added by GetSupportedFormatsInFactories) that supports the codec, that factory is used,
-    // so that e.g. "AV1 (NvCodec)" gets the hardware encoder even though the internal factory also has AV1.
-    // Otherwise the first factory supporting the codec is used: a remote peer's implementation_name may name an
-    // implementation this device does not have.
+    // Returns the factory that supports the codec of `format`, preferring hardware implementations over the
+    // internal (software) one, e.g. NVENC AV1 over libaom. The format's implementation_name is not used: in a
+    // negotiated format it comes from the remote peer's answer and names that peer's decoder (or is missing for
+    // browsers), not the local encoder.
     template<typename Factory>
     Factory* FindCodecFactory(
         const std::map<std::string, std::unique_ptr<Factory>>& factories, const webrtc::SdpVideoFormat& format)
     {
-        auto impl = format.parameters.find(kSdpKeyNameCodecImpl);
-        if (impl != format.parameters.end())
-        {
-            auto named = factories.find(impl->second);
-            if (named != factories.end())
-            {
-                for (const webrtc::SdpVideoFormat& other : named->second->GetSupportedFormats())
-                {
-                    if (format.IsSameCodec(other))
-                        return named->second.get();
-                }
-            }
-        }
+        Factory* internal = nullptr;
         for (const auto& pair : factories)
         {
             for (const webrtc::SdpVideoFormat& other : pair.second->GetSupportedFormats())
             {
-                if (format.IsSameCodec(other))
+                if (!format.IsSameCodec(other))
+                    continue;
+                if (pair.first != kInternalImpl)
                     return pair.second.get();
+                internal = pair.second.get();
+                break;
             }
         }
-        return nullptr;
+        return internal;
     }
 
     template<typename Factory>

@@ -100,8 +100,9 @@ namespace webrtc
         std::vector<SdpVideoFormat> formats_;
     };
 
-    // Two implementations of the same codec: the format's implementation_name decides.
-    TEST(FindCodecFactoryTest, PrefersTheNamedImplementation)
+    // Two implementations of the same codec: the hardware one is used, whatever implementation_name says (in a
+    // negotiated format it names the remote peer's decoder).
+    TEST(FindCodecFactoryTest, PrefersHardwareImplementations)
     {
         std::map<std::string, std::unique_ptr<VideoEncoderFactory>> factories;
         factories.emplace(
@@ -113,20 +114,13 @@ namespace webrtc
         VideoEncoderFactory* nvcodec = factories[kNvCodecImpl].get();
 
         SdpVideoFormat av1 = SdpVideoFormat::AV1Profile0();
-        EXPECT_EQ(FindCodecFactory(factories, av1), internal);
-
-        av1.parameters[kSdpKeyNameCodecImpl] = kNvCodecImpl;
+        EXPECT_EQ(FindCodecFactory(factories, av1), nvcodec);
+        av1.parameters[kSdpKeyNameCodecImpl] = kInternalImpl;
         EXPECT_EQ(FindCodecFactory(factories, av1), nvcodec);
 
-        av1.parameters[kSdpKeyNameCodecImpl] = kInternalImpl;
-        EXPECT_EQ(FindCodecFactory(factories, av1), internal);
-
-        // A named implementation without the codec, or one this device does not have, falls back to any factory.
-        SdpVideoFormat vp8 = SdpVideoFormat::VP8();
-        vp8.parameters[kSdpKeyNameCodecImpl] = kNvCodecImpl;
-        EXPECT_EQ(FindCodecFactory(factories, vp8), internal);
-        av1.parameters[kSdpKeyNameCodecImpl] = kVideoToolboxImpl;
-        EXPECT_EQ(FindCodecFactory(factories, av1), internal);
+        // Codecs only the internal factory has.
+        EXPECT_EQ(FindCodecFactory(factories, SdpVideoFormat::VP8()), internal);
+        EXPECT_EQ(FindCodecFactory(factories, SdpVideoFormat::VP9Profile0()), nullptr);
     }
 
     INSTANTIATE_TEST_SUITE_P(GfxDevice, CreateVideoCodecFactoryTest, testing::ValuesIn(supportedGfxDevices));
